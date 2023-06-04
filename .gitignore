@@ -1,0 +1,19 @@
+# notes, that i dont need
+
+# temporary output files
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+# output files
+*.pdf
+
