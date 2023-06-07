@@ -1,11 +1,138 @@
 %----------------------------------------------------------------------------
-\chapter{A linux operációs rendszer}
+\chapter{A Linux operációs rendszer}
 %----------------------------------------------------------------------------
 
 A Linux operációs rendszer napjainkban alapvető eszköz a legtöbb villamosmérnöki és informatikai területen. Megtalálhatjuk minden nagyobb teljesítményt igénylő informatikai eszközünkben. Számos router és switch Linux rendszert
-futtat, de megjelenik kisebb beágyazott eszközökben és szervereken is egyaránt. Napjainkban az asztali felhasználása is egyre inkább teret nyer köszönhetően a személyreszabhatóságának, teljesítményének és ingyenességének.
+futtat, de megjelenik kisebb beágyazott eszközökben és szervereken is egyaránt. A mobiltelefonok túlnyomó többsége is Linux alapú operációs rendszert futtat, mert az android operációs rendszer szintén Linux alapú.
+Napjainkban az asztali felhasználása is egyre inkább teret nyer köszönhetően a személyre szabhatóságának, teljesítményének és ingyenességének.
 
-A Linux eredetileg egy Minix klónként indult amelyet Linus Torvalds Finn származású informatikus kezdett el fejleszteni. Első kiadása 1992-ben jelent meg, azóta rohamos és aktív fejlesztés alatt van. 
-Széleskörű népszerűségét számos dolognak köszönheti.
+A Linux egy Unix-like operációs rendszer. Eredetileg egy Minix klónként indult amelyet Linus Torvalds Finn származású informatikus kezdett el fejleszteni. Első kiadása 1992-ben jelent meg, azóta rohamos és aktív fejlesztés alatt áll.
+Széles körű népszerűségét számos dolognak köszönheti.
+
+Az operációs rendszer rendkívül személyre szabható, ami rengeteg különböző igényű alkalmazás számára teszi elérhetővé. Az nyílt forráskódú licensznek\footnote{licensz: GPLv2}
+köszönhetően olcsó megoldás, valamint fejlesztését nem egy fejlesztőcsoport, hanem egy kiterjedt közösség végzi, így a hibák keresése sokkal gyorsabban történhet. A fejlesztésben több nagyvállalat, mint például az intel vagy az ARM
+is részt vesz biztosítva, hogy  a kernel minél több típusú hardveren futtatható legyen, és minél több eszközhöz legyen driver. A nyílt forráskód ugyanakkor lehetővé teszi saját módosítások, javítások, illetve kiegészítések
+eszközölését. Ezen tulajdonság pedig rendkívül hasznos, ugyanis lehetőséget ad a saját hardver kihasználására.
+
+A Linux kernel 2.6.22 verzió óta támogat egy real time működést, amellyel a kernel soft real-time ütemezésre képes. Ez a mód a legtöbb esetben nem javít, sőt ront a rendszer teljesítményén, ellenben bizonyos kritikus beágyazott
+feladatok nem megvalósíthatóak real-time működés nélkül.
+
+\section{Az operációs rendszer felépítése}
+
+Egy Linux alapú operációs rendszer általában több részegységből áll, ezek egymást elfedő rétegekként, vagy egymásra épülő szintenként képzelhetőek el. A Linux, pontosabban szólva GNU/Linux önmagában csak a kernelt foglalja magában,
+egy teljes rendszer működéséhez azonban több egyéb komponensre is szükség van.
+
+\subsection{Kernel}
+
+A kernel feladata, hogy a rendelkezésre álló erőforrásokat elossza a végrehajtandó feladatok között, valamint platformot adjon ezen feladatok közötti kommunikációnak. A kernel alapja egy ütemező, azaz scheduler. Ennek a
+programnak feladata, hogy a számítási teljesítményt és a processzor időt elossza a futtatandó taskok között. Minden task saját virtuális processzoron fut, valamint saját stack-el rendelkezik. Ebből kifolyólag egy task szempontjából
+nem észrevehető amikor a scheduler kicserél két futó taskot egy processzoron.
+
+A kommunikációban azonban akadhatnak szinkronizációs problémák is, a fent ismertetett működés következtében. Ebből az okból a kernel feladata megfelelő kommunikációs és szinkronizációs eszközöket adni a taskok számára. Ilyen
+eszközök a message queue-k, a shared memory, amelyek üzenetküldésre és kommunikációra használható eszközök,. valamint a mutexek és szemaforok, amelyek a versenyhelyzetből adódó hibákat hivatottak kiküszöbölni, valamint  a taskok
+számára szinkronizációs lehetőséget biztosítanak.
+
+A Linux kernel eredetileg monolitikus kernel, azaz egy lefordított oszthatatlan program, amelynek módosításához az egész kernel újrafordítására van szükség. Ez a kialakítás nem optimális hiszen minden új eszközcsatlakoztatása esetén
+az eszközhöz tartozó drivert bele kell fordítani a kernelbe. A probléma áthidalása érdekében módosításokat végeztek a Linux kernelen, és egy moduláris kernelt hoztak létre. Ennek a megvalósításához dinamikus linkelésre volt szükség.
+A dinamikus linkelés azt jelenti, hogy a program futás közben, külső file tartalmát képes saját magához linkelni, minek következtében a kívülről linkelt funkcionalitás az akciót követően már elérhető a kernelből. A különböző
+eszközökhöz használt driverek ilyen módon könnyebben linkelhetőek a kernelhez, ezáltal fejlesztésük és felhasználásuk is roppant dinamikussá vált. Hátulütője a folyamatnak hogy a kernel sebezhető ha instabil modulok kerülnek
+betöltésre. Egy rosszul működő modul könnyedén az egész rendszert tönkreteheti, ezért új modul betöltésénél fokozott elővigyázatosságra van szükség.
+
+\subsection{Shell}
+
+A legtöbb rendszerben kritikus, hogy legyen valamilyen felhasználói bemenet, amelyet Unix-like rendszerek esetében általában egy úgynevezett shell biztosít. A shell a kernelre épít, és egy szöveges interfészt biztosít a
+felhasználónak, amin keresztül parancsokat adhatunk az operációs rendszernek, valamint programokat indíthatunk, vagy navigálhatunk a fájlrendszerben A rendszer természetesen működhet shell nélkül, de ebben az esetben nincs
+módunk az eszközünk megbontása nélkül hozzáférni az operációs rendszerhez, ezért ez csak ritkán fordul elő szinte csak beágyazott környezetben.
+
+Többfajta shell implementáció is létezik, ezek közül a teljesség igénye nélkül csak párat említek:
+
+\begin{itemize}
+\item sh
+\item bash
+\item zsh
+\item ksh
+\item fish
+\end{itemize}
+
+Az első és legrégebbi, ezáltal beágyazott rendszerben leggyakrabban előforduló shell az sh, azaz a Bourne Shell. Ez egy kis méretű shell amely eredetileg a Unix 78. verziójának volt alapértelmezett shellje. Ennek a
+shellnek a továbbfejlesztett verziója a bash, azaz Bourne Again Shell, amely új funkciókkal, valamint kényelmi újításokkal látta el elődjét.
+
+A lista többi eleme ritkán fordul elő beágyazott környezetben, leggyakrabban desktopon találkozunk velük. 
+
+\subsection{GUI}
+
+A terminál interfészen kívül a Linux operációs rendszerek képesek grafikus felhasználói felületet is biztosítani. A beágyazott környezetekre kevésbé jellemző, azonban ha valamilyen képi megjelenítést szeretnénk elérni,
+gyakran egyszerűbb megoldás egy létező grafikus környezet használata, mint az alapjaiból megírni a kimenetet. Ilyen környezetből két fontos környezetet különíthetünk el. Az egyik az X11 a másik a Wayland.
+
+Az X11 egy régi kiforrott rendszer, amely elfedi a ki és bemeneteket (úgy mint, monitor, egér, billentyűzet). Szerver kliens kapcsolat alapú amely annak a megközelítésnek a maradványa, hogy egy központi számítógéphez több
+kisebb gép csatlakozik, a megjelenítést a végpontok végzik, míg a számításigényes feladat a központi rendszeren fut. Ez a megközelítés napjainkban kevésbé praktikus, lévén a legtöbb grafikus alkalmazást ugyanaz a gép jeleníti meg,
+mint amelyik a számításokat végzi, ezért felesleges többletműveleteket kell végezni a protocol betartása érdekében.
+
+Fejlesztése lassuló tendenciát mutat, helyét egyre inkább átadja egy új protokollnak a Waylandnek.
+
+\medskip
+
+A wayland egy modernebb, korszerűbb protokol és architektúra, amely a grafikus alkalmazások megjelenítésére lett kifejlesztve. Koncepcióját tekintve egyszerűbb és kisebb az erőforrásigénye. Fontos komponense egy Úgynevezett
+wayland compositor, amelyet minden grafikus környezet implementálhat. A wayland biztosít egy nyelvet amin keresztül ezzel a compositor-ral kommunikálhatnak alkalmazásaink.
+
+Az első verzió kiadására 2008-ban került sor. Sajnos a technológia kiforratlansága, valamint az X11-re építő könyvtárak mennyisége miatt az átállás nehézkes.
+
+\section{A boot folyamat}
+
+A könnyebb mikrokontrollereken használt operációs rendszerekkel ellentétben egy Linux alapú rendszer boot folyamata komplexebb, és több időt is vesz igénybe. A boot folyamatot fázisokra bonthatjuk, amelyek időben egymást követik,
+és mindegyik fázis az időben utána következőt készíti elő, egészen a teljes rendszer felállásáig
+
+\subsection{BIOS}
+
+A bekapcsolást követően az alaplapba égetett firmware azaz a BIOS\footnote{BIOS: Basic Input Output System} indul el. Ennek a rövid programnak a feladata a POST azaz Power On Self Test öntesztelő eljárás végrehajtása,
+majd a megfelelő bootloader betöltése az MBR szerint. Az MBR azaz Master Boot Record az első szektorban található kis terület amely tartalmazza a bootloader információit, valamint a partíciós táblát. Ezek alapján a BIOS elindítja a
+megfelelő bootloadert.
+
+\subsection{Bootloader}
+
+A bootloader egy kicsi és kompakt program ami az operációs rendszer komplex indítását hivatott elősegíteni. Képes akár több kernel imaget is kezelni, és fő feladata a kernel image betöltése a memóriába. PC-s környezetben
+leggyakrabban a GRUB\footnote{GRUB: Grand Unified BootLoader} nevű bootloaderrel találkozhatunk. A neve kicsit megtévesztő lehet, valójában a GRUB2 programra használt név lévén az első verziót szinte teljesen leváltotta.
+
+Beágyazott környezetben gyakran az U-Boot\footnote{U-Boot: Universal Boot} szolgál erre a célra. Ez a bootloader egy teljes bootloader, amely a teljes bootfolyamatért képes felelni, ellentétben a GRUB-bal, amely csak úgynevezett
+'second stage' bootloader. További lényeges különbség, hogy míg a GRUB x86 architektúrára lett tervezve, addig az U-Boot ARM architektúrákra, és ez utóbbi architektúra erősen dominálja a piacot. 
+
+\subsection{Kernel}
+
+A kernel az operációs rendszer magja. Betöltés után egy tömörített speciális fájlrendszert, az initramfs-t betölti a memóriába ami biztosítja a kernel számára a megfelelő eszközöket a rendszer elindításához. A következő lépésben a
+kernel további hardver inicializációkat hajt végre majd felcsatolja a root fájlrendszert. utolsó lépésben elindítja az init programot, amely a rendszer használatához szükséges serviceket indítja el.
+
+\subsection{Init}
+
+Az init program feladata a rendszer számára fontos process-ek elindítása. Ez a process egyedüliként a 0 process id-val rendelkezik, és gyökérpontja a processtreenek. Működése scriptekkel konfigurálható, kilenc szintet tartalmaz,
+amelyekhez külön indítási script tartozik.
+
+\begin{enumerate}
+  \item Leállítás
+  \item Egy felhasználós mód
+  \item Több felhasználós mód hálózat nélkül
+  \item Több felhasználós mód
+  \item nem használt
+  \item Több felhasználós mód grafikus környezettel
+  \item újraindítás
+  \item nem használt
+  \item nem használt
+  \item nem használt
+\end{enumerate}
+
+Az init processnek két híresebb implementációja van, a SystemV és a systemd. A systemd újabb, de kompatibilitás miatt a régi futási szintekhez aliasokat tartalmaz. További különbség, hogy a systemd konfigurációkat tárol, amelyek a
+shellt hivatottak tehermentesíteni, és a függőségek analizálásával párhuzamosítás segítségével gyorsítják a boot folyamatot.
+
+\section{A Linux fordítása}
+
+A Linux operációs rendszer egyik legnagyobb előnye, hogy az egész rendszer forráskódjához szabad hozzáférésünk van, módosítható és fordítható. Fordítása azonban összetett és bonyolult feladat, amelynek automatizálására
+több keretrendszer is épült. Ezek a keretrendszerek általában megkönnyítik a fordítás folyamatát, konfigurációs interfészt biztosítanak a kernelhez, illetve adnak olyan eszközöket, amelyek segítségével a végső image könnyedén
+elkészíthető.
+
+Két fontos rendszerről érdemes megemlékezni, a Buildroot-ról, valamint a Yocto Projectről. A két build rendszer között az egyik legnagyobb különbség a fordításra használt fő eszközben rejlik. A buildroot egy script és Makefile
+gyűjtemény amely segít a forráskód lefordításában, valamint a root fájrendszer generálásában. Mindkét rendszer keresztfordítást használ, hogy a célhardveren futó binárisokat állítson elő.
+
+A projekt során nagyobb komplexitása ellenére a yocto projectet választottam, amely szabadabb fejlesztést és személyre szabhatóságot tesz lehetővé. További nagy előnye hogy képes felhasználni az előzőm fordítás kimenetét, így hiba,
+vagy kisebb javítás után nem kell a teljes folyamatot előröl kezdeni. A következő fejezetben részletesen foglalkozom vele.
+
 
 
