@@ -7,7 +7,6 @@
 
 \input{include/packages}
 
-%TODO Set the main variables
 \newcommand{\vikszerzoVezeteknev}{Koloszár}
 \newcommand{\vikszerzoKeresztnev}{Gergely}
 
@@ -32,7 +31,6 @@
 \newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
 %\newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev, \tdkszerzoB} % két szerző esetén
 
-%TODO Language configuration -- choose one
 % Beállítások magyar nyelvű dolgozathoz
 \input{include/thesis-hu}
 % Settings for English documents
@@ -50,7 +48,6 @@
 %TODO These includes define guidelines -- remove these
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %% \include{include/guideline}
-
 %% \include{include/project}
 
 \selectthesislanguage
@@ -58,20 +55,15 @@
 %TODO Titlepage -- choose one from below
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \include{include/titlepage}		   % Szakdolgozat/Diplomaterv címlap
-%\include{include/titlepage-tdk}	% TDK címlap
-%\include{include/titlepage-otdk}   % OTDK címlap
-
 
 % Table of Contents
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \tableofcontents\vfill
 
-
 % Declaration and Abstract
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \include{include/declaration} %TODO Hallgatói nyilatkozat -- TDK és OTDK esetén törlendő!
 \include{content/abstract}    %TODO Összefoglaló -- TDK és OTDK esetén nem kötelező
-
 
 % The main part of the thesis
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
