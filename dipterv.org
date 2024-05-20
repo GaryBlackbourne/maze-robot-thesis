@@ -1,13 +1,52 @@
-* Diplomaterv feladatkiírás
-* Címoldal
-* Tartalomjegyzék
-* A diplomatervező nyilatkozata az önálló munkáról és az elektronikus adatok kezeléséről
-* TODO Tartalmi összefoglaló magyarul és angolul (abstract)
-* Bevezetés: a feladat értelmezése, a tervezés célja, a feladat indokoltsága, a diplomaterv felépítésének rövid összefoglalása
-* A feladatkiírás pontosítása és részletes elemzése
-* Előzmények (irodalomkutatás, hasonló alkotások), az ezekből levonható következtetések
-* A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
-* A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
-* Esetleges köszönetnyilvánítások
-* Részletes és pontos irodalomjegyzék
-* Függelék(ek)
+* Diplomaterv szerkezete
+** TODO Diplomaterv feladatkiírás
+Ezt utólag kell vagy most?
+** DONE Címoldal
+** DONE Tartalomjegyzék
+** DONE A diplomatervező nyilatkozata az önálló munkáról és az elektronikus adatok kezeléséről
+** TODO Tartalmi összefoglaló magyarul és angolul (abstract)
+Ezen egy kicsit kell még finomítani, hogy azon legyen a hangsúly amivel
+általában foglalkoztam.
+** Bevezetés: 
+*** DONE feladat értelmezése
+Úgy legyen értelmezve hogy minél inkább az elkészítésen legyen a hangsúly
+*** DONE a tervezés célja
+Leírtam mi a cél, mit szeretnék elérni.
+*** DONE a feladat indokoltsága
+Adtam rá egy pár példát hogy mi minden helyzetben kellhet, valamint beszéltem a fejlesztő
+eszközökről is.
+*** TODO ros és yocto alapszintű bemutatása
+*** TODO a diplomaterv felépítésének rövid összefoglalása
+** DONE A feladatkiírás pontosítása és részletes elemzése
+Ezt lehet hogy kihagyom, mert nem nagyon van értelme lamentálni a feladaton.
+Inkább írok egy hosszabb bevezetőt, amiben ismertetem hogy mi a helyzet mondjuk subchapterben
+** TODO Előzmények (irodalomkutatás, hasonló alkotások), az ezekből levonható következtetések
+Ide jöhet az összes hardware spec, meg shit, áramkörök, alkaltrészek, etc, de itt még/már nincsenek
+tervezési shitek, csak az áramkörökhöz kapcsolódó dolgok.
+** TODO Chapter 1 firmware és build
+- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
+- A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+** TODO Chapter 2 ros2
+- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
+- A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+*/home/geri/Downloads/Labirintus-megoldo-robot-Feladatkiiras-1.pdf* TODO Chapter 3 yocto
+- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
+- A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+** TODO Chapter 3 útvonal tervezés
+- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
+** TODO Részletes és pontos irodalomjegyzék
+** TODO Függelék(ek)
+* Tippek
+- \medsip parancsal lehet uj bekkezdést csinálni és azzal telik sok hely.
+- mindenhova tegyünk ábrákat ahol csak el lehet képzelni.
+- ami nem megy most az todo
+* Feladatpontok
+** Mutassa be a Yocto project és a ROS2 rendszereket
+** Elemezze a ROS2 integrálását a yocto környezetben
+** Készítsen robotot amely autonóm mozgásra és absztrakt környezetben tájékozódásra képes.
+Ide lehet kéne még a ros2 action amivel haladni tudunk.
+** Demonstrálja a rendszer képességeit egy labirintusból kitaláló alkalmazással (Ez veszett fejsze)
+** Dokumentálja és automatizálja a robot szoftverének előállítását.
+Le tudjuk vajon fordítani a firmware-t?
+* Itt tartok
+[[file:text/chapters/chapter-0-introduction.tex::68][link]]

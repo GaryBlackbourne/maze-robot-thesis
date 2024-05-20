@@ -1,9 +1,7 @@
 % !TeX spellcheck = hu_HU
 % !TeX encoding = UTF-8
 % !TeX program = xelatex
-% TODO Change language to en_GB (recommended) or en_US for English documents
 \documentclass[11pt,a4paper,oneside]{report}             % Single-side
-%\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
 
 \input{include/packages}
 
@@ -21,60 +19,44 @@
 
 \newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
 
-% Beállítások magyar nyelvű dolgozathoz
+% Beállítások 
 \input{include/thesis-hu}
-
 \input{include/preamble}
 
+% római számozás az elején
+\pagenumbering{gobble}
+
 %--------------------------------------------------------------------------------------
-% Table of contents and the main text
+% BEGIN DOCUMENT
 %--------------------------------------------------------------------------------------
 \begin{document}
 
-\pagenumbering{gobble}
+\selectthesislanguage{}
 
-%TODO These includes define guidelines -- remove these
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%% \include{guides/guideline}
-%% \include{guides/project}
+% címoldal
+\include{text/titlepage}
 
-\selectthesislanguage
-
-%TODO Titlepage -- choose one from below
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{text/titlepage}		   % Szakdolgozat/Diplomaterv címlap
-
-% Table of Contents
+% Tartalomjegyzék
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \tableofcontents\vfill
 
-% Declaration and Abstract
+% Nyilatkozat and Abstract
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{text/declaration} %TODO Hallgatói nyilatkozat -- TDK és OTDK esetén törlendő!
-\include{text/abstract}    %TODO Összefoglaló -- TDK és OTDK esetén nem kötelező
+\include{text/declaration}
+\include{text/abstract}
 
-% The main part of the thesis
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% normális oldalszámozás innentől a fejezeteknek
 \pagenumbering{arabic}
 
-% main content
-
-%  
-\include{text/introduction}
-
+% Fejezetek
+\include{text/chapters/chapter-0-introduction}
 \include{text/chapters/chapter-1-elozmenyek}
 \include{text/chapters/chapter-2-linux}
 \include{text/chapters/chapter-3-yocto}
 \include{text/chapters/chapter-5-raspberry}
-
-
 % egész rendszer általános kiértékelése egy lezáró fejezetben
 
-% Acknowledgements
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%% \include{content/acknowledgement}
-
-
+% vajon erre szükségem van?
 % List of Figures, Tables
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
@@ -86,10 +68,9 @@
 \addcontentsline{toc}{chapter}{\bibname}
 \bibliography{bib/mybib}
 
-
 % Appendix
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%% \include{content/appendices}
+\include{text/appendices}
 
 %\label{page:last}
 \end{document}
