@@ -1,21 +1,19 @@
-# notes, that i dont need
-jegyzet.org
-dipterv.org
-
 # temporary output files
 *.aux
+*.dvi
+*.thm
 *.lof
 *.log
 *.lot
 *.fls
 *.out
 *.toc
-*.fmt
-*.fot
 *.cb
 *.cb2
 .*.lb
+*.fmt
+*.fot
 
 # output files
-*.pdf
+output/*.pdf
 

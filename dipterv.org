@@ -1,0 +1,13 @@
+* Diplomaterv feladatkiírás
+* Címoldal
+* Tartalomjegyzék
+* A diplomatervező nyilatkozata az önálló munkáról és az elektronikus adatok kezeléséről
+* TODO Tartalmi összefoglaló magyarul és angolul (abstract)
+* Bevezetés: a feladat értelmezése, a tervezés célja, a feladat indokoltsága, a diplomaterv felépítésének rövid összefoglalása
+* A feladatkiírás pontosítása és részletes elemzése
+* Előzmények (irodalomkutatás, hasonló alkotások), az ezekből levonható következtetések
+* A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
+* A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+* Esetleges köszönetnyilvánítások
+* Részletes és pontos irodalomjegyzék
+* Függelék(ek)

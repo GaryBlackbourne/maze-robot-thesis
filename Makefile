@@ -1,18 +1,15 @@
 DOCUMENT=thesis
 #MODE=-interaction=batchmode
 
-all: clean xelatex
+all: clean compile_xelatex
 	echo
-
-xelatex: compile_xelatex
-	mv $(DOCUMENT)-xelatex.pdf ../pdf/$(DOCUMENT).pdf
 
 compile_xelatex:
 	xelatex $(MODE) $(DOCUMENT)
 	bibtex $(DOCUMENT)
 	xelatex $(MODE) $(DOCUMENT)
 	xelatex $(MODE) $(DOCUMENT)
-	mv $(DOCUMENT).pdf $(DOCUMENT)-xelatex.pdf
+	mv $(DOCUMENT).pdf output/$(DOCUMENT)-xelatex.pdf
 
 pdflatex: compile_pdflatex
 	mv $(DOCUMENT)-pdflatex.pdf ../pdf/$(DOCUMENT).pdf
