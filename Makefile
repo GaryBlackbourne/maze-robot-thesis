@@ -1,12 +1,15 @@
 DOCUMENT=thesis
-
+READER=evince
 
 AUX_EXT = aux bbl blg log out thm toc
 AUX_FILES = $(foreach EXT, $(AUX_EXT), $(DOCUMENT).$(EXT))
 
-all: clean xelatex
+all: clean doc read
 
-xelatex:
+read:
+	$(READER) output/$(DOCUMENT).pdf &> /dev/null &
+
+doc:
 	echo "start build"
 	xelatex $(MODE) $(DOCUMENT)
 	bibtex $(DOCUMENT)
@@ -15,6 +18,7 @@ xelatex:
 	mkdir -p ./output/aux
 	mv $(DOCUMENT).pdf output/$(DOCUMENT).pdf
 	mv $(AUX_FILES) output/aux/
+
 clean:
 	echo "Cleaning temporary files..."
 	@for d in . include text text/chapters; do \
@@ -24,3 +28,4 @@ clean:
 	done
 	@rm -rf output
 	@echo "done!"
+.PHONY: clean
