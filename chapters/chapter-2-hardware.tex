@@ -1,0 +1,205 @@
+%----------------------------------------------------------------------------
+\chapter{Táp és vezérlő panelek}
+%----------------------------------------------------------------------------
+
+Az előző fejezetben a projekt motivációjáról, valamint előzményeiről írtam,
+ebben a fejezetben bemutatom a tápellátó rendszert és a hozzá tartozó panelt,
+valamint a vezérlő panelt, amely a robot motorjainak, és szenzorjainak
+vezérléséért felelős.
+
+
+%----------------------------------------------------------------------------
+\section{A tápellátás}
+%----------------------------------------------------------------------------
+
+A robot különböző alkatrészeinek különböző tápfeszültségre van szüksége, az
+alkatrészek hibamentes működéséhez elengedhetetlen egy stabil tápfeszültséget
+biztosító eszköz.
+
+Helyhezkötött alkalmazásokban ezt könnyedén megoldhatjuk a hálózati feszültség
+felhasználásával, egy mobil alkalmazás esetén azonban ez nem megengedhető. Ilyen
+esetben mobilis feszültségforrásra van szükség, amely lehet elem, vagy
+akkumulátor. A projekt során én az akkumulátoros megoldás mellett döntöttem, de
+a moduláris kialakítás miatt ez könnyen módosítható konfiguráció.
+
+A táp megtervezése két fő paraméteren alapul: a szükséges teljesítményen, és az
+igényelt tápfeszültségen. A szükséges feszültségszinteket az alkatrészek
+függvényében a következőkben állapítottam meg:
+
+\begin{itemize}
+\item 5V: a raspberry pi számára
+\item 3.3V: a vezérlőpanel, az enkóderek valamint a lidarok számára
+\item 6V: a motorok számára
+\end{itemize}
+
+A teljesítményviszonyokat pedig felülbecsléssel állapítottam meg. A vezérlés és
+a raspberry pi teljes kihasználtság esetén 15W teljesítménynél kevesebbet
+fogyaszt, ezért a pi irányában 15W teljesítményt írtam elő. A motorok szintén
+15W-nál kevesebb teljesítményt vesznek fel a teljes kihasználáskor, ezért a motor
+irányába menő teljesítményt szintén 15W-ban írtam elő.
+
+\missingfiguref{ide jön egy kép a teljesítményáramlásról}
+
+A teljesítményáramlás a tápfeszültségek szempontjából a következőképpen alakul:
+A raspberry pi, és a vezérlés rendre 5V és 3.3V tápfeszültségeket és 15W
+teljesítményt kapnak. A motor egy vonalon kap összesen 15W teljesítményt és 6V
+tápfeszültséget. Ez összesen egy 30W teljesítményt leadó feszültségforrást
+igényel, valamint egy ehhez a teljesítménykonfigurációhoz méretezett tápot.
+
+%----------------------------------------------------------------------------
+\section{A táp áramkör}
+%----------------------------------------------------------------------------
+
+A tápellátó áramkör feladata a rendszer minden komponensét elegendő
+teljesítménnyel ellátni. Ehhez a fent részletezettek szerint olyan tápáramkörre
+van szükség amely a következőket biztosítja: három kimeneti tápfeszültségszint:
+\textbf{3.3V}, \textbf{5V}, \textbf{6V}; teljes rendszer teljesítmény:
+\textbf{30W} amely két részben oszlik meg: \textbf{15W} a \textbf{6V} kimenetre
+és \textbf{15W} a \textbf{3.3V} és \textbf{5V} kimenetekre.
+
+Ehhez rendelkezésre áll egy akkumulátoros feszültségforrás, amely a projekt
+esetében egy Li-ion akkumulátorblokkot jelent. Ennek az akkumulátorblokknak a
+kimenő teljesítménye alulról becsülhető 30W-al. A megfelelő feszültségek
+előállításához három cellát használok, amelyek teljesen feltöltött állapotban
+összesen 12.6V (3 * 4.2V) feszültséget állítanak elő.
+
+A lítium cellák vezérlése egy komplex feladat, amelyre nem volt kapacitásom,
+így egy megvásárolható BMS modult használtam. A BMS\footnote{BMS: Battery
+Management System} egy olyan modul amely a Lítium-ion cellák vezérléséért felel,
+amely komplex elektronikát igényel. Három bemenetére egyesével egy cella
+kapcsolódik, amelyek között kiegyensúlyozza a terhelést és kimenetén \textbf{12V}
+egyenfeszültséget állít elő.
+
+A tápáramkör bemenete tehát 12V egyenfeszültség amiből a kívánt feszültségeket
+kell előállítani. 
+
+\missingfigure{Tápáramkörök topológiájáról egy ábra}
+
+A tápáramkör kialakításában a táp topológiája egy döntő fontosságú paraméter.
+Kapcsolóüzemű tápok kialakításukat tekintve komplexebb és alkatrészigényesebb
+architektúrák, amik kimenetén rendszerint valamennyi zaj jelenik meg a
+kapcsolóüzemű mivoltukból kifolyólag. Ezeknek a tápegységeknek azonban hatalmas
+előnyük a magas hatásfok, és az alacsony vesztességek.
+
+Használható eszközök még a feszültségstabilizátor áramkörök, amelyek rendkívül
+stabil és zajmentes kimeneti feszültséget állítanak elő, ellenben a fölösleges
+teljesítményt eldiszcipálják, így ez sokkal kevésbé hatékony megoldás, ha nagy
+feszültségkülönbségek között kell váltani.
+
+A fenti feltételek alapján végül egy olyan tápáramkört terveztem amely két
+kapcsolóüzemű tápáramkört használ, hogy a 12V bemeneti feszültségből 6V és 5V
+feszültségeket állítsanak elő. Ezek a kapcsolások nagyon gyakran fordulnak elő
+így az integrált áramkör gyártója az adatlapban mellékelt referencia kapcsolást
+a jellemző feszültségszintekre. A buck konverterek kimenetét kondenzátorokkal
+szűrtem, hogy a kimeneten minél kevesebb zaj tudjon csak megjelenni.
+
+Az 5V kimenő feszültségből egy LDO segítségével állítom elő a vezérlőpanel és
+enkóderek számára a 3.3V tápfeszültséget. Ezzel a konstrukcióval minimalizáltam
+a vesztességet, ami az LDO-n diszcipálódó teljesítményből adódna. 
+
+Az áramkört az open source és linux alatt is elérhető KiCAD programban
+terveztem. A schematic az alábbi ábrán látható.
+\missingfigure{IDE JÖN MAJD LINK A SCHEMATICRA}
+
+A kapcsolóüzemű tápáramörök kialakításnál jó gyakorlat, ha mezőkitöltéseket
+használunk, amelyek jó hatással vannak a tápáramkör zajmentességére.
+
+\missingfigure{IDE JÖN MAJD A LINK A LAYOUTRÓL}
+
+%----------------------------------------------------------------------------
+\section{A vezérlőpanel}
+%----------------------------------------------------------------------------
+
+A tápáramkör bemutatása után következzen a vezérlőpanel bemutatása. Ennek a
+panelnek az elsődleges feladata, hogy a robot motorjait vezérelje, valamint
+a szenzorait inicializálja és olvassa.
+
+Ez a panel egy mikrovezérlőt hordoz, amely mindezen funkcionalitást képes
+ellátni. A használt kontroller egy stm32f103cb mikrovezérlő, amely egy
+ARM Cortex-M3 maggal 20 kb RAM-mal, és 60 kb flash memóriával rendelkezik.
+
+Az STM32 mikrovezérlőcsalád különösen elterjedt az autóiparban, és egy
+nagyon népszerű gyártó és család. A vezérlő kiválasztásánál fontos szerepet
+játszott, hogy már volt tapasztalatom stm32 mikrovezérlővel.
+
+\missingfigure{drawios blokkdiagram a vezérlésről}
+
+A vezérlő feladatai közé tartozik, hogy a motorok meghajtását elvégezze. A
+mikrovezérlő gpio lábainak maximális árama nem elegendő a motor meghajtásához,
+valamint feszültsége is elenyésző a motor szükségleteihez viszonyítva. Ebből a
+célból egy-egy H-bridge áramkör kapott helyet a vezérlőpanelen, amelyet 3.3V
+feszültségszintekkel lehet vezérelni, de a motor kimeneteire már képes 6V
+feszültséget és a hozzá tartozó 15W teljesítményt kapcsolni. A H-híd topológia
+előnye, hogy a motor mindkét irányba vezérelhető lévén a polaritás megfordítható
+a H-bridge megfelelő vezérlésével. A meghajtó áramkörök teljesítmény bemenetére
+csatlakozik a tápáramkör által előállított 6V.
+
+A motorok enkóderrel is fel vannak szerelve, így a mikrovezérlő mérheti ezen
+motorok sebességét, és ezzel egy esetleges szabályzási kör megvalósítása
+is lehetővé válik. A motorok szögsebessége ezen felül szintén egy fontos
+információ a felsőbb szintű logika számára is.
+
+További fontos feladata a vezérlőnek, hogy a távolságmérő szenzorokat
+periodikusan olvassa, és ezek értékét eltárolja. Ez később a felsőbb szintű
+logika számára lehet fontos információ, valamint extra védelmet jelenthet, ha a
+vezérlő le tudja fékezni a robotot, ha egy adott küszöbérték alatt mér egy
+szenzorral, így elkerülve egy lehetséges ütközést. Ehhez a szenzorokat egy
+i2c buszra kell csatlakoztatni, amelyet a mikrovezérlő meghajt. A panelen
+a szenzorokhoz egy egy gpio trace is vezet, amely az egyedi címkiosztás miatt
+lesz majd fontos.
+
+Végül de nem utolsó sorban a vezérlő feladata, hogy a már említett felsőbb szintű
+logikát végrehajó raspberry pi-vel tartsa a kapcsolatot, és interfészt
+biztosítson számára. Erre két lehetőség is van a boardon, az egyik a debug usart
+port amely végül felhasználásra kerül majd, valamint egy külön i2c port, ami a
+panelre ki van vezetve.
+
+A vezérlőpanelen továbbá helyet kapott egy steppper motor meghajtó modul
+foglalata is, ez viszont a diplomaterv során nem került kihasználásra.
+
+\missingfigure{ctrl board schematic}
+\missingfigure{ctrl board layout}
+
+A panel a a következő csatlakozási pontokat biztosítja:
+
+\begin{itemize}
+\item 2 db csatlakozó a motorokhoz, valamint az ezeken található enkóderekhez
+\item 4 db csatlakozó egyazon I2C busz interfészhez
+\item 1 db USART interfész
+\item 1 db I2C interfész
+\item 1 db stepper motor vezérlő kimenet
+\item 1 db tápcsatlakozó bemenet
+\item 1 db STLink kompatibilis programozó csatlakozó
+\end{itemize}
+
+\missingfigure{Szemléltető ábra a csatlakozókhoz a board felülnézeti képével valamint bekeretezésekkel}
+
+\subsection{Firmware}
+
+A mikrovezérlő firmware megírása során törekedtem a platformfüggetlen, eönnyen
+áttekinthető kód készítésére. A teljesítmény maximalizálása és a kódméret
+kordában tartása végett nem szerepel a projektben HAL\footnote{HAL: Hardware
+Abstraction Layer} library kód. Minimális generált kóddal dolgoztam, amely kimerül a
+linkerscript, valamint a startup fájlokban, ezeket a gyártó STM32CubeMX nevű
+szoftverével hoztam létre. A vezérlő felkonfigurálásához, és perifériáinak
+eléréséhez a CMSIS\footnote{CMSIS: Cortex Microcontroller Software Interface
+Standard, az ARM által megkövetelt szabványos nevezéktan és támogatás minden
+Cortex típusú magot tartalmazó mikrovezérlőre} által szolgáltatott
+regiszterdefiníciókat használtam. A firmware megírása során arően támaszkodtam
+az STM32F103 \todo{Ez egy hivatkozás az urlre}Reference Manualjára.
+
+Ennek a firmware verziónak a képességei kimerültek egy USART periféria
+használatában, a timer periféria pwm konfigurációjában, valamint a FreeRTOS
+beágyazott operációsrendszer elindításában.
+
+Ez a megközelítés nagyban segített a mikrovezérlő belső működésének pontos
+megértésében, ellenben a diplomatervi munka során a fejlesztés gyorsítása
+érdekében áttértem a HAL driverek használatára is, erről a későbbi fejezetekben
+lesz szó.
+
+Az önálló laboratórium alatt írt firmware végül nem lett közvetlenül hasznomra,
+így teljes egészében cserélnem kellett.
+
+Az önálló laboratóriumi munkám ennyit segített a kész produktumhoz, a következő
+feladatokat már a diplomatervezés keretein belül hajtottam végre.
+

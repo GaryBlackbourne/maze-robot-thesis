@@ -1,0 +1,134 @@
+%----------------------------------------------------------------------------
+\chapter{A Yocto project}
+%----------------------------------------------------------------------------
+
+A beágyazott környezetekben bevett gyakorlat, hogy nem egy előre kész disztribúciót teleptünk, hanem a fejlesztés során a megfelelő komponensekből magunk válogatjuk össze az operációs rendszer funkcióit és komponenseit. Ennek a
+gyakorlatnak, bár kétség kívül bonyolultabb feladat, számos előnye van. Az így elkészített rendszer felett ugyanis teljes kontrollunk van, ami kiterjed a kernel verziójára és konfigurációjára ugyanúgy, mint az egyes packagekre,
+és azok konfigurációjára. Az így elkészített operációs rendszer előnyei:
+
+\begin{itemize}
+\item \textbf{Kis méretű:} hiszen csak a szükséges komponensek vannak benne. Egy beágyazott környezetben a méret fontos tényező lehet
+\item \textbf{Kisebb erőforrásigényű:} Az első ponthoz hasonlóan a memória könnyedén lehet szűk keresztmetszet
+\item \textbf{Könnyebben debugolható:} lévén kevesebb komponens van, így nem valószínű hogy általunk nem ismert folyamat játszódna le ami hibára vezet
+\item \textbf{Átláthatóbb:} kisebb mérete és személyreszabott mivolta könnyebben áttekinthető rendszert eredményez
+\end{itemize}
+
+Egy korrekt rendszer elkészítéséhez azonban szükség van egy megfelelő környezetre amely segítségével az egyébként nehéz és komplex feladatot elvégezhetjük. Ilyen rendszerből több is a rendelkezésünkre áll, a jelen projektben
+azonban a Yocto Project mellett döntöttem.
+
+\section{Koncepciók}
+
+A Yocto Project alapvetően egy úgynevezett umbrella project, ami az open-embedded saját task execution engine-jére, a bitbake szoftverre épül. A projekt kevés függőséggel rendelkezik, amelyek a honlapon\todo{ide kell hivatkozás}
+elérhetőek. A project teljesen nyílt forrású beszerzése egy git repository clone-ozásával történik. Az így beszerezhető csomag a Poky referencia disztribúciót tartalmazza. A projekt dokumentációja alapján minden projekt ajánlott
+induló lépése, hogy ezt a projektet alapul használva kezdjünk neki a fejlesztésnek, majd több kevesebba változtatást eszközölve haladjunk igényeinknek megfelelően.
+
+Azb induló lépésekhez mindent tartalmaz a repository. A csomag többek között tartalmaz egy bibtake példány, scripteket a használat megkönnyítése érdekében, valamint néhány alapvető layert, amelyek a teljes projekt
+működéséhez szükséges fileokat tartalmaznak. Minden egyéb forrásfájl vagy eszköz ezek után kerül letöltésre vagy lefordításra, ezt a folyamatot azonban már az automattizált build környezet kezeli.
+
+\subsection{Bitbake}
+
+A fordítókörnyezet lelke és magja a Python nyelven íródott Bitbake nevű program. A Bitbake egy saját szintaktikával rendelkező scriptekből álló taskokat végrehajtó eszköz. Ezeket a scripteket recepteknek nevezzük.
+A bitbake futása során egy target scriptet vár el, amelyből kiindulva egy függőségi gráf szerint hajtja végre a receptekbe kódolt feladatot. Nagy előnye, hogy a végrehajtást képes -- a függőségeket figyelembe véve --
+párhuzamosan végrehajtani, így több szálon gyorsítható a fordítási folyamat.
+
+A rendszer további előnye, hogy képes eltárolt korábbi fordítási eredményekből dolgozni, így ha váratlan hibába ütközik a folyamat, úgy nem kell a legelejéről végrehajtani mindent. Ez a funkcionalitás rendkívül felgyorsítja
+a fejlesztés folyamatát, amelyben így csak az első build tart hosszab ideíg, vagy ha utólag nagy, a teljes projektet érintő változtatásokat eszközölünk.
+
+A fejlesztés során minden elkészítendő library, bináris, vagy akár image, rendelkezik egy saját receptel, amely az adott csomag fordításához szükséges beállításokat és utasításokat tartalmazza. Ezeket az információkat a projekt
+terminológiája szerint \textbf{meta-adatoknak} nevezzük.
+
+\subsection{Receptek}
+
+A receptek a projektben használatos alapvető építő elemek. Általában egy libraryhez vagy binárishoz egy recept tartozik, amely a fordításhoz szükséges konfigurációt és utasításokat tartalmazó szöveges file.
+A receptek kiterjesztése rendszerint .bb. Egy recept tartalma a következő:
+\todo{bitbake manual a forrás}
+
+\begin{itemize}
+\item Package információ (Készítő, honlap, licensz, stb)
+\item Verziószám
+\item Függőségek
+\item Forráskód upstream
+\item Forráskód patchek
+\item Konfiguráció a fordításhoz
+\item Fordítási utasítások
+\item Utasítások egy package elkészítéséhez
+\item Installálási utasítások
+\end{itemize}
+
+A receptek saját szintakitikával rendelkeznek, amely lehetőséget ad a gyakran előforduló műveletek, például feltételes értékadás könnyű és tömör leírására. 
+
+A fejlesztés során gyakran a szükséges könyvtárak és programok számára megfelelő receptet írni vagy keresni. Bevett gyakorlatnak számít azonban már meglévő scriptek felhasználása.
+A receptek funkcionalitás szerint layerekbe vannak rendezve, amelyek így egy funkcionalitást támogatnak, valamint könnyebb terjeszthetőséget és szeparálhatóságot kapnak.\todo{link a repositorykhoz}
+
+\subsubsection{Append és Class fájlok}
+
+Fejlesztés során előfordul, hogy egy recept egy-két részét szeretnénk csak módosítani. Erre adnak lehetőséget az append fileok, ezek kiterjesztése .bbappend. Minden append fájlal szemben elvárás, hogy egy recepthez tartozzon.
+A file neve ebből adódóan kötelezően meg kell hogy egyezzen a kiterjeszteni kívánt recept nevével, leszámítva a kiterjesztést. Megengedett azonban, hogy egy append fájl több recepthez is tartozzon. Erre tipikus példa a
+különböző verziójú receptek, amelyek mint ugyanahhoz a packagehez tartoznak. Ez az eset egy kis kivételt jelent az elnevezési szabályokbanm, ugyanis esetben a fileok elnevezésében használható '\%', mint wildcard karakter. 
+
+Egy másik jellemzően előforduló szituáció, hogy bizonyos adatokra több receptből is egyaránt van szükség. Ezt a célt szolgálják a class fileok, amelyek kiterjesztése .bbclass. Ezek a fájlok több metadata fájl által
+egyszerre használható információt tárolnak. Az ilyen fileok segítségével könnyebben centralizálhatjuk a receptek paramétereit, így könnyebben áttekinthető, moduláris struktúrát kapunk.
+
+\subsection{Layerek}
+
+Adott funkcionalitás ritkán érhető el egyetlen library vagy egyetlen program segítségével, viszont bizonyos packageket érdemes egy csoportban kezelni, hiszen együtt szolgáltatnak egy adott funkcionalitást. Ennek
+a problémának a megoldásaként a projekt során layereket használunk. Egy layer lényegében egy recept és konfigutráció gyűjtemény, amelyeket valamilyen szempont szerint egy halmazba soroltunk. A fordítás során a
+felhasznált rétegeket egy specifikus konfigurációs fileban explicit módon meg kell adnunk, így tartalmuk elérhtővé válik.
+
+A layerek hierarchikusan helyezkednek el egymás alatt és felett. A magasabb proioritású layerek örökölhetik illetve múdosíthatják az kisebb prioritású layerek konfigurációit valamint ki is terjeszthetik azt. Ez a megközelítés egy
+moduláris és könnyen szerkeszthető rendszert eredményez, ahol nem nagy nehézség egy komplex rendszer egyes elemeit módosítgatni.
+
+Gyakori, hogy ezeket a layereket külön találjuk meg egy funkcionalitáshoz. Rendszerint saját repository-ban találhatóak amelyet git segítségével tölthetünk le. Konvenció, hogy 'meta-'-val kezdődő könyvtárakban
+vannak, ezek gyakori elnevezése a project root könyvtára (a többi meta-* könyvtár mellett). A projekt nagy hangsúlyt fektet arra, hogy a már meglévő, működö layereket használjuk, ehhez külön adatbázist is
+találhatunk a projekt honlapján. Ebből az adatbázisból vizsgált és tesztelt layereket tölthetünk le, ezáltal sok fejlesztési időt spórolva magunknak.
+
+\section{Felépítés és Működés}
+
+\subsection{A source directory tartalma}
+A project teljesen automatizál minden lehetséges lépést, a lényegi konfiguráción kívül ideális esetben csak néhány parancs kiadására van szükség. A projekt klónozása után egy poky nevű mappában találunk mindent ami a
+projekthez tartozik:
+
+\begin{itemize}
+\item \textbf{bitbake könyvtár:} Tartalmaz egy Bitbake csomagot, ezt a programot fogjuk használni a későbbiekben a fordítás lebonyolításához.
+\item \textbf{doumentation könyvtár:} Dokumentációt tartalmaz a projekthez, valamint eszközöket, hogy HTML vagy PDF formátumban generálható legyen.
+\item \textbf{meta könyvtár:} Alapvető open-embedded metaadatokat tartalmaz, mint pl a kernel, illetve firmware csomagok, valamint targetek qemu virtualizációs környezethez.
+\item \textbf{meta-poky könyvtár:} A Poky referencia disztribúcióhoz tartozó minimális csomagokat tartalmazza, mint például a tinyinit, vagy a busybox.
+\item \textbf{meta-yocto-bsp könyvtár:} Referencia BSP\footnote{BSP: Board Support Package}-ket tartalmaz.
+\item \textbf{oe-init-build-env:} Ez a script inicializálja a projektet, illetve hozza létre a munkakönyvtárat, amit rendszerint build-nek nevezünk. Minden munkamenet ennek a scriptnek a sourceolásával kezdődik.
+\item \textbf{scripts könyvtár:} A könyvtárban a különböző lépésekhez és inicializáláshoz szükséges scriptek találhatóak. Többek között ezek a scriptek egészítik ki a PATH-t hogy a bitbake indítható legyen.
+\end{itemize}
+
+A felsoroláson kívül szerepelnek még egyéb fileok a source könyvtárban. Ezekre a fordítás és a projekt további része során nem lesz szükségünk, csak licenszinformációkat és egyéb útmutatást tartalmaznak.
+
+\subsection{A build könyvtár}
+
+Az 'oe-init-build-env' script sourceolása után egy új mappa keletkezik amelynek a nevét manuálisan megadhattuk a script argumentumaként. Amennyiben ezt nem tettük meg, úgy a neve build lesz. A továbbiakban ebben a
+mappában találunk minden fordítási kimenetet, artifactet és konfigurációt. A mappában két fontos file található, amelyekek be kell állítani fordítás előtt.
+
+\subsubsection{Konfigurációs fileok}
+
+A felhasznált layereket a conf/bblayers.conf konfigurációs fileban írhatjuk. Ebben a fileban minden felhasznált layert hozzá kell adnunk abszolút elérési utat használva a BBLAYERS változóhoz. A fordítás során csak azok a
+receptek szerepelhetnek majd, amelyeket az itt felsorolt layerek valamelyike tartalmazza.
+
+A következő konfigurációs file a conf/local.conf. Ebben a fileban specifikálhatunk az egész fordításra érvényes beállításokat. A számos lehetzőség és magyarázó komment mellett az egyik legfontosabb beállítás a
+MACHINE változó ami a célhardvert határozza meg. Alapértéke egy qemux86 emulátorra mutat amit a saját célhardverünkre módosíthatunk. Ebben a fájlban adhatjuk meg továbbá a kimeneti csomag formátumát. Ennek
+alapértelmezett értéke RMP package-k generálására állítja be a build környezetet.
+
+\subsubsection{Kimeneti fileok}
+
+A keresztfordítás kimenete a tmp könyvtárban jön majd létre, ahol külön mappákba rendezve találjuk majd a generált fileokat. A projekt nagy mennyiségű kimeneti fájlt hoz létre, ezeknek a legnagyobb része azonban átmeneti
+állomány ami azért kerül eltárolásra, hogy egy későbbi build folyamatban kevesebb időt vegyen el az újbóli legenerálása. Ezek a fájlok számunkra jelenleg nem fontosak. A számunkra legfontosabb kimenet általában egy image,
+amely tartalmazza az operációs rendszert, fájlrendszert, valamint a bootloadert és a megfelelő bootfileokat, egyetlen tömörített állományban.
+
+Előfordulhat hogy a platformhoz tartozó receptek amelyre a fordítás történik nem támogatják egy teljes image elkészítését, csak a részegységeket. Ebben az esetben saját magunknak kell manuálisan partícionálni a tárolót és
+felmásolni a megfelelő helyekre az egyes elemeket. Ebben a projektben egy Raspberry Pi SBC-vel dolgoztam, ahol az image generálás automatizálva van.
+
+\subsection{A fordítás menete}
+
+Az első lépésben a Bitbake a targetnek megfelelő recepteket beolvassa, és feldolgozza. Ezután a receptekben található upstream-ekről letöltésre kerülnek a forrásfájlok,
+amelyek segítségével a keresztfordító környezetet lefordul. A rendszer a további fordítást már az újonnan létrehozott keresztfordító segítségével végzi el.
+Ez a megközelítés lehetővé teszi, hogy egy recept pontosan meghatározhassa a felhasználandó fordító programot, és egyben tehermentesíti a felhasználót, hiszen a fordításhoz szükséges programok, azaz a keresztfordító
+környezet is automatizált módon kerül 'telepítésre'.
+
+\missingfigure{Ide jön majd a yocto projectes nyilacskás ábra}
+
