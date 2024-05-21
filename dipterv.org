@@ -7,7 +7,7 @@ Ezt utólag kell vagy most?
 ** TODO Tartalmi összefoglaló magyarul és angolul (abstract)
 Ezen egy kicsit kell még finomítani, hogy azon legyen a hangsúly amivel
 általában foglalkoztam.
-** Bevezetés: 
+** DONE Bevezetés: 
 *** DONE feladat értelmezése
 Úgy legyen értelmezve hogy minél inkább az elkészítésen legyen a hangsúly
 *** DONE a tervezés célja
@@ -15,8 +15,10 @@ Leírtam mi a cél, mit szeretnék elérni.
 *** DONE a feladat indokoltsága
 Adtam rá egy pár példát hogy mi minden helyzetben kellhet, valamint beszéltem a fejlesztő
 eszközökről is.
-*** TODO ros és yocto alapszintű bemutatása
-*** TODO a diplomaterv felépítésének rövid összefoglalása
+*** DONE ros és yocto alapszintű bemutatása
+Be vannak mutatva
+*** DONE a diplomaterv felépítésének rövid összefoglalása
+Erről szól az utolsó bekezdés.
 ** DONE A feladatkiírás pontosítása és részletes elemzése
 Ezt lehet hogy kihagyom, mert nem nagyon van értelme lamentálni a feladaton.
 Inkább írok egy hosszabb bevezetőt, amiben ismertetem hogy mi a helyzet mondjuk subchapterben

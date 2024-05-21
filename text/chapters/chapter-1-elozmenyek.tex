@@ -1,19 +1,148 @@
 %----------------------------------------------------------------------------
-\chapter{Kiinduló projekt}
+\chapter{Előzmények}
 %----------------------------------------------------------------------------
 
 % feladatértelmezés legyen, cél meghatározás,
 % szükséges eszközök (libek alkatrészek) felmérése
 % ezek rövid bemutatása
 
-
 % legyen tervezés szegmens indoklásokkal és realizáció fejezet amiben a
 % megvalósítást és a tapasztalatokat problémákat írom le.
 
-A diplomatervezés feladat az önálló laboratóriumi munkám folytatása, amelynek
-keretein belül egy autonóm robot megtervezése és megépítése volt a cél.
-A feladat elvégzése során széleskörű szakmai ismeretekre tettem szert. 
+\section{A részfeladatok}
 
+A diplomatervezés feladat keretein belül egy autonóm robot megtervezése és
+megépítése volt a cél. Ez a feladat egy komplex tervezési feladat, amely több fő
+részfeladatra bontható. A munkám során ezeket a részeket, mint kisebb önálló
+részfeladatokat, egymás után oldottam meg, kisebb-nagyobb átfedésekkel. Ezeket a
+részfeladatokat az alábbi módon határoztam meg:
+
+\begin{itemize}
+\item Hardver
+  \begin{itemize}
+  \item Mechanikai kialakítás megtervezése és kialakítása
+  \item Szenzor és motor kiválasztása
+  \item Energiaellátás megtervezése és kialakítása
+  \item Motor és szenzorvezérlő áramkör megtervezése és kialakítása
+  \item Magasabb szintű döntéshozó egység választás
+  \end{itemize}
+\item{Firmware}
+  \begin{itemize}
+  \item Motor és szenzorvezérlő áramkör firmware megtervezése és kialakítása
+  \end{itemize}
+\item{Software}
+  \begin{itemize}
+  \item Beágyazott linux rendszer készítése
+  \item ROS2 keretrendszer telepítése
+  \item A robot hardver integrálása a ROS2 keretrendszerbe
+  \item Demo alkalmazás elkészítése amelyben a robot labirintusban halad.
+  \end{itemize}
+\end{itemize}
+
+\section{Az előzmények}
+
+A feladat egyik központi részének alapját a robot alkotó elektronikai komponensek
+jelentették. A feladathoz felhasználtam a korábbi, önálló laboratóriumi projekt
+kereteiben elkészített áramköri paneleket, amelyek egy témában a diplomatervhez
+nagyon hasonló alkalmazáshoz készültek. Ezek biztosították a hardveres alapot a
+robot kialakítása során.  A robot koncepcióját bemutató következő fejezetben
+részletesebben kitérek a panelek felhasználására és topológiájára, a jelen
+fejezetben pusztán az elektronikai igényekről, specifikációkról valamint az
+alkatrészek megválasztásáról lesz szó.
+
+\subsection{Motor és szenzor választás}
+
+A robot két fő ponton kapcsolódik a környezetéhez amiben a feladatát ellátja: a
+szenzoraival, és a motorjaival. Ezen alkatrészek kiválasztása a tervezési fázis
+elején történt, és meghatározó szerepű volt.
+
+\medskip
+
+A szenzorok biztosítják az információszerzés lehetőségét a robot számára a
+külvilág felől, így a pontos feladatvégrehajtáshoz megfelelő szenzor kiválasztása
+elengedhetetlen. Minden feladathoz szükséges a végrehajtáshoz szükséges
+információk kinyerése a környezetből, ezeknek az információknak a tipusa eltérő
+lehet. A navigációhoz nagyon gyakran alkalmazunk távolságmérést aminek több módja
+van, mint például a radar, a szonár, vagy esetleg a lidar. A robot esetében az
+olyan szenzorok kiválasztására volt szükség, amelyekkel pontos távolságméréssel
+falak relatív pozícióját lehetett meghatározni.
+
+Rövid kutatás után az STMicroelectronics által gyártott VL53L1 szenzorchipekre
+esett a választásom. Ezek a chipek voltak a leggyakoribb keresési találatok, és
+jó visszajelzéseket találtam róluk. Bár a kommunikáció a chippel I2C buszon
+zajlik, a szenzorok komplexitása és vezérlésük bonyolultsága miatt, vezérlésükhöz
+a gyártó külön driver csomagot biztosít. A gyártó nem csak integrált áramkör
+formájában forgalmazza ezeket az alkatrészeket, hanem VL53L1-SATEL néven, mint
+modul is kaphatóak. Ebben a kiszerelésben a táp- és földlábak, az I2C busz
+valamint két fontos láb, ki vannak vezetve a panel oldalán található tüskesorra.
+A panel 3.3V feszültséget igényel, amiből a szenzor IC számára előállít egy
+alacsonyabb feszültségszintet. Ez a projekt szempontjából ideális, mert nincs
+szükség még egy tápfeszültségszint előállítására.
+
+\missingfigure{ábra a szenzorokról}
+
+\medskip
+
+Az autonóm robot helyzetváltoztatása motorok segítségével történik. A motorok
+meghatározásánál a feladat végrehajtásához szükséges teljesítmény és
+forgatónyomaték igény, valamint a robot által leadható teljesítmény a két
+legfontosabb paraméter. Fontos szerepet játszik továbbá a motor mehajtásának
+módja, amely a kisebb robotok esetében szinte kizárólag DC motorok felhasználását
+jelenti. A robot tervezése során fontos kiemelni, hogy a motor egyben érzékelő
+is, ahhoz, hogy pontos beavatkozást végezhessünk, a motorok sebességének mérésére
+is szükség van. A motorok sebességének mérésére leggyakrabban enkódereket
+használunk, amiket néhány gyártó motorjaiban beépítve találunk, más esetekben
+magunknak kell felszerelnünk azokat a motor tengelyére.
+
+A projektben 6V DC meghajtású, szénkefés motorokat választottam, mert az ezekhez
+tartozó feszültségszintet könnyen elő tudtam állítani, és teljesítményben
+megfeleltek az alkalmazás számára. A motorok típusa N20E villanymotor, amelyet
+könnyen be tudtam szerezni. Az alkatrészt kisméretű áttétellel szerelték fel, ami
+a maximális elérhető fordulatszámot növelte a maximális nyomaték beáldozásával. A
+motoron megtalálható volt továbbá egy inkrementális enkóder, amelyhez panelre
+forrasztott tüskesoron keresztül lehetett áramkört illeszteni. Ezek a tárcsák \(2
+* 7\) beosztást tartalmaztak.
+
+\missingfigure{ábra a motorokról}
+
+\subsection{A tápellátás}
+
+
+\subsection{A vezérlő elektronika}
+
+
+\section{Az elvégzendő feladatok}
+
+\subsection{Mechanikai tervezés és kialakítás}
+
+A projekt során a robot prototípus modelljét készítettem el, így a mechanikai
+tervezésre kisebb hangsúlyt fektettem. Ennek a részfeladatnak a legszemléletesebb
+része az áramkörök topológiájára és a mechanikai paraméterekre gyakorolt hatás
+volt. A következő fejezetben röviden bemutatom a robot mechanikai kialakítását.
+
+\subsection{A robot magasabb szintű vezérlése}
+
+A magasabb szintű logikát végző processzorhoz, egy SBC\footnote{Single Board
+Computer}-t használtam. Ezek a panelek egy nagyteljesítményű processzort, vagy
+SoC\footnote{System On a Chip}-ot hordoznak, amelyet így könnyebben
+intergrálhattam a robot rendszerébe. A választott SBC egy raspberry pi 4 B
+modell, amelyet széleskörűen alkalmaznak hobbielektronikai megoldásokban, és
+ipari felhasználásra is van példa. Ennek a boardnak könnyen hozzáférhető
+dokumentációja van és rendelkeztem már az eszközt illető tapasztalattal.
+
+\section{A projekt célja}
+
+Cél megfogalmazása
+
+
+
+
+
+
+
+
+\medskip
+%% a robot kialakítása
 Az autonóm robotok között egy relative könnyen megvalósítható konstrukció a
 differenciális robot, így a projekt fő fokuszában egy ilyen konstrukció  mellett
 maradtam. Ennek a robot típusnak összesen két motor áll rendelkezésére hogy
@@ -35,18 +164,6 @@ egyes témakörökben amiket a robot tervezése során érintek, ezeket a dolgoz
 további részeiben rendre dokumentálom.
 
 A robot tervezése során 9 fő feladatot határoztam meg:
-
-\begin{itemize}
-\item mechanikai kialakítás megtervezése és kialakítása
-\item energiaellátás megtervezése és kialakítása
-\item motor és szenzorvezérlő áramkör megtervezése és kialakítása
-\item motor és szenzorvezérlő áramkör firmware megtervezése és kialakítása
-\item magasabb szintű döntéshozó egység választás
-\item beágyazott linux rendszer készítése
-\item ROS2 keretrendszer telepítése
-\item A saját hardware integrálása a ROS2 keretrendszerbe
-\item Demo alkalmazás elkészítése amelyben a robot labirintusban halad.
-\end{itemize}
 
 A robot kialakítása során fontos szempont volt a modularitás. Így ha egy
 alkatrész meghibásodik, vagy a minősége nem megfelelő, az eszközt könnyebben
@@ -73,7 +190,6 @@ hogy minden munkát a saját számítógépemen egy linuxos környezetben végez
 A projekt ebben az állapotban ért az önálló laboratórium végére, így a hátralévő
 feladatok, valamint az újonnan defíniált célok már a diplomaterv feladataiba
 tartoznak.
-
 
 %----------------------------------------------------------------------------
 \section{Alkatrészválasztás}

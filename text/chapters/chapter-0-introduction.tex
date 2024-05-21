@@ -52,52 +52,65 @@ rendszere, egy lakás takarítása, vagy akár egy csatornarendszer karbantartá
 A diplomaterv feladat kiírásban szereplő labirintus egy ilyen jellegű problémát
 hivatott modellezni. A feladat fő célja egy autonóm robot megalkotása. A robot
 tervezése magában foglalja a robot koncepcionális terveit, általános
-kialakításának meghatározását. A feladatban továbbá foglalkozom a robot hardveres
-kialakításával, firmware fejlesztéssel mikrokontrolleres platformon, beágyazott
-linux készítésével a Yocto project felhasználásával és a ROS2 keretrendszer
-alapszintű megismerésével. Végül a felsorolt részfeladatok során a fejlesztés
-és deployment automatizálásának kérdéskörével.
+kialakításának meghatározását. A feladatban foglalkozom továbbá a robot hardveres
+kialakításával, a firmware fejlesztésével mikrokontrolleres platformon,
+beágyazott linux készítésével a Yocto project felhasználásával és a ROS2
+keretrendszer alapszintű megismerésével. Végül a felsorolt részfeladatok során a
+fejlesztés és deployment automatizálásának kérdéskörével.
 
 A feladat szerves részét képezi, hogy a projekthez mérten megismerem és bemutatom
-a felhasznált keretrendszereket és eszközöket. A robotikai alkalmazások területén
-a ROS, azaz Robot Operating System csomag egy elterjedt környezet, amely
-segítségével a fejlesztés felgyorsítható, és moduláris, könnyen újrahasznosítható
-kódot készíthetünk.
+a felhasznált keretrendszereket és eszközöket.
 
-
-%% itt tartok:
+A robot magas szintű funkcionalitásának implementálása gyakran valamilyen magas
+szintű nyelven történik. Ezek a funkciók illetve mőködési egységek gyakran
+megegyeznek különböző robotokban, ezért megírásukat gyakran támogatja valamilyen
+keretrendszer, ami a fejlesztést nagyban megkönnyítni. A feladat során egy ilyen
+keretrendszert, a Robot Operating System-et, másnéven ROS-t használtam fel. A
+robotikai alkalmazások területén a ROS, azaz Robot Operating System csomag egy
+elterjedt környezet, amely segítségével a fejlesztés felgyorsítható, és
+segítségével moduláris, könnyen újrahasznosítható kódot készíthetünk.
 
 A robot hardveres megépítését, valamint a firmware fejlesztését követően,
-szükséges egy nagy teljesítményű operációsrendszer image előállítása is. Ez
-beágyazott környezetben kimagasló többségben egy Linux alapú rendszer. Egy Linux
-image előállítása manuálisan roppant nagy kihívás, ezért automatizált
-rendszereket szokás használni.
+szükséges egy nagy teljesítményű operációsrendszer, amelyen a magas szintű logika
+megvalósulhat. Ez beágyazott környezetben kimagasló többségben egy Linux alapú
+rendszer, amely mind nyílt forráskódja, mind hatékony és kevés erőforrást igénylő
+működésének köszönhetően ideális választás. Egy Linux image előállítása
+manuálisan roppant nagy kihívás és rengeteg hibalehetőséget hordoz, ezért a build
+folyamatot automatizált rendszerekkel végezzük. A feladat megoldásában én a Yocto
+projectet használtam.
 
-el kell végezni a ROS2 applikáció futtatása között egy
+\section{A Robot Operating System}
 
-
+A ROS neve első hallásra megtévesztő, ez nem egy hivatalos értelemben vett
+operációs rendszer, hanem sokkal inkább egy library és eszköz csomag, amely
+robotikai alkalmazások fejlesztésére és futtatására lett létrehozva. A project
+nagy előnye, hogy jól dokumentált, és nagy közösség alakult ki körülötte. 
+Az open source megközelítésnek hála sok különböző hardverre lefordítható,
+valamint fejlesztés során sok már a közösség által elkészített package, és
+dokumentáció segíti a fejlesztőt.
 
 \section{A Yocto project}
 
-A beágyazott rendszerek területén nagyobb teljesítményű processzorok
-felhasználására, valamint komplex rendszerek implementálására a legnépszerűbb
-platform a Linux. Ennek a operációs rendszernek számos előnye van, amely miatt a
-fent ismertetett megkötéseknek és igényeknek eleget tesz.
+A Yocto project egy nyílt forráskódú projekt, amely linux disztribúciók
+elkészítésében nyújt segítséget. A Yocto lényegében egy umbrella project, ami az
+openembedded build system-et felhasználva és kiegészítve biztosít egy build
+környezetet. A projekt sajátossága, hogy a build teljesen automatizált, a
+fejlesztő a buildfolyamatot meghatározó konfigurációs fileok, és az egyes
+build lépéseket meghatározó receptek szerkesztésével határozza meg a kívánt
+disztribúció sajátosságait.
 
-A robot fejlesztése során a magas szintü funkciók kialakítására alkalmas eszköz a
-Robot Operating System csomag, amely egy DDS-en alapuló keretrendszer. Moduláris
-könnyű felépítése és Linux rendszerbe integráltsága ideális eszközzé teszi, egy
-fent ismertetett feladathoz.
+\section{A dolgozat tartalma}
 
-A Diplomaterv során egy autonóm robot megtervezésének és felprogramozásának a
-fázisait mutatom be. Elsőként a projekthez felhasznált alap projektet mutatom be,
-amelyre a későbiek során építkezni fogok. Egyesével kitérek a központibb
-felhasznált eszközök működésére úgy mint a felhasznált hardverek, és szenzorok, a
-Linux rendszer és működése, a Yocto project és ROS keretrendszer, majd a
-projektben történő felhasználásukat mutatom be.
+A Diplomaterv dolgozat során egy autonóm robot megtervezésének fázisain haladok
+végig. Elsőként a projekthez felhasznált alap hardver komponenseket mutatom be,
+amelyre a későbiek során építkezni fogok. Kitérek ezek apróbb sajátosságaira, és
+tervezés során tapasztalt javítási, fejlesztési lehetőségeikre. Ezután egyesével
+részletezem a robot moduljait: a firmware-t, a linux disztribúciót, valamint a
+ROS driver alkalmazást. A fejezetekben külön kitérek a modul kialakítására,
+architektúrájára és a tervezés során figyelembe vett szempontokra; bemutatom a
+felhasznált és-vagy létrehozott eszközöket és keretrendszereket; majd értékelem a
+a produktum működésését, megállapítom a hibáit és kitérek fejlesztési
+lehtőségeikre is.
 
 \todo{ha elkészül összefoglalom hogy melyik fejezetben miről legyen szó}
-\todo{inkább legyen több szó az előállítások módjáról, yocto, ros}
-\todo{össze kéne foglalni a dolgozatban tárgyalt témákat, történési sorrendben}
-
 
