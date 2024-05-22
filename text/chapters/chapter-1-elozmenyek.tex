@@ -2,13 +2,6 @@
 \chapter{Előzmények}
 %----------------------------------------------------------------------------
 
-% feladatértelmezés legyen, cél meghatározás,
-% szükséges eszközök (libek alkatrészek) felmérése
-% ezek rövid bemutatása
-
-% legyen tervezés szegmens indoklásokkal és realizáció fejezet amiben a
-% megvalósítást és a tapasztalatokat problémákat írom le.
-
 \section{A részfeladatok}
 
 A diplomatervezés feladat keretein belül egy autonóm robot megtervezése és
@@ -48,7 +41,11 @@ nagyon hasonló alkalmazáshoz készültek. Ezek biztosították a hardveres ala
 robot kialakítása során.  A robot koncepcióját bemutató következő fejezetben
 részletesebben kitérek a panelek felhasználására és topológiájára, a jelen
 fejezetben pusztán az elektronikai igényekről, specifikációkról valamint az
-alkatrészek megválasztásáról lesz szó.
+alkatrészek megválasztásáról lesz szó. A projekt verziókövetve megtalálható a
+github repository-ban~\cite{RpirobotGitrepo}, ahol a pcbs mappa alatt egy
+movement-control és egy power-supply-unit könyvtárban találhatóak a KiCAD
+projektek. Az ábrák pdf formátumban elérhetőek a doc/schemas/circuits mappában a
+ctrl-board és pwr-supply mappákban. 
 
 \subsection{Motor és szenzor választás}
 
@@ -60,24 +57,29 @@ elején történt, és meghatározó szerepű volt.
 
 A szenzorok biztosítják az információszerzés lehetőségét a robot számára a
 külvilág felől, így a pontos feladatvégrehajtáshoz megfelelő szenzor kiválasztása
-elengedhetetlen. Minden feladathoz szükséges a végrehajtáshoz szükséges
+elengedhetetlen.  Minden feladathoz szükséges a végrehajtáshoz szükséges
 információk kinyerése a környezetből, ezeknek az információknak a tipusa eltérő
-lehet. A navigációhoz nagyon gyakran alkalmazunk távolságmérést aminek több módja
-van, mint például a radar, a szonár, vagy esetleg a lidar. A robot esetében az
-olyan szenzorok kiválasztására volt szükség, amelyekkel pontos távolságméréssel
-falak relatív pozícióját lehetett meghatározni.
+lehet. A navigációhoz nagyon gyakran alkalmazunk távolságmérést amivel a robot
+relatív pozícióját vagy környezetének felépítését szeretnénk vizsgálni.  A
+távolságmérésre többfajta bevált megoldás létezik mint például a radar, a szonár,
+vagy esetleg a lidar. A robot esetében az olyan szenzorok kiválasztására volt
+szükség, amelyekkel pontos távolságméréssel falak relatív pozícióját lehetett
+meghatározni.
 
 Rövid kutatás után az STMicroelectronics által gyártott VL53L1 szenzorchipekre
-esett a választásom. Ezek a chipek voltak a leggyakoribb keresési találatok, és
-jó visszajelzéseket találtam róluk. Bár a kommunikáció a chippel I2C buszon
-zajlik, a szenzorok komplexitása és vezérlésük bonyolultsága miatt, vezérlésükhöz
-a gyártó külön driver csomagot biztosít. A gyártó nem csak integrált áramkör
-formájában forgalmazza ezeket az alkatrészeket, hanem VL53L1-SATEL néven, mint
-modul is kaphatóak. Ebben a kiszerelésben a táp- és földlábak, az I2C busz
-valamint két fontos láb, ki vannak vezetve a panel oldalán található tüskesorra.
-A panel 3.3V feszültséget igényel, amiből a szenzor IC számára előállít egy
-alacsonyabb feszültségszintet. Ez a projekt szempontjából ideális, mert nincs
-szükség még egy tápfeszültségszint előállítására.
+esett a választásom. Ezek a chipek LIDAR működésű érzékelők, azaz lézer
+kibocsátásán és a visszaverődés érzékelésén alapul a működésük. Rendkívül gyakori
+keresési találatok voltak, és sok hobbielektronikai projekt foglalkozott velük. A
+kommunikáció a chippel I2C buszon zajlik, a szenzorok komplexitása és vezérlésük
+bonyolultsága miatt, azonban vezérlésükhöz a gyártó külön driver csomagot
+biztosít. A gyártó nem csak integrált áramkör formájában forgalmazza ezeket az
+alkatrészeket, hanem VL53L1-SATEL néven, mint modul is kaphatóak. Ebben a
+kiszerelésben a táp- és földlábak, az I2C busz valamint két fontos láb, ki vannak
+vezetve a panel oldalán található tüskesorra.  A panel 3.3V feszültséget igényel,
+amiből a szenzor IC számára előállít egy alacsonyabb feszültségszintet. Ez a
+projekt szempontjából ideális, mert nincs szükség még egy tápfeszültségszint
+előállítására, valamint a csatlakozás és majd a mechanikus rögzítés is könnyebb
+egy kész áramköri modul esetében.
 
 \missingfigure{ábra a szenzorokról}
 
@@ -94,33 +96,189 @@ is szükség van. A motorok sebességének mérésére leggyakrabban enkódereke
 használunk, amiket néhány gyártó motorjaiban beépítve találunk, más esetekben
 magunknak kell felszerelnünk azokat a motor tengelyére.
 
-A projektben 6V DC meghajtású, szénkefés motorokat választottam, mert az ezekhez
+A projektben egyenáramú, szénkefés motorokat választottam, mert az ezekhez
 tartozó feszültségszintet könnyen elő tudtam állítani, és teljesítményben
 megfeleltek az alkalmazás számára. A motorok típusa N20E villanymotor, amelyet
 könnyen be tudtam szerezni. Az alkatrészt kisméretű áttétellel szerelték fel, ami
 a maximális elérhető fordulatszámot növelte a maximális nyomaték beáldozásával. A
+kereskedő oldalán több különböző áttétellel felszerelt motor volt elérhető.  A
+motor felfüggesztéséhez szükséges alkatrészek szintén elérhetőek voltak, ami nagy
+segítségnek bizonyult a robot mechanikai megtervezése és realizációja során. A
 motoron megtalálható volt továbbá egy inkrementális enkóder, amelyhez panelre
 forrasztott tüskesoron keresztül lehetett áramkört illeszteni. Ezek a tárcsák \(2
-* 7\) beosztást tartalmaztak.
+* 7\) beosztást tartalmaztak. A motor 6V DC feszültségget igényel, a beépített
+enkóder 3.3V-tól 5V-íg tetszőleges feszültségszinten tud működni, ami alkalmas a
+projektben történő felhasználásra.
 
 \missingfigure{ábra a motorokról}
 
 \subsection{A tápellátás}
 
+A robot különböző alkatrészeinek különböző tápfeszültségre van szüksége, az
+alkatrészek hibamentes működéséhez elengedhetetlen egy stabil tápfeszültséget
+biztosító eszköz.
+
+Helyhezkötött alkalmazásokban ezt könnyedén megoldhatjuk a hálózati feszültség
+felhasználásával, egy mobil alkalmazás esetén azonban ez nem megengedhető. Ilyen
+esetben mobilis feszültségforrásra van szükség, amely lehet elem, vagy
+akkumulátor. A projekt során az akkumulátoros megoldás mellett döntöttem, de
+a moduláris kialakítás miatt ez könnyen módosítható konfiguráció.
+
+\medskip
+
+A táp megtervezése két fő paraméteren alapul: a szükséges teljesítményen, és az
+igényelt tápfeszültségen. A szükséges feszültségszinteket az alkatrészek
+függvényében a következőkben állapítottam meg:
+
+\begin{itemize}
+\item 5V: a raspberry pi számára
+\item 3.3V: a vezérlőpanel, az enkóderek valamint a lidarok számára
+\item 6V: a motorok számára
+\end{itemize}
+
+A teljesítményviszonyokat pedig felülbecsléssel állapítottam meg. A vezérlés és
+a raspberry pi teljes kihasználtság esetén 15W teljesítménynél kevesebbet
+fogyaszt, ezért a pi irányában 15W teljesítményt írtam elő. A motorok szintén
+15W-nál kevesebb teljesítményt vesznek fel a teljes kihasználáskor, ezért a motor
+irányába menő teljesítményt szintén 15W-ban írtam elő.
+
+A teljesítményáramlás a tápfeszültségek szempontjából a következőképpen alakul:
+A raspberry pi, és a vezérlés rendre 5V és 3.3V tápfeszültségeket és 15W
+teljesítményt kapnak. A motor egy vonalon kap összesen 15W teljesítményt és 6V
+tápfeszültséget. Ez összesen egy 30W teljesítményt leadó feszültségforrást
+igényel, valamint egy ehhez a teljesítménykonfigurációhoz méretezett tápot.
+
+A tápellátó áramkör feladata a rendszer minden komponensét elegendő
+teljesítménnyel ellátni. Ehhez a fent részletezetteknek megfelelően, olyan
+tápáramkörre van szükség amely a következőket biztosítja: három kimeneti
+tápfeszültségszint: \textbf{3.3V}, \textbf{5V}, \textbf{6V}; teljes rendszer
+teljesítmény: \textbf{30W} amely két részben oszlik meg: \textbf{15W} a
+\textbf{6V} kimenetre és \textbf{15W} a \textbf{3.3V} és \textbf{5V} kimenetekre.
+Ehhez rendelkezésre áll egy akkumulátoros feszültségforrás, amely a projekt
+esetében egy Li-ion akkumulátorblokkot jelent. Ennek az akkumulátorblokknak a
+kimenő teljesítménye alulról becsülhető 30W-al. A megfelelő feszültségek
+előállításához három cellát használok, amelyek teljesen feltöltött állapotban
+összesen 12.6V (\(3 * 4.2\)) feszültséget állítanak elő.
+
+\medskip
+
+A lítium cellák vezérlése egy komplex feladat, amely túlmutat a projekt céljain
+és specifikációján, így egy megvásárolható BMS modult használtam. A
+BMS\footnote{BMS: Battery Management System} egy olyan modul amely a Lítium-ion
+cellák vezérléséért felel, amely komplex elektronikát igényel. Három bemenetére
+egyesével egy cella kapcsolódik, amelyek között kiegyensúlyozza a terhelést és
+kimenetén \textbf{12V} egyenfeszültséget állít elő.
+
+A tápáramkör bemenete tehát 12V egyenfeszültség amiből a kívánt feszültségeket
+kell előállítani. 
+
+\missingfigure{Tápáramkörök topológiájáról egy ábra}
+
+A tápáramkör kialakításában a táp topológiája egy döntő fontosságú paraméter.
+Kapcsolóüzemű tápok kialakításukat tekintve komplexebb és alkatrészigényesebb
+architektúrák, amik kimenetén rendszerint valamennyi zaj jelenik meg a
+kapcsolóüzemű mivoltukból kifolyólag. Ezeknek a tápegységeknek azonban hatalmas
+előnyük a magas hatásfok, és az alacsony vesztességek.
+
+Felhasználható eszközök még a feszültségstabilizátor áramkörök, amelyek rendkívül
+stabil és zajmentes kimeneti feszültséget állítanak elő, ellenben a fölösleges
+teljesítményt eldiszcipálják, így ez sokkal kisebb hatásfokú megoldás, ha nagy
+feszültségkülönbségek között kell váltani.
+
+A fenti feltételek alapján a felhasznált tápáramkör panel két kapcsolóüzemű
+tápáramkört használ, hogy a 12V bemeneti feszültségből 6V és 5V feszültségeket
+állítsanak elő. Ezek a kapcsolások nagyon gyakran fordulnak elő így az integrált
+áramkör gyártója az adatlapban mellékelt referencia kapcsolást a jellemző
+feszültségszintekre. A buck konverterek kimenetét kondenzátorokkal szűrtem, hogy
+a kimeneten minél kevesebb zaj tudjon csak megjelenni.
+
+Az 5V kimenő feszültségből egy LDO segítségével áll elő a vezérlőpanel és
+enkóderek számára a 3.3V tápfeszültség. Ezzel a konstrukcióval minimalizáltam
+a vesztességet, ami az LDO-n diszcipálódó teljesítményből adódna. 
+
+Az áramkört az open source és linux alatt is elérhető KiCAD programban
+készült, a kapcsolási rajz az alábbi ábrán látható.
+
+\missingfigure{IDE JÖN MAJD LINK A SCHEMATICRA}
+
+A kapcsolóüzemű tápáramörök kialakításnál jó gyakorlat, ha mezőkitöltéseket
+használunk, amelyek jó hatással vannak a tápáramkör zajmentességére. Ezt
+szemlélteti az alábbi ábra a tápáramkör layoutjáról.
+
+\missingfigure{IDE JÖN MAJD A LINK A LAYOUTRÓL}
 
 \subsection{A vezérlő elektronika}
+A tápáramkör bemutatása után következzen a vezérlőpanel bemutatása. Ennek a
+panelnek az elsődleges feladata, hogy a robot motorjait vezérelje, valamint
+a szenzorait inicializálja és olvassa.
 
+Ez a panel egy mikrovezérlőt hordoz, amely mindezen funkcionalitást képes
+ellátni. A használt kontroller egy stm32f103cb mikrovezérlő, amely egy
+ARM Cortex-M3 maggal 20 kb RAM-mal, és 60 kb flash memóriával rendelkezik.
 
-\section{Az elvégzendő feladatok}
+Az STM32 mikrovezérlőcsalád különösen elterjedt az autóiparban, és egy
+nagyon népszerű gyártó és család. A vezérlő kiválasztásánál fontos szerepet
+játszott, hogy már volt tapasztalatom stm32 mikrovezérlővel.
 
-\subsection{Mechanikai tervezés és kialakítás}
+\medskip
 
-A projekt során a robot prototípus modelljét készítettem el, így a mechanikai
-tervezésre kisebb hangsúlyt fektettem. Ennek a részfeladatnak a legszemléletesebb
-része az áramkörök topológiájára és a mechanikai paraméterekre gyakorolt hatás
-volt. A következő fejezetben röviden bemutatom a robot mechanikai kialakítását.
+A vezérlő feladatai közé tartozik, hogy a motorok meghajtását elvégezze. A
+mikrovezérlő gpio lábainak maximális árama nem elegendő a motor meghajtásához,
+valamint feszültsége is elenyésző a motor szükségleteihez viszonyítva. Ebből a
+célból egy-egy H-bridge áramkör kapott helyet a vezérlőpanelen, amelyet 3.3V
+feszültségszintekkel lehet vezérelni, de a motor kimeneteire már képes 6V
+feszültséget és a hozzá tartozó 15W teljesítményt kapcsolni. A H-híd topológia
+előnye, hogy a motor mindkét irányba vezérelhető lévén a polaritás megfordítható
+a H-bridge megfelelő vezérlésével. A meghajtó áramkörök teljesítmény bemenetére
+csatlakozik a tápáramkör által előállított 6V.
+
+Lévén a motorok enkóderrel is fel vannak szerelve, így a mikrovezérlő mérheti
+ezen motorok sebességét, és ezzel egy esetleges szabályzási kör megvalósítása is
+lehetővé válik. A motorok szögsebessége ezen felül szintén egy fontos információ
+a felsőbb szintű logika számára is.
+
+További fontos feladata a vezérlőnek, hogy a távolságmérő szenzorokat
+periodikusan olvassa, és ezek értékét eltárolja. Ez később a felsőbb szintű
+logika számára lehet fontos információ, valamint extra védelmet jelenthet, ha a
+vezérlő le tudja fékezni a robotot, ha egy adott küszöbérték alatt mér egy
+szenzorral, így elkerülve egy lehetséges ütközést. Ehhez a szenzorokat egy
+i2c buszra kell csatlakoztatni, amelyet a mikrovezérlő meghajt. A panelen
+a szenzorokhoz egy egy gpio trace is vezet, amely az egyedi címkiosztás miatt
+lesz majd fontos.
+
+Végül de nem utolsó sorban a vezérlő feladata, hogy a már említett felsőbb szintű
+logikát végrehajó raspberry pi-vel tartsa a kapcsolatot, és interfészt
+biztosítson számára. Erre két lehetőség is van a boardon, az egyik a debug usart
+port amely végül felhasználásra kerül majd, valamint egy külön i2c port, ami a
+panelre ki van vezetve.
+
+A vezérlőpanelen továbbá helyet kapott egy steppper motor meghajtó modul
+foglalata is, ez viszont a diplomaterv során nem került kihasználásra.
+
+\missingfigure{ctrl board schematic}
+\missingfigure{ctrl board layout}
+
+A panel a a következő csatlakozási pontokat biztosítja:
+
+\begin{itemize}
+\item 2 db csatlakozó a motorokhoz, valamint az ezeken található enkóderekhez
+\item 4 db csatlakozó egyazon I2C busz interfészhez
+\item 1 db USART interfész
+\item 1 db I2C interfész
+\item 1 db stepper motor vezérlő kimenet
+\item 1 db tápcsatlakozó bemenet
+\item 1 db STLink kompatibilis programozó csatlakozó
+\end{itemize}
+
+\missingfigure{Szemléltető ábra a csatlakozókhoz a board felülnézeti képével valamint bekeretezésekkel}
 
 \subsection{A robot magasabb szintű vezérlése}
+A magasabb szintű funkcionalitás megvalósítása több számítási kapacitást igényel,
+minthogy mikrovezérlőn könnyen implementálható legyen. A legtöbb robot ezen
+célból a mikrovezérlőket egyes alrendszerek menedzselésére használja, és a
+nagyobb teljesítményt igénylő általános feladatokat egy központi vezérlőegység
+végzi. Egy ilyen áramkör panelre ültetése azonban nagy szakértelmet és komplex
+panelt igényel, így alternatív megoldásra van szükség.
 
 A magasabb szintű logikát végző processzorhoz, egy SBC\footnote{Single Board
 Computer}-t használtam. Ezek a panelek egy nagyteljesítményű processzort, vagy
@@ -130,110 +288,112 @@ modell, amelyet széleskörűen alkalmaznak hobbielektronikai megoldásokban, é
 ipari felhasználásra is van példa. Ennek a boardnak könnyen hozzáférhető
 dokumentációja van és rendelkeztem már az eszközt illető tapasztalattal.
 
-\section{A projekt célja}
+\section{Az elvégzendő feladatok}
 
-Cél megfogalmazása
+Az előző szekcióban összefoglaltam a robot hardveres kialakítását, valamint a
+felhasznált modulokat és alkatrészeket. A következőkben összefoglalom, a
+diplomaterv során megvalósítandó célokat, és röviden ismertetem a
+problémaköröket.
+
+\subsection{Mechanikai tervezés és kialakítás}
+
+Az egyetlen elvégzendő mechanikai feladat a robot mechanikai vázának
+megtervezése, kialakítása, majd a robot végső összeszerelése. A váz megtervezése
+során fel kell mérni, hogy milyen anyagok állnak rendelkezésre, megmunkálhatóság
+illetve beszerezhetőség szempontjából, és milyen anyagokat célszerű választani a
+robot feladata és motorjainak függvényében. A tervezés során figyelembe kell
+venni az elektronikai alkatrészek topológiáját, és egy megfelelő struktúrát kell
+kialakítani amely az összeszerelést és a majdani esetleges hibakeresést, vagy
+alkatrészek cseréjét minél kevésbé nehezíti meg.
+
+A váz feladata a robot struktúrális szilárdságának biztosítása, az elektronika
+hordozása és védelme. A projekt során a robot prototípus modelljét készítettem
+el, így a mechanikai tervezésre kisebb hangsúlyt fektettem.
+
+A következő fejezetben röviden bemutatásra kerül a robot mechanikus váza, a
+választott anyagok és alkatrészek.
+
+\subsection{Firmware fejlesztés}
+
+A vezérlőpanel egy mikrovezérlőt tartalmaz, mint központi elem, így a projekt
+egyik központi feladata a mikrovezérlőn futó kód, a firmware fejlesztése. A
+
+fejlesztés szerves része a megfelelő toolchain kiválasztása, a fejlesztéshez és
+használt eszközök, összegyűjtése, és a munkakörnyezet kialakítása. Ezt követően a
+firmware architektúrájának megtervezése következik. Ebben a lépésben a zajlik a
+firmware feladatainak specifikálása, operációs rendszer szükségességének
+felmérése, a szükséges keretrendszerek, könyvtárak kiválasztása. Ezekről
+praktikusan dokumentáció és ábra készítése, majd a firmware funkcióinak
+implementálása és tesztelés.
+
+A vezérlőpanel, így a firmware feladatait a következő pontokban határoztam meg:
+
+\begin{itemize}
+\item A motorok meghajtása
+\item A motorsebességek mérése, esetleg motorszabályozás
+\item A szenzorok inicializálása és olvasása.
+\item Interfész biztosítása amelyen keresztül a robot vezérelhető
+\end{itemize}
+
+\subsection{Embedded Linux image készítése}
+
+A magasabb absztrakciós szinten megvalósítandó logikának elengedhetetlen
+feltétele, egy megfelelő platform megléte. Ez a platform beágyazott környezetben
+rendszerint Linux alapú operációs rendszert jelent. A feladat végrehajtásához
+ezért szükséges egy ilyen operációs rendszer létrehozása, amelyhez többfajta
+build környezet felhasználható.
+
+A projekt következő feladata tehát egy Linux image létrehozása, ami támogatja a
+célplatformot. Ennek az imagenek tartalmaznia kell minden olyan szoftveres
+komponenst és konfigurációt, hogy a rendszer bootolásra alkalmas legyen, a bootot
+követően hozzáférhető legyen valamilyen csatornán (ssh, soros port), illetve
+tartalmazza a feladat végrehajtásához szükséges programokat és eszközöket.
+
+A feladatnak itt is elengedhetetlen része a megfelelő munkakörnyezet létrehozása
+és annak dokumentálása.
+
+\subsection{ROS2 keretrendszer integrálása a projektbe}
+
+A robot lényegi funkcióinak fejlesztéséhez szükséges egy keretrendszer, amely a
+projektben bemutatásra kerülő ROS2 keretrendszer. A keretrendszer és a robot
+között azonban a kapcsolatot ki kell építeni, hogy az utasítások a robot
+alacsonyabb szintű rétegei számára végrehajthatóak legyenek, valamint a
+környezeti információk és visszacsatolások a keretrendszer számára is elérhetőek
+legyenek.
+
+A feladatok közé tartozik tehát a projektben használt keretrendszer támogatására
+esetlegesen egy kernel-, vagy userspace driver fejlesztése, amely a kommunikáció
+biztosítására szolgál.
+
+A keretrendszer integrálásához tartozik továbbá, hogy az ne csak a robot hardver
+és keretrendszer között biztosítsunk kapcsolatot, hanem a fejlesztés folyamatába
+történő integrálás is megtörténjen. Ezutóbbi elősegíti a dinamikus és kényelmes
+fejlesztést valamint a szoftveres modulok előállítása könnyebb és átláthatóbb
+lesz általa. Az image generálásba integrált keretrendszer és magas szintű logika
+ezenfelül biztosítja, hogy az image könnyen reprodukálható marad.
 
 
+\subsection{Yocto Project és ROS2 bemutatása}
 
+Az előző két feladatban megfogalmaztam az image generálás valamint a
+keretrendszer integrálásának feladatait. Az ezekkel a rendszerekkel történő
+hatékony munkavégzésnek azonban feltétele, hogy minél alaposabb megértéssel
+rendelkezzünk az adott rendszer képességeiről és funkcióiról, így ezek
+dokumentálása és bemutatása is a feladat részét képezi.
 
+Ez a bemutatás az adott modullal foglalkozó fejezetben fog megtörténni, hogy a
+rendszer bemutatását követően könnyen demonstrálhassam a bemutatott képességeket,
+vagy azok egy részét.
 
+\subsection{A kész robot bemutatása, labirintus alkalmazáson keresztül}
 
+A projekt utolsó és egyben záró feladata egy ismert topológiájú labirintusban
+történő haladás, amely a robot moduljainak együttes összehangolt működését
+hivatott bemutatni. 
 
+\todo{ide írjunk olyat amit sikerül kikutatni, pl a* algoritmus}
 
 \medskip
-%% a robot kialakítása
-Az autonóm robotok között egy relative könnyen megvalósítható konstrukció a
-differenciális robot, így a projekt fő fokuszában egy ilyen konstrukció  mellett
-maradtam. Ennek a robot típusnak összesen két motor áll rendelkezésére hogy
-helyzetét és orientációját változtassa, ezáltal  könnyebben megvalósítható mint
-komplexem meghajtással rendelkező társai, viszont mozgékony és sok lehetőséget
-tartogató kialakítás. Klasszikus elrendezése, hogy a két motort a hosszanti
-tengellyel merőlegesen kell elhelyezni, ezálal a  a robot sebessége a motorok
-szögsebességéből valamint a kerékátmérőből számítható. A robot orientációját a
-két motor különböző nagyságban és/vagy különböző sebességgel történő
-meghajtásával lehet vezérelni. A kialakítás további előnyeihez tartozik, hogy a
-robot vezérléséből csak relative kevés erőforrást kell a mozgásra allokálni,
-hiszen pusztán csak a két motorhoz tartozó szabályozó és irányító algoritmusokat
-kell futtatni, ugyanakkor a robot sík, vagy közel sík terepen minden különösebb
-nehézség nélkül képes navigálni, ezáltal sokféle alkalmazásban ideális választás
-lehet.
 
-A projekt egyik fő célja az volt hogy minél átfogóbb ismereteket szerezzek az
-egyes témakörökben amiket a robot tervezése során érintek, ezeket a dolgozat
-további részeiben rendre dokumentálom.
-
-A robot tervezése során 9 fő feladatot határoztam meg:
-
-A robot kialakítása során fontos szempont volt a modularitás. Így ha egy
-alkatrész meghibásodik, vagy a minősége nem megfelelő, az eszközt könnyebben
-lehet frissíteni, fejleszteni. Ezen felül, amennyiben új elvárás merülne fel,
-úgy kevés alkatrész cseréjével, vagy újak implementálásával könnyen alkalmassá
-tehető a robot, egyéb feladatok ellátására is.
-
-A feladatok könnyebb strukturálása valamint a rendszer pontosabb átláthatósága
-érdekében blokkdiagramot is készítettem:
-
-\missingfigure{ide jön majd a blokkdiagram a robotról}
-
-Az önálló laboratórium során több problémába is ütköztem, melyek közül az egyik
-legfontosabb a chiphiány, amely jelentősen megnehezítette a  megfelelő
-alkatrészek megtalálását és ezzel jelentősen lelassította a tervezési fázist is.
-
-Az önálló laboratórium keretei között végül sikeresen elkészült a tápellátásért
-felelős panel, és a motorvezérlést biztosító panel. Döntés született a
-felhasználandó motorok, szenzorok, és egyéb alkatrészek ügyében, valamint
-elkészült egy kezdetleges firmware amelyel a mikrokontroller perifériáit
-tesztelte és egy hozzá tartozó build környezet, amely lehetővé tette számomra,
-hogy minden munkát a saját számítógépemen egy linuxos környezetben végezzek.
-
-A projekt ebben az állapotban ért az önálló laboratórium végére, így a hátralévő
-feladatok, valamint az újonnan defíniált célok már a diplomaterv feladataiba
-tartoznak.
-
-%----------------------------------------------------------------------------
-\section{Alkatrészválasztás}
-%----------------------------------------------------------------------------
-
-A megfelelő alkatrészek kiválasztása kritikus feladat volt a tervezési szakasz
-legelején.
-
-Első lépésben a robot hozzávetőleges tömege és kialakítása alapján választottam
-motorokat, amelyek a fő beavatkozó szervek. A beépített enkóderek és a megfelelő
-tápfeszültség alapján az n20e motorok mellett döntöttem. Ezek több
-konfigurációban is kaphatóak voltak, és inkrementális enkóderrel szerelték fel
-őket, így a sebességmérés is lehetővé vált ezeknek a motoroknak a használatakor.
-A kereskedő weboldalán a motorokhoz megfelelő felfüggesztést, és tengelyre
-szerelhető kereket is találtam, ami a mechanikai szereléseknél nagy segítség
-volt. Ezek a motorok kefés DC motorok amelyeket gyakran használnak
-hobbielektronikában. A motorok kapocsfeszültsége 6V, valamint a beépített
-enkóderek működéséhez 3.3V-tól 5V-íg tetszőlegesen megválasztható feszültségszint
-tartozik.
-
-A következő lépésben a távolságérzékeléssel foglaloztam. A távolságérzékelőknek
-több fajtája létezik, működési elveikből kifolyólag. A projekthez én az
-STMicroelectronics VL53L1 érzékelőjét választottam, amit előzetes kutatásaim
-és ajánlások alapján választottam. Ez a szenzor egy LIDAR, lézer alapú
-távolságmérő berendezés. A szenzor egyik nagy előnye volt az I2C interfész, amin
-a szenzorral kommunikálni lehet. Erős érv volt továbbá a VL53L1-SATEL board, ami
-egy kis méretű development board amelyre a szenzor fel van ültetve. A board
-egyik felén standard tüskesorhoz tartozó furatok vannak, amelyekre a szenzor 
-fontos lábai ki vannak vezetve. A board ennek köszönhetően könnyen felszerelhető,
-nem kell hozzá külön panelt tervezni, valamint a tápellátást is a SATEL boardra
-lehet bízni. Ezzel a modullal a szenzor könnyen használható 3.3V
-tápfeszültségről.
-
-A projekt legelejétől fogva fontos lépés volt, hogy egy beágyazott linux alapú
-vezérlő tudjon a magas szintű feladatokkal foglalkozni, hogy a firmware
-komplexitása lecsökkenhessen, valamint a rendszer megőrizze modularitását. A
-legelterjedtebb megoldás erre a célra a raspberry pi, amely egy ARM alapú
-SBC\footnote{Single Board Computer}. Ennek az eszköznek hatalmas népszerűsége
-van, valamint rendkívül jól dokumentált, így alkalmasnak éreztem erre a
-feladatra.
-
-A fenti specifikációkkal már el tudtam kezdeni a robot topológiájának
-megtervezését, valamint a táp, és a vezérlőpanelek megtervezését.
-
-A következő fejezetben bemutatom a robot tápellátásának teljes tervét az
-elkészült táp panelt, valamint a vezérlőpanelt.
-
+A következő fejezetben bemutatom a robot koncepcionális kialakítását,
+topológiáját, valamint a mechanikus váz tervezését és kialakítását.

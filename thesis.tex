@@ -26,9 +26,9 @@
 % római számozás az elején
 \pagenumbering{gobble}
 
-%--------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------
 % BEGIN DOCUMENT
-%--------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------
 \begin{document}
 
 \selectthesislanguage{}
@@ -37,11 +37,11 @@
 \include{text/titlepage}
 
 % Tartalomjegyzék
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \tableofcontents\vfill
 
 % Nyilatkozat and Abstract
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \include{text/declaration}
 \include{text/abstract}
 
@@ -51,26 +51,27 @@
 % Fejezetek
 \include{text/chapters/chapter-0-introduction}
 \include{text/chapters/chapter-1-elozmenyek}
-\include{text/chapters/chapter-2-linux}
-\include{text/chapters/chapter-3-yocto}
-\include{text/chapters/chapter-5-raspberry}
-% egész rendszer általános kiértékelése egy lezáró fejezetben
+\include{text/chapters/chapter-2-overview}
+%% \include{text/chapters/chapter-3-firmware}
+%% \include{text/chapters/chapter-4-yocto}
+%% \include{text/chapters/chapter-5-maze}
+% TODO: egész rendszer általános kiértékelése egy lezáró fejezetben
 
 % vajon erre szükségem van?
 % List of Figures, Tables
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
 %\listoftables\addcontentsline{toc}{chapter}{\listtablename}
 
 
 % Bibliography
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \addcontentsline{toc}{chapter}{\bibname}
 \bibliography{bib/mybib}
 
 % Appendix
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{text/appendices}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%% \include{text/appendices}
 
 %\label{page:last}
 \end{document}

@@ -1,0 +1,118 @@
+\chapter{Architektúra}
+
+\section{A robot topológiája}
+
+A robot tervezése sok kisebb feladatból és megtervezendő egységből, alegységből
+áll. A tervezés során célravezető megközelítésnek tartottam a nagyobb egységek
+megtervezésétől a kisebb alegységek megtervezéséíg haladni. Így a specifikációtól
+indulva az aktuális feladatot alfeladatokra bontva volt lehetőségem kidolgozni a
+robot részleteit annélkül, hogy a részletekben nagyon elvesznék.
+
+Ezt a megközelítést követve a specifikáció alapján meghatároztam a modulokat,
+amiket a robot működéséhez létre kell hozni. Ezt követően meghatároztam az
+interfészeket, amin a modulok egymással kapcsolatban állnak, maje ezekből egy diagrammot
+készítettem, amelyen a rendszer áttekinthető. 
+
+\missingfigure{blokkdiragram a robot kialakításáról}
+
+\subsection{A Differenciális robot}
+
+A tervezés első fázisa a robot kialakításának kiválasztása volt. Az autonóm
+robotok számos elrendezésben megtervezhetők, amely a robot alkalmazásától függően
+lehet komplexebb vagy egyszerűbb. Bizonyos környezetek robosztusabb kialakítást
+igényelnek, más környezetek nagyobb mozgékonyságot. A projekt szempontjából a
+differenciális elrendezést tartottam a legcélravezetőbbnek.
+
+Az autonóm robotok között a differenciális robot egy relative könnyen
+megvalósítható konstrukció, így a projekt fokuszában egy ilyen konstrukció
+mellett maradtam. Ennek a robot típusnak összesen két motor áll rendelkezésére
+hogy helyzetét és orientációját változtassa, ezáltal könnyebben megvalósítható
+mint komplexebb meghajtással rendelkező társai, viszont mozgékony és sok
+lehetőséget tartogató kialakítás.
+
+\missingfigure{Ábra a differenciális robotról}
+
+Klasszikus elrendezése, hogy a két motort a hosszanti tengellyel merőlegesen kell
+elhelyezni, ezálal a a robot sebessége a motorok szögsebességéből valamint a
+kerékátmérőből számítható. A robot orientációját a két motor különböző nagyságban
+és/vagy különböző sebességgel történő meghajtásával lehet vezérelni.
+
+A kialakítás további előnyeihez tartozik, hogy a robot vezérléséből csak relative
+kevés erőforrást kell a mozgásra allokálni, hiszen pusztán csak a két motorhoz
+tartozó szabályozó és irányító algoritmusokat kell futtatni, ugyanakkor a robot
+sík, vagy közel sík terepen minden különösebb nehézség nélkül képes navigálni,
+ezáltal sokféle alkalmazásban ideális választás lehet.
+
+\subsection{Modulok és feladatkörök}
+
+A robot megalkotását modulok megtervezésére és realizációjára alapoztam, ennek a
+megközelítésnek a tervezésen kívül a végtermék minőségében is jelentős hatásai
+voltak. A kész robot ugyanis különálló, de jól meghatározott interfésszel
+rendelkező modulok összességéből áll össze, így ha egy alkatrész meghibásodik,
+vagy a minősége nem megfelelő, az eszközt könnyebben lehet javítani, vagy a hibás
+modult cserélni. Ezen felül, amennyiben új elvárás merülne fel, úgy kevés
+alkatrész cseréjével, vagy újak implementálásával könnyen alkalmassá tehető a
+robot, egyéb feladatok ellátására is.
+
+A projekt ennek a megközelítésnek köszönhetően könnyen fejleszthető, amennyiben
+igény merülne fel adott modulok letisztázására, vagy funkcióköreik bővítésére. A
+szóban forgó modul ugyanis, ameddig betartja a számára meghatározott interfészt,
+minden különösebb nehézség nélkül fejleszthető és módosítható úgy, hogy a robot
+működőképes marad.
+
+\missingfigure{részletes blokkdiagramm, kommunikációs csatornákkal, és
+  protokollokkal}
+
+
+
+
+\todo{Ide jön a robot leírása, hogy hogyan akarom kialakítani milyen modulok
+  lesznek bnenne meg minden ilyen shut}
+
+
+\section{A terv értékelése}
+
+\subsection{Pozitívumok}
+
+A projekt moduláris megközelítéséből nagyon sokat profitáltam, a feladatok
+ugyanis bizonyos megkötésekkel párhuzamosíthatóak voltak, ami a fejlesztést
+nagyban gyorsította és tette kényelmesebbé. Egy késleltetett rendelés például nem
+akasztotta meg teljesen a munkát, csak egy részmodult késleltetett.
+
+Az adott modulok tesztelése szintén sokkal könnyebbnek bizonyult úgy, hogy egy
+előre defíniált interfészt vagy protokollt tudtam követni. Így egy feladatot
+könnyebben lehetett elvégezettnek tekinteni ha a tesztelésen átesett, nem kellett
+az egész konstrukciónak elkészülnie a részeredményekhez. 
+
+\subsection{Hátrányok}
+
+Az előre defíniált interfészek jelentettek nehézséget is. Ha egy modul
+fejlesztésében nem várt nehézséget okoz egy bizonyos interfész betartása, akkor
+az sok fejlesztési idő kiesését tudja jelenteni.
+
+A projekt fejlesztése nagyon erősen függ olyan döntésektől amikben a fejlesztést
+megelőzően kevés tapasztalattal rendelkeztem, hogy hatékony interfészt határozzak
+meg. Ilyen esetben vagy a már meglévő modulokhoz alkalmazkodva több idő és
+energia ráfordítással fejlesztettem le a modult, vagy módosítottam az interfészt,
+amennyiben nem, vagy csak nagyon kevés modul függött az adott interfésztől. Az
+utólagos interfészmódosítások azonban nagy bizonytalansággal járhatnak, és a
+legtöbb esetben érdemes azokat elkerülni.
+
+\subsection{Fejlesztési lehetőségek}
+
+
+\todo{Ide irunk minden olyat ami nem volt eléggé átgondolva a robot
+  megalkotásakor: firmware, protokoll, táp, hardver, stb.}
+
+
+\section{A mechanikus váz}
+
+bevezető
+
+\subsection{Anyaghasználat}
+
+fa, csavarok, távtartók, méretek, furatok,
+
+\subsection{Az elkészült váz}
+
+értékelés

@@ -4,3 +4,32 @@
 
 
 
+
+\missingfigure{drawios blokkdiagram a vezérlésről}
+
+A mikrovezérlő firmware megírása során törekedtem a platformfüggetlen, eönnyen
+áttekinthető kód készítésére. A teljesítmény maximalizálása és a kódméret
+kordában tartása végett nem szerepel a projektben HAL\footnote{HAL: Hardware
+Abstraction Layer} library kód. Minimális generált kóddal dolgoztam, amely
+kimerül a linkerscript, valamint a startup fájlokban, ezeket a gyártó STM32CubeMX
+nevű szoftverével hoztam létre. A vezérlő felkonfigurálásához, és perifériáinak
+eléréséhez a CMSIS\footnote{CMSIS: Cortex Microcontroller Software Interface
+Standard, az ARM által megkövetelt szabványos nevezéktan és támogatás minden
+Cortex típusú magot tartalmazó mikrovezérlőre} által szolgáltatott
+regiszterdefiníciókat használtam. A firmware megírása során arően támaszkodtam az
+STM32F103 \todo{Ez egy hivatkozás az urlre}Reference Manualjára.
+
+Ennek a firmware verziónak a képességei kimerültek egy USART periféria
+használatában, a timer periféria pwm konfigurációjában, valamint a FreeRTOS
+beágyazott operációsrendszer elindításában.
+
+Ez a megközelítés nagyban segített a mikrovezérlő belső működésének pontos
+megértésében, ellenben a diplomatervi munka során a fejlesztés gyorsítása
+érdekében áttértem a HAL driverek használatára is, erről a későbbi fejezetekben
+lesz szó.
+
+Az önálló laboratórium alatt írt firmware végül nem lett közvetlenül hasznomra,
+így teljes egészében cserélnem kellett.
+
+Az önálló laboratóriumi munkám ennyit segített a kész produktumhoz, a következő
+feladatokat már a diplomatervezés keretein belül hajtottam végre.
