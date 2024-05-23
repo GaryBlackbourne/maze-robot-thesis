@@ -51,4 +51,4 @@ Ide lehet kéne még a ros2 action amivel haladni tudunk.
 ** Dokumentálja és automatizálja a robot szoftverének előállítását.
 Le tudjuk vajon fordítani a firmware-t?
 * Itt tartok
-[[file:text/chapters/chapter-0-introduction.tex::68][link]]
+[[file:text/chapters/chapter-2-overview.tex::63][link]]
