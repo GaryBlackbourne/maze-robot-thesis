@@ -3,7 +3,312 @@
 %----------------------------------------------------------------------------
 
 
+Az előző fejezetekben bemutattam a robot modelljét, és vezérlésének terveit. Volt
+szó az alkalmazott szenzorokról és motorokról, bemutatásra került a tápegység, és
+a robot mechanikai váza.
 
+Ebben a fejezetben a mikrokontrolleren futó program, a firmware működését fogom
+bemutatni, kezdve annak specifikációjával és szükségességével. Bemutatom a
+firmware létrehozásához használt build rendszert, a firmware architektúráját, és
+működését. A fejezet végén kitérek a továbbfejlesztési lehetőségekre is.
+
+\section{Specifikáció}
+
+\subsection{Target platform}
+A robot hardverének meghajtásáért felelős mikrokontroller, a robot hardveres
+komponenseinek közvetlen vezérléséért felelős, a rajta futó firmware minősége a
+robot működése szempontjából kritikus. Ennek a programnak a feladata a robot
+hardvereinek összekapcsolása a robot szoftveres részével. Működése szoros
+kapcsolatban áll a meghajtott hardver működésével és időzítése kritikus a feladat
+szempontjából ezért real-time rendszerről beszélünk.
+
+Az STM32F103 mikrokontroller egy 32 bites ARM Cortex-M3 magot tartalmazó
+mirovezérlő. Modern kialakításának és gyártói támogatásnak köszönhetően C nyelven
+programozható chip. A vezérlő 60 kB flash memóriát, és 20 kB RAM memóriát
+tartalmaz, ezek a firmware számára betartandó keretek a programkód mérete és a
+program szervezése és memórialábnyoma szempontjából.
+
+\subsection{A Firmware feladatai}
+
+Tekintsük át a firmware feladatait!
+
+\begin{itemize}
+\item{Kommunikáció a Raspberry Pi-vel}
+\item{Szenzorok inicializálása és kezelése}
+\item{Motorok vezérlése}
+\item{Motorok sebességének mérése}
+\end{itemize}
+
+\subsection{A kommunikáció és protokol}
+
+Az első feladat a kommunikációs csatorna defíniálása. A firmware a hardvert a
+magasabb szintű logikától kapot utasítások alapján vezérli, ezért kialakításnál
+master-slave jellegű kommunikációs megközelítést célszerű alkalmazni.
+
+A kommunikáció soros porton keresztül történik. Ezen a csatornán bájtos
+adatátvitel lehetséges, ezért üzenet alapú kommunikációt használtam. Az
+üzenetváltás során meghatároztam parancs és legkérdezés üzeneteket, amelyeket a
+Raspberry Pi küld információ kérés vagy vezérlés céljából. A kapott üzenetre a
+firmware egy üzenetben választol, annak függvényében, hogy a parancsot nyugtázta
+(ACK) vagy ismeretlennek találta (UNKNOWN). Ha a parancs lekérdezés volt, úgy a
+mikrovezérlő válaszol a kért adattal egy üzenetben. A zárásként a mikrovezérlő
+lezárja az üzenetváltást egy DONE üzenettel.
+
+Az üzenetek egy vagy több bájtot, vagyis karaktert tartalmazhatnak, és
+mindenképpen carriage-return karakterrel végződnek. Egy transzfer a fent
+ismertetett üzenetváltásból áll, minden esetben egy parancsal kezdődik és egy
+DONE jelzéssel (hiba esetén unknown jelzéssel) ér véget.
+
+A kommunikációra csak ASCII karakterek használhatóak, ezzel elkerülve, hogy az
+adatbájtok véletlenül egybeessenek a sor vége karakterrel, és így idő előtt
+megszakítsák a kommunikációt.
+
+\missingfigure{Ábra az üzenetekről}
+
+Tekintsük át a lehetséges üzeneteket. A firmware feladatainak defíniálásakor
+tisztázódott, hogy kétfajta üzenet létezik, SET vagy GET, amely valamilyen
+adatot mint érték kér, vagy vezérlő üzenet és a firmware valamely paraméterét
+állítja. Ezeket az üzenetben rendre `s' vagy `g' karakter jelöli.
+
+A mikrokontroller szenzorokkal távolságot mér, illetve enkóderek segítségével a
+motorok sebességét. Ezáltal GET utasítás sebességre, és távolságra adható, ezeket
+az üzenetben VELOCITY `v', illetve SENSOR `s' karakter jelöli. A továbbiakban
+target-ként hivatkozom rájuk. SET parancs
+értelemszerűen csak sebességre adható, így SET parancsot csak VELOCITY target
+követhet: ``sv''.
+
+A parancsot ezek után SENSOR target esetén maximum négy, VELOCITY target esetén
+maximum két iránymeghatározó karakter követi. Ezek a FORWARD, BACKWARD, LEFT,
+RIGHT irányhatározó rendre a `f', `b', `l', `r' karakterekkel. VELOCITY target
+esetén csak LEFT és RIGHT irányhatározó karakter érvényes, lévén a robot két
+motorral rendelkezik. 
+
+GET parancs esetén az üzenetet carriage-return karakterrel zárhatjuk, és a
+specifikált sorrendben várhatjuk a mikrovezérlő válaszát. Amennyiben SET
+parancsot adtunk, úgy egy `-' karakterrel jelezzük a firmware számára hogy adat
+következik. A küldendő adatot hexadecimális formában ascii karakterekre kódolva
+abban a sorrendben küldjük el, amely sorrendet az irányhatározó karaktereinkel
+meghatároztunk. A megfelelő mennyiségű adat elküldése után a mikrovezérlő
+nyugtázza a megkapott utasítást (ACK), majd annak végrehajtásáról DONE üzenetben
+tájékoztat minket.
+
+GET parancs esetén a firmware ugyanilyen formátumban biztosítja számunkra az
+adatot. Az UNKNOWN, DONE és ACK üzenetek karaktereit rendre a `u', `n' és `k'
+karakterek jelölik.
+\todo{Ez miért van így? miért nem u-d-k mint eddig mindennek? hiszen a carriage
+  return ugyis elválaszt....  nem akarjuk kipatchelni?}
+
+\medskip
+
+\subsection{Szenzorok inicializálása és lekérdezése}
+
+A firmwarenek feladata a szenzorok inicializálása. A mikrokontroller egy I2C
+perifériát használ a szenzorok kezeléséhez, viszont mindegyik szenzorhoz
+egyesével tartozik egy GPIO, amelyel a szenzor bootolása vezérelhető. A szenzorok
+adatlapjából kiolvasható, hogy boot után a 0x52 címen érhetőek el. A bootfolyamat
+késleltetésével a firmware fel tudja paraméterezni külön külön az összes
+szenzort, így azok a futás alatt saját címmel rendelkezhetnek.
+
+Az inicializáció után a firmware aszinkron módon gyűjt adatot a szenzoroktól
+amelyeket parancsra elérhetővé kell tennie a Raspberry számára. Ezzel az
+architektúrával elkerülhető, hogy feladatok véletlenszerű felhalmozódása
+bottlenecket képezzen a rendszerben, viszont megfelelően gyakori leolvasás esetén
+megközelítőleg ugyanolyan pontos működést kapunk.
+
+\subsection{Motorok sebességének mérése}
+
+A mikrovezérlő dedikált timer perifériákat tartalmaz amelyek külön funkcióval
+rendelkeznek az inkrementális enkóderek jeleinek feldolgozásához. A timerek
+megfelelő inicializációja után a firmware feladata kiolvasni a timerek cnt
+regiszterének értékét, majd ezekből az értékekből a robot sebességét valamilyen
+algoritmus segítségével kiszámolni.
+
+A sebesség algoritmusa függ a felhasznált alkatrészek fizikai paraméterétől, mint
+a kerék átmérője, a motorokon használt áttétel, az enkódertárcsák beosztása,
+valamint, ha a differenciális elrendezésből egy sebességértéket szeretnénk
+defíniálni, a kerekek egymástól vett távolsága.
+
+A sebességmérés pontossága függ az enkóder felbontásától, a kerék aktuális
+szögsebességétől, valamint a lekérdezés időbeli pontosságától is.
+
+A sebesség mértékegysége előre meghatározandó paraméter amit a firmware számára
+specifikálni kell. Ezt a mértékegységet a robot léptékeihez és a feladatához
+mérten mm/s egységben állapítottam meg.
+
+\subsection{Motorvezérlés}
+
+A motorok sebességének beállítása szintén a firmware feladata. A sebesség
+beállítás komplex feladat is lehet, amennyiben nagy pontosságra törekszünk.
+
+A motorok sebességszabályozásért felelős algoritmus állhat egy egyszerű pwm
+állításból de egy komplex PID szabályzóból és szabályzókörből is. Az algoritmus
+komplexitásának felső korlátja, hogy egy iteráció futásideje bele kell, hogy
+férjen a szabályzó task periódusidejébe, amit a floating point unit hiánya
+nagyban meg tud nehezíteni adott sebesség felett.
+
+A firmware specifikációja során nem határoztam meg pontos követelményeket, és a
+végső kialakításban nem szerepel PID szabályzás, de a kódbázisban implementálva
+van egy szabályzó, ami alkalmas lehet további fejlesztésre.
+
+\medskip
+
+A motor vezérlésénél fontos kérdés, hogy mi történjen ha elveszik a kapcsolat a
+magasabb szintű vezérléssel. Robotikai alkalmazásokban általános megoldás, hogy
+ilyen esetben a robot megáll, hiszen a funkcionalitás jelentős része kiesett, így
+a robot akár károkat is okozhat.
+
+A folyamatos kapcsolat igényét a firmware fejlesztése során szem előtt tartottam.
+
+\section{Build}
+
+A szoftverfejlesztés egy fontos eleme, hogy az adott build artifact könnyen
+reprodukálható legyen. Az összetett fejlesztőkörnyezetek integrált toolchainjei
+és komponensei ezeket a funkciókat általában megnehezítik, és megkötik a
+fejlesztő kezét a felhasznáható eszközök terén.
+
+A firmware fejlesztése alatt különleges figyelmet fordítottam rá, hogy munkám
+széles körben elérhető eszközöket igényeljen csak a fordításhoz, és minél
+modulárisabb, könnyebben cserélhető eszköztárra és projektkomponensekre bontottam
+a feladatot.
+
+A fordításhoz a GNU toolchain ARM mikrokontrollerek számára készült verzióját, az
+arm-none-eabi-gcc-t használtam. A többlépcsős build folyamat végrehajtásához
+shellscriptekből és Makefileokból álló rendszert építettem, amely a forráskódot
+viselkedés szerint modulokba engedi csomagolni, így többfajta kialakítású projekt
+is könnyedén integrálható a buldbe. A nyelvi szerver támogatáshoz clangd-t
+használtam amihez a szükséges compile\_commands.json file-t a bear nevű, szintén
+open source szoftverrel generáltam.
+
+A projekt ezen felépítése lehetővé teszi hogy tetszőleges editorral (vim, emacs,
+vscode) vagy fejlesztői környezettel megnyitható és szerkeszthető legyen.
+
+A project teljesen verziókövetve van amihez git-et használtam. A repository
+szabad licensz mellett elérhető a github linken\todo{hivatkozás}. 
+
+\subsection{A project architektúrája}
+
+A repository root könyvtárában két fontos mappát találunk, a utils és modules
+mappákat. A utils mappa tartalmazza a projekthez használt általános scriptek
+legnagyobb részét. ebben a mappában található scriptek a következők:
+
+\begin{itemize}
+\item{build.sh:~A build folyamatot elindító script.}
+\item{clean.sh:~A build artifactokat törlő script.}
+\item{flash.sh~Az elkészült binárist ST-Linken keresztül a mikrokontrollerre
+  másoló script.}
+\item{openocd-start:~Az openocd service indító scriptje, amely on-chip
+  debugoláshoz használandó.}
+\item{openocd-start-bg:~Az openocd service indító scriptje, amely on-chip
+  debugoláshoz használandó. A folyamatot háttérfolyamatként indítja.}
+\item{gdb.sh:~Az arm gdb programot megfelelő indítási kapcsolókkal indító scirpt,
+  igényli az openocd futását.}
+\item{gdb-ide.sh:~Az arm gdb programot megfelelő indítási kapcsolókkal a
+  fejlesztőkörnyezetből indító scirpt, igényli az openocd futását.}
+\item{stm32f1x.cfg:~Az openocd által igényelt konfigurációs file a target
+  mikrovezérlőhöz.}
+\end{itemize}
+
+A build egyszerűen végrehajtható a build.sh script futatásával. A buldhez tartozó
+konfigurációt a settings.sh file tartalmazza, ami a repository root könyvtárában
+található. A scriptben néhány hasznos beállítás amit konfigurálni lehet:
+
+\begin{itemize}
+\item{A project neve}
+\item{A fordító és linker binárisok}
+\item{A kimenetet tartalmazó könyvtár}
+\item{A fordításhoz és inkeléshez használt flagek}
+\item{Az optimalizáció szintje}
+\item{A lefordítandó modulok listája}
+\end{itemize}
+
+A projekt root könyvtárában található modules mappa további mappákat tartalmaz,
+amelyek a projektben használt modulok.
+
+A moduláris kialakításnak hála, egy új szoftverkomponens vagy library lefordítása
+sokkal könnyebb és nem borítja meg a projekt addigi architektúráját. Egy modul a
+modules mappán belül található olyan könyvtár amely tartalmaz module.sh scriptet.
+A module.sh script minden modulhoz meghatározza a fordítás lépéseit, ami a
+leggyakrabban egy make parancs. A modul saját mappájában belül dolgozik, és
+kimenetét egy obj nevű mappában gyűjti össze. A modul lefordulása után ezek a
+kimenetek a modul nevének prefixálásával bemásolásra kerülnek a projekt build
+mappáján belül található obj mappába. Ezzel a megoldással elkerülhetjük, hogy két
+modul által ugyanazon a néven hívott object file felülírja egymást.
+
+A modulok jellemzően tartalmaznak egy Makefile-t is, ami a pontos build
+instrukciókat és a függőségeket is tartalmazza.
+
+A modulok lefordítása és kimeneteik globális build mappába történő másolását
+követően a build script meghívja a Make-et a project root könyvtárából, ami a
+linkelést elvégzi. Az így kapott kimenet egy ``.elf'' file, amely mellé
+automatikusan generálódik egy ``.bin'' kiterjesztésű file, ami alkalmas a
+mikrokontrollerre történő másolásra.
+
+\medskip
+
+A build folyamat végeztével az ST-Linket csatlakoztatva a fejlesztői
+számítógéphez, a ``utils/flash.sh'' scriptet futtatva a program letölthető a
+mikrovezérlőre. 
+
+\section{FreeRTOS}
+
+A firmware-ek felhasználási területükből kifolyólag gyakran real time
+működésűek. Egy real time működésű program garanciát vállal, hogy meghatározott
+időn belül biztosan választ ad. A real time működés elérését gyakran
+nehezíti, hogy egy mikrovezérlő programja több feladatkört lát el egyidőben. Az
+ilyen típusú multitasking környezetek megsegítésére real time
+operációsrendszereket alkalmazunk.
+
+Egy real time operációsrendszer nem garantálja a szoftver real time működését,
+viszont lehetővé teszi, hogy real time működésű szoftvert fejlesszünk. Az
+operációsrendszer eközben eszközkészletet biztosít a fejlesztő számára
+a multitasking megkönnyítésére és a versenyhelyzetek, és IPC\footnote{Inter
+Process Communication} igények kezelésére. A firmware feladatainak
+számából adódóan szükségesnek láttam egy operációsrendszer használatát.
+
+Mikrokontrolleres alkalmazások tekintetében a legelterjedtebb beágyazott
+operációsrendszer a FreeRTOS, amely egy ingyenes, nyílt forráskódú RTOS, 32 bites
+mikrokontrollerekre tervezve.
+
+A FreeRTOS operációsrendszer számos hasznos eszközt biztosít:
+
+\begin{itemize}
+\item{Konfigurálható kernel, többfajta ütemezőalgoritmussal.}
+\item{Mutexek és szemaforok, szinkronizáció, és versenyhelyzetek kezelése
+  céljából.}
+\item{Opcionális dinamikus memóriakezelés, malloc, és free implementációkkal.}
+\item{Taskok, Task prioritások, Taskkezelő mechanizmusok, függvények.}
+\item{Message Queue-k, Notificationok, IPC megoldások.}
+\end{itemize}
+
+A firmware első modulja (a main modult leszámítva) a FreeRTOS modul. Ez a projekt
+forráskód szinten elérhető, és rendkívül jól dokumentált. A FreeRTOS monolitikus
+kialakítású, az operációs rendszer egybe fordul a projektel. A main függvényben a
+``vStartScheduler()'' függvényhívással indíthatjuk el az ütemezőt.
+
+\todo{Freertos link}
+
+\section{Firmware architektúra}
+
+Felhasznált driverek, taskok szerkezete, 
+
+\subsection{robot internal struct}
+
+Minek mi a feladata, mutexek, versenyhelyzetek. Fontos paraméterek
+
+\subsection{Rx Task}
+
+\subsection{Tx Task}
+
+\subsection{Motor Task}
+
+\subsection{Sensor Task}
+
+\section{Értékelés, Fejlesztési lehetőségek}
+
+
+
+
+\subsection{dolgok}
 
 \missingfigure{drawios blokkdiagram a vezérlésről}
 
