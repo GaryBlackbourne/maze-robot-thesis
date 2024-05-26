@@ -15,12 +15,13 @@ működését. A fejezet végén kitérek a továbbfejlesztési lehetőségekre 
 \section{Specifikáció}
 
 \subsection{Target platform}
+
 A robot hardverének meghajtásáért felelős mikrokontroller, a robot hardveres
 komponenseinek közvetlen vezérléséért felelős, a rajta futó firmware minősége a
 robot működése szempontjából kritikus. Ennek a programnak a feladata a robot
 hardvereinek összekapcsolása a robot szoftveres részével. Működése szoros
 kapcsolatban áll a meghajtott hardver működésével és időzítése kritikus a feladat
-szempontjából ezért real-time rendszerről beszélünk.
+szempontjából így igény van real-time működésű firmware kialakítására.
 
 Az STM32F103 mikrokontroller egy 32 bites ARM Cortex-M3 magot tartalmazó
 mirovezérlő. Modern kialakításának és gyártói támogatásnak köszönhetően C nyelven
@@ -159,6 +160,8 @@ a robot akár károkat is okozhat.
 
 A folyamatos kapcsolat igényét a firmware fejlesztése során szem előtt tartottam.
 
+\missingfigure{drawios blokkdiagram a vezérlésről}
+
 \section{Build}
 
 A szoftverfejlesztés egy fontos eleme, hogy az adott build artifact könnyen
@@ -249,7 +252,16 @@ A build folyamat végeztével az ST-Linket csatlakoztatva a fejlesztői
 számítógéphez, a ``utils/flash.sh'' scriptet futtatva a program letölthető a
 mikrovezérlőre. 
 
-\section{FreeRTOS}
+\section{Felhasznált libraryk és keretrendszerek}
+
+A firmware fejlesztéséhez több könyvtárat és eszközt használtam a projekt
+áttekinthetősége, és a fejlesztés sebessége végett. A következőkben röviden
+bemutatom a projektben használt librarykat és keretrendszereket, a projektben
+használt librarykat és keretrendszereket. Röviden bemutatom lényegi működésüket,
+indoklom szükségességüket a projekt szempontjából, és kitérek előnyeikre és
+esetleges nehézségeikre is.
+
+\subsection{FreeRTOS}
 
 A firmware-ek felhasználási területükből kifolyólag gyakran real time
 működésűek. Egy real time működésű program garanciát vállal, hogy meghatározott
@@ -283,58 +295,458 @@ A FreeRTOS operációsrendszer számos hasznos eszközt biztosít:
 A firmware első modulja (a main modult leszámítva) a FreeRTOS modul. Ez a projekt
 forráskód szinten elérhető, és rendkívül jól dokumentált. A FreeRTOS monolitikus
 kialakítású, az operációs rendszer egybe fordul a projektel. A main függvényben a
-``vStartScheduler()'' függvényhívással indíthatjuk el az ütemezőt.
+``vStartScheduler()'' függvényhívással indíthatjuk el az ütemezőt. Amely ezután
+ütemezi az előzőleg létrehozott taskokat.
+
+Az operációsrendszer funkcióihoz API hívásokon keresztül férünk hozzá, ezek vagy
+függvények vagy makrók formájában állnak rendelkezésre. A FreeRTOS beállításait
+egy FreeRTOSConfig.h nevű headerben találjuk, ehhez a filehoz referencia
+implementációt a FreeRTOS honlapján a dokumentációban találhatunk. Fejlesztés
+előtt érdemes a rendszerrel megismerkedni, és a használni kívánt rendszerhívások
+dokumentációját átolvasni, erre a FreeRTOS honlapján az API reference szolgál.
 
 \todo{Freertos link}
 
-\section{Firmware architektúra}
+\subsection{CMSIS}
 
-Felhasznált driverek, taskok szerkezete, 
+Az ARM minden gyártótól aki ARM licenszelt architektúrát implementál megköveteli,
+hogy termékük mellé készítsenek CMSIS támogatást. A CMSIS, azaz Cortex
+Microcontroller Software Interface Standard, egy szabvány amely az eszközhöz
+regiszterdefiníciókat és alapszintű működéshez tartozó függvényeket
+biztosít. Segítségével elkerülhető, hogy a fejlesztést megelőzően minden
+regiszterhez saját definíciót kelljen készítenie a fejlesztőnek, vagy a driver
+kódban mágikus konstansokat használjon regisztereléréshez.
+
+\missingfigure{cmsis fileok}
+
+A CMSIS a hardverhez legközelebbi szint, ahol olvasható kódot lehet C nyelven
+írni. Érdemes megemlíteni, hogy csak CMSIS felhasználásával és egyéb absztrakciós
+rétegek nélkülözésével rendkívül optimális kód írható. Erre a szintű
+optimalizálásra azonban csak nagyon ritkán van igény, mert az adott feladathoz
+használt mikrovezérlő rendszerint jelentős erőforrástartalékkal rendelkezik, így
+a fejlesztést könnyítendő nincs szükség mikrooptimalizálásra. A CMSIS egyik nagy ereje,
+hogy az absztrakciós library-k számára biztosít platformot. A másik fontos
+alkalmazása, hogy a kód adott szegmenseiben lokálisan CMSIS kód alkalmazásával
+biztosítja a mikrooptimalizálás lehetőségét a fejlesztő számára.
+
+\medskip
+
+A projekt keretein belül limitált mennyiségben használtam direkt CMSIS kódot,
+lévén nem merült fel komoly igény ilyen mértékű mikrooptimalizálásra. Az aktuális
+firmware fejlesztését megelőzően azonban volt kísérletem CMSIS alapú kód
+fejlesztésére, amelyet a fejlesztés sebessége miatt nem tartottam ideálisnak,
+ezért azt a projektet elvetettem, és új alapokra helyeztem a robot firmware
+kódját.
+
+\subsection{HAL}
+
+Az STMicroelectronics biztosít két absztrakciós réteget a mikrovezérlőihez, ezek
+az LL driver, valamint a HAL driver. A HAL\footnote{Hardware Abstraction Layer}
+driver egy magas szintű hardver absztrakciós könyvtár, amely minden STM32
+perifériához tartalmaz driver réteget. A HAL kód könnyebben olvasható mint egy
+CMSIS ellenben teljesítményében, és generált kód méretében számottevően lassabb.
+
+A projekt fejlesztése során a HAL drivereket és saját kiegészítő kódot használtam
+a mikrovezérlő hardvereivel történő interakcióban, ennek három fő indoka volt.
+
+\begin{itemize}
+\item{A HAL Driverek jól dokumentáltak, sok segédanyag érhető el velük
+  kapcsolatban}
+\item{Az STMicroelectronics CubeMX eszköze a HAL kód generálását támogatja.}
+\item{A HAL Driverek felahsználásával lényegesen gyorsabban tudtam működő kódot
+  létrehozni.}
+\end{itemize}
+
+Az STMicroelectronics biztosít egy fejlesztés segítő eszközt, az STMCubeMX
+kódgeneráló és lábkiosztás menedzser programot. Ez a program integrálva elérhető
+a CubeIDE fejlesztői környezetben, illetve standalone verziója is beszerezhető a
+gyártó honlapjáról. A HAL driverek mellett szóló erős érv, hogy a projekt
+inicializációja során a CubeMX által generált inicializáló kód nagyban
+megkönnyítette a projekt bootstrapelését.
+
+\medskip
+
+A HAL driverek felhasználásának akadnak azonban hátrányai is. Ipari
+alkalmazásában bizonyos feladatok megkövetelik, a HAL Driverek adott funkcióinak
+helyettesítését. Erre a fejlesztés során közvetlen példát találtam.  USART stream
+olvasása során a robot esetében számolni kellett azzal, hogy billentyűzetről
+történő olvasással ellentétben a stream karakterei között nem lesz üres idő, és
+egy karakter megérkezése után a következő karakter fogadása már folyamatban
+van. Egy ilyen stream fogadását DMA vagy interrupt rutinok segítségével lehet
+megvalósítani, ahol viszont az interrupt rutinnak megfelelően rövid idő alatt
+kell lefutnia.
+
+Pusztán HAL driverek felhasználásával ez nem lehetséges, mert az interruptos
+olvasás újboli bekapcsolása a driverben reseteli az USART perifériát, amely így a
+következő karaktert frame errorral fogja olvasni.
+
+\subsection{VL53L1 API}
+
+A VL53L1 szenzor egy teljes mikrovezérlőt magában foglaló távolságmérő eszköz,
+meghajtása jelentősen eltér az I2C interfésszel rendelkező szenzorok döntő
+többségétől. A projektbe történő integrálás során ez többször jelentett nagyobb
+megakadást is.
+
+\medskip
+
+A VL53L1 szenzor, rengeteg belső funkcióval és konfigurációs lehetőséggel
+rendelkezik, vezérlése komplex feladat. Az STMicroelectronics erre a problémára
+válaszul kiadott egy forráskód szinten elérhető driver csomagot, amely
+lefordítható tetszőleges architektúrára, és a szenzor vezérlését végzi.
+
+A projekt során a szenzorok illesztésének feladata lényegétben ennek a drivernek
+a beágyazása és lefordítása volt.  A driver több mint 30 forrásfileból áll, a
+csomagban található dokumentáció valamint rövid readme, amely a driver
+felhasználását hivatott bemutatni. A csomag implementál minden fontos vezérlő
+logikát amely a szenzor vezérléséhez szükséges, ezekhez pedig publikus API
+tartozik, amely függvények dokumentálva vannak a driverhez mellékelt API
+dokumentációban. A driverben az I2C interfész kezelésére szolgáló függvények
+nincsenek implementálva, ezek csak szimbólum szinten jelennek meg. Az integrálás
+legfontosabb része ezeknek a függvényeknek az implementálása, amely a driver
+számára lehetővé teszi az I2C interfész használatát.
+
+Ez a feladat jelentős nehézségeket okozott, mert nem találtam pontos
+dokumentációt az implementálandó függvényekről, azok helyéről, valamint a driver
+beüzemeléséről, pusztán a teljes driver használatáról.
+
+További nehézséget jelentett, hogy a driver több verzióban is megtalálható, és
+több szenzorverzióhoz készült kiadás is elérhető, a driver csomagok között pedig
+tévesen időnként Microsoft Windows operációsrendszerhez szánt teszt- és
+kliensprogram is előfordult.
+
+\medskip
+
+Alapos kutatómunkát követően végül egy STMicroelectronics fórumbejegyzésben
+találtam egy verziót, amely az ULD, azaz UltraLite Driver csomag nevet
+viselte. Ennek a driver csomagnak hatalmas előnye, hogy csak a legszükségesebb
+forráskódokat tartalmazza, és egyértelműen defíniálva van, hogy melyik függvények
+implementálását igényli.
+
+Ez a driver verzió azért jött létre, hogy a szenzorral ismerkedő fejlesztők vagy
+fejlesztőcsapatok egy könnyebben áttekinthető projekt kereteiben használhassák az
+eszközt. Ennek a kiadásnak további hatalmas előnye volt a projekt szempontjából,
+hogy egy nagyságrendel kisebb a lefordított kód mérete, amely így a mikrovezérlő
+flash memóriájában könnyedén elfér, a firmware egyéb részei mellett.
+
+Az UltraLite Driver lefordításában és implementációjában nagy segítségemre volt
+az ULD csomagban mellékelt példa projekt. A példaprojekt kódjából kiindulva
+implementáltam az I2C periféria illesztését, és sikeresen teszteltem a szenzort.
+
+\section{A firmware architektúra}
+
+Az előző szegmensben bemutattam a felhasznált rétegeket, drivereket, és
+könyvárakat. Ebben a részben bemutatom a firmware taskfelosztását, azok
+architektúráját. Bemutatom a taskok kommunikációját, valamint a robot belső
+memóriamodelljét, ami a robot paramétereinek firmware-en belüli modellje. 
 
 \subsection{robot internal struct}
 
-Minek mi a feladata, mutexek, versenyhelyzetek. Fontos paraméterek
+A firmware egy singleton adatstruktúrában tárolja azokat a paramétereket amik a
+robot aktuális állapotát jellemzik. A robot ilyenmódon történő modellezése egy
+helyen összesíti az összes paramétert így kiegészítés során elég ezt az egyetlen
+struktúrát bővíteni.
+
+A robot paraméterei alstruktúrákba rendeződnek, ez a megoldás modulok szerint
+csoportosít minden tagváltozót. A kód ezért olvashatóbb és könnyen követhető,
+valamint lehetőséget ad a hosszú és nem beszédes változónevek kikerülésére. Az
+alstruktúrák tartalmazzák a kérdéses adatokat valamilyen formában, valamint
+többségük tartalmaz mutexet, amelyet a versenyhelyzetek elkerülésére használ a
+firmware.
+
+A struktúra négy fő alstruktúrából áll:
+\begin{itemize}
+\item{distance:~A szenzorok által mért adat, négy darab előjel nélküli 16 bites
+  egész, valamint egy mutex.}
+\item{encoder:~Az enkóderpár jelenlegi, és előző iteráció beli értékei előjeles
+  16 bites egész formában.}
+\item{actual\_speed:~A robot mért sebessége ami az enkóder értékekből
+  számolódik, egy pár előjeles 16 bites egész, és egy mutex.}
+\item{target\_speed:~A robot célsebessége, ami egy pár előjeles 16 bites egész,
+  valamint egy mutex, és egy timeout 16bites előjel nélküli egész.}
+\end{itemize}
+
+A firmware élesen elkülöníti a mért és kívánt sebességeket. A struktúra tagjai
+közül három érhető el írásra és-vagy olvasásra a firmware számára specifikált
+utasítások szerint.
+
+\medskip
+
+A fent bemutatott struktúrán négy task, és egy interrupt rutin végez író- vagy
+olvasó műveleteket. Rendszerint egy feladat a működését befolyásoló paramétereket
+a struktúrából veszi, kimenetét a struktúrába írja vissza. A kövekezőkben
+bemutatom a taskokat amelyek a robot funkcionalitását adják.
 
 \subsection{Rx Task}
 
+A firmware az USART felől érkező utasításokat egy külön taskban dolgozza fel. Az
+üzenetek fogadásához azonban egy megszakításkezelő függvényt is felhasználok.
+
+Az USART streamen érkező utasítások karakterenként érkeznek meg a vezérlőbe,
+fogadásukat interrupt rutin végzi. Egy üzenet az első karakterétől (azaz az
+utolsó stop bit után számíott első start bittől) számítva a carriage-return
+karakter érkezéséíg tart. Az interrupt rutin feladata, hogy minden megérkezett
+karaktert egy ideiglenes bufferben tárol, majd az első ``\\r'' karakter
+megérkezését követően az üzenetet a parancsokat feldolgozó task számára egy
+message queue-ba rakja. 
+
+A periféria 115200 baud szimbólumsebességre lett konfigurálva, ez az interrupt
+rutin számára felső korlátot jelent a futásidőre nézve, hiszen az interrupt
+rutinnak a következő karakter megérkezése előtt be kell fejeznie futását. Az
+olvasás egy gyors művelet, ellenben a message queueban való műveletvégzés egy
+rendszerhívás ami az interrupt rutin kontextusában hosszú időt vesz igénybe.
+
+A rutin futását nehéz utasítások számából kiszámítani ezért mérést végeztem. Az
+interrupt handler első sorában egy GPIO lábat 1-es állapotba állítottam,
+visszatérés előtt közvetlenül pedig reseteltem, így oszcilloszkóppal az impulzus
+hossszából következtettem a rutin futásidejére.
+
+\todo{képlet, hogy mennyi időnk van, az interrupt végrehajtására + mennyi idő
+  alatt futott le a rutin.}
+\missingfigure{mérések az optimalizáció ki, és bekapcsolásával.}
+
+\todo{próbáltam rambol futtatni a kódot, de nem volt értelme mert az data uton
+  jött és lassabb lett.}
+
+Az érkező karakterstream feldolgozásához szükséges feltétel, hogy a karaktereket
+nagyobb sebességgel tudjuk fogadni, mint ahogyan azok megérkeznek. A szükséges
+idő limitet a következő módon határoztam meg:
+
+\medskip
+
+Az USART konfiguráció 8N1 kialakítású, 115200 baud következésképpen az időkeret:
+
+\begin{eqnarray*}
+N_{karakter} = 10 \\
+baudrate = 115200 \frac{1}{s} \\
+T_{karakter} = N_{karakter} * \frac{1}{baudrate} s > 8.68 * 10^{-5} s \\
+\end{eqnarray*}
+
+A fenti módszer segítségével meghatározható, a karakter-stream olvasásához
+használt intterupt rutin futási idejére egy felső korlát, ezt $8.68 * 10^{-5}s$
+-ban határoztam meg. A méréshez a kódot release és debug módban is lefordítottam,
+az időkorlátoknak mindkét kód megfelelt. Az optimalizáció hatása látványos, az
+ábrákon\todo{hivatkozás} jól megfigyelhető.
+
+\medskip
+
+Érdekesség: A kód gyorsabb végrehajtása érdekében kísérletet tettem a függvény
+flash memória helyett RAM-ból történő végrehajtására. Ennek a kísérletnek az
+eredménye képpen a függvénynek az flashből történő végrehajtáshoz viszonyítva
+több volt a futásideje. Ennek a jelenségnek az oka a végrehajtó architektúrájában
+keresendő, a RAM ugyanis a harward architektúrának megfelelően nem a
+kód végrehajtásra lett tervezve, így az utasítások felolvasása lassabb, még ha a
+RAM sebessége elméletben a flash sebességénél nagyobb. Komplexebb
+mikrovezérlőkben, amelyek nagyobb órajelfrekvencián működnek, ilyen esetekre egy
+kis méretű utasítás-úti RAM modul is megtalálható, ahova a nagy sebességben
+végrehajtandó kód betöltésre kerül.
+
+\medskip
+
+Fontos kiemelni, hogy a karakter stream időkorlátjának teljesítése nem elégséges
+feltétele a helyes futásnak, a rendszernek ugyanis időre van szüksége a parancsok
+értelmezéséhez és végrehajtásához is. Ennek érdekében egy message queue-t
+alkalmaztam, amely egy FreeRTOS funkció. A message queue eltárol maximum 5
+stringet, amelyeket a parancsfeldolgozó task kiolvas, és végrehajt. A queue
+feltöltését az interrupt handler rutin végzi minden fogadott ``\\r''
+karakternél. A queue hatására rövid ideig tartó message burst-öt a firmware képes
+lekezelni, és az üzenetekre érkezési sorrendben reagálni. 
+
+\medskip
+
+A parancsokat értelmező task az inicializációs fázist követően várakozik a
+message queue-ba érkzező üzenetekre, amennyiben üzenet érkezik, úgy azt
+végrehajtja. A parancsok a specifikációnak megfelelően értelmeződnek. Külön
+függvényben történik a beérkező parancs értelmezése és bírálása, hogy
+értelmezhető vagy ismeretlen utasítás. Értelmes utasítás hatására egy parancs
+struktúra generálódik. A parancs állapotáról a task visszajelzést küld, ennek
+végrehajhatósága esetén a generált parancs struktúrát egy végrehajtó függvény
+kezeli, amely az állapotot módosító függvények meghívását végzi. 
+
 \subsection{Tx Task}
+
+A fogadást végző feladattól külön választva, egy sokkal egyszerűbb kialakítású
+task kezeli az üzenetek küldését. Programszervezés szempontjából logikusabbnak
+láttam, ha a küldés és fogadás külön taskokon keresztül történik.
+
+A task felépítésében hasonlít fogadást végző társára, az elküldendő üzenetek egy
+szeparált message queue-ba érkeznek, amelyből a task érkezés sorrendjében kiveszi
+majd elküldi az üzeneteket.
+
+Az üzenetek küldését a processzoridővel való takarékoskodás jegyében DMA
+felhasználásával végeztem, így a task futásideje alacsonyan tartható. 
+
+\medskip
+
+A taskok inicializációjának sorrendjében megfigyelhető függőség, például az
+RxTask nem válaszolhat, amig a küldést végző task nem fejezte be inicializációs
+lépéseit. Ennek a befolyásolására a taskok létrehozásának sorrendje alkalmas
+megoldás. Ez a megközelítés azonban olyan megoldáshoz vezet, ami a forráskódból
+nehezen olvasható logikát implikál, a firmware esetleges átstruktúrálására a
+rendszer érzékennyé válik.
+
+Alternatív megoldásként a taskok inicializációs lépéseit kiegészítettem
+szemaforok felhasználásával, amelyek segítségével a függő taskok blokkolnak,
+ameddig függőségeik nem teljesülnek. Ennek a kialakításnak kis mértékben nagyobb
+memóriaigénye van, lévén a taskokat szinkronizáló szemaforoknak szükséges
+memóriaterület, de robosztusabb megoldás ami látványosabb is a kód olvasása
+közben.
 
 \subsection{Motor Task}
 
+A motor vezérléséért felelős tasknak két fő feladatot kell ellátnia. A motor
+sebességének vezérléséhez a PWM kitöltési tényezőt ki kell számítania, illetve a
+motorok sebességét is ki kell kalkulálnia.
+
+\subsubsection{Sebességmérés}
+
+A sebesség pontos méréséhez egy timer periféria megszakítását használtam, lévén
+az enkóder timerek perifériáinak olvasását minél pontosabban, azonos időközönként
+kell olvasni. A megszakításkezelő rutin egy egyszerű feladatot végez, minden
+meghívás alkalmával a robot paramétereit tároló globális struktúra enkóder
+mezőjét frissíti. Mindkét motorhoz tartozó enkóder timer CNT  regiszterét
+kiolvassa, majd az eltárolt előző értéknek beállítja az eltárolt jelenlegi
+értéket, ezt követően a számlálóból kiolvasott értékkel frissíti a jelenlegi
+számlálóértéket. A megszakítás kezelő értelemszerűen mindkét motor sebességét a
+fenti módon frissíti. A rutin semmilyen többletfeladatot nem végez, mert az
+időkritikus pont az új mérési eredmény pontos időben történő megszerzése, a
+számítások elvégzésére a motorvezérlő task tökéletesen alkalmas.
+
+\medskip
+
+A motorok vezérlésének első lépése a sebesség meghatározása. Ezt az imént
+bemutatott módon, az interrupt által kiolvasott enkóder értékekből végzi a
+firmware. Az interrupt rutin csak kiolvassa a sebességet, azonban a task szintén
+a rutin által írt memóriaterületet olvassa ami versenyhelyzetet eredményez. Arra
+az időre, amig a task kiolvassa a robot paraméterei közül az enkóder értékeit,
+kritikus szakaszt határoztam meg. Ennek a megközelítésnek nagy előnye, hogy nem
+igényel mutex létrehozást, ami az időzítést tovább nehezítené, ellenben a
+kritikus szakasz olyan rövid, hogy nincs lényegi ráhatással a rendszer többi
+komponensének idejére. A kritikus szakaszban töltött idő alatt beérkező
+megszakítások a szakaszból történő kilépéssel érvényre jutnak, így nem 
+maradhat ki megszakítás sem.
+
+A sebesség meghatározását ezek után egy egyszerű matematikai képlet segítségéve a
+task már könnyedén elvégzi, a kiolvasott enkóderértékek, a kerék és motor fizikai
+paraméterei és a megszakítás periódusideje alapján:
+
+\begin{eqnarray*}
+CNT = az enkóder értéke
+N_{inkremens} = 14 \\
+D_{kerék} = 21 mm \\
+C_{kerék} = D * \pi \\
+G_{áttétel} = \frac{1}{100} \\
+t = 10 ms \\
+s = \frac{C_{kerék} * CNT}{N_{inkremens} * G_{áttétel}}
+v = \frac{s}{t} \\
+\end{eqnarray*}
+
+Tehát a kerék kerülete az átmérőből adódik, az enkóder egy teljes körülfordulás
+alatt 14 lépést végez, a motor áttétele pedig egy tényleges körülfordulást 100
+motortengely fordulással ér el. A CNT értékével skálázva megkapjuk a kerék által
+megtett utat, amit a mintavétel periódusidejével leosztva megkapjuk a
+sebességet.
+
+A sebesség mértékegységének a mm/s mértéket választottam, amely a robot
+feladatához  és méretéhez viszonyítva alkalmas méretarányban reprezentálja a
+motorok sebességét.
+
+A motor, áttétel, vagy kerék cseréje esetén a paraméterek újbóli megadása
+szükséges, ezt a jelenlegi firmware verzióban egy header file-ban lehet
+konfigurálni. 
+
+\subsubsection{Sebességszabályozás}
+
+A motor sebességének szabályozására az eredeti tervekben PI, vagy PID szabályzó
+szerepelt. A firmware végleges megvalósításában a szabályzás megvalósítására már
+nem maradt idő, ellenben a kód szerkezetének kialakításában figyeltem rá, hogy a
+szabályzás könnyen integrálható legyen.
+
+A projektnek része egy szabályzó algoritmus, amelyet külső könyvtár
+részeként\todo{hivatkozás} integráltam a projektbe, a kód viszont nem került
+végrehajtásra.
+
+\todo{leírjam a szabályzás menetét, szabályzóhangolást?}
+\todo{szabályozáshoz irodalomhivatkozás, jegyzet?}
+
+A motor sebességszabályozása jelenleg a beállított sebességérték mint PWM jelet
+vezérlő jellemző kerül direkt beírásra a timer ARR\footnote{AutoReload Register}
+regiszterébe. Ez a kialakítás a vezérlő logika számára lehetővé teszi a pontos
+pwm beállítást, ellenben a hardverhez túlságosan közeli hozzáférést biztosít, ami
+nem elegáns megoldás, lévén a firmware feladatai között szerepel a hardver
+absztrahálása.
+
 \subsection{Sensor Task}
+
+Végül de nem utolsó sorban a firmware tartalmaz egy sensor vezérlő taskot. Ennek
+a tasknak a feladata a VL53L1 szenzorok inicializálása, egyedi címek kiosztása,
+valamint a szenzorok periodikus olvasása, az UltraLite driveren keresztül.
+
+\medskip
+
+A task kezdeti lépésben négy címet hoz létre, amivel a szenzorokat
+inicializálja. Az inicializáció során a szenzorokat a hozzájuk rendelt GPIO
+lábakon keresztül egyesével, egymás után bootolja be, majd egyedi címmel látja el
+őket. A már bebootolt szenzorok csak a nekik kiosztott egyedi I2C címekre fognak
+válaszolni, így a soron következő eszközt alapértelmezett gyári címén megszólítva
+az inicializáció elvégezhető. A sensorok helyes működéséről és állapotukról
+visszajelzést adnak, amit polling jellegű megoldással, driver támogatással
+vizsgál a task.
+
+Az összes szenzor bebootolását követően a task fő ciklusában egyesével
+végigolvassa a szenzorokat, amelyek, amennyiben van elérhető mérési adat, azt
+visszaküldik a vezérlő fele. A szenzorolvasó task ezt követően a robot
+paramétereinek struktúrájába, a megfelelő alstruktúrába beírja az értékeket. A
+struktúra mutexel védett, lévén a szenzorolvasó taskal párhuzamosan a
+parancsvégrehajtásért felelős task olvashatja a mért távolságértékeket. 
 
 \section{Értékelés, Fejlesztési lehetőségek}
 
+A firmware fejlesztése összetett feladat volt, a fejlesztés során sok új
+tapasztalatra tettem szert.
 
+\medskip
 
+Az elkészült verzió komponensei jó összhangban működnek egymással, az időzítési
+feladatokat is megfelelően sikerült kivitelezni. A felhasznált hardver elégséges
+volt a feladathoz, bár adott alkalmakkor a feladatot könnyítette volna egy
+nagyobb teljesítményű mikrovezérlő alkalmazása.
 
-\subsection{dolgok}
+A projekt során átható és mély ismeretekre tettem szert a fordítás, és a build
+folyamatok tekintetében, az elkészült projektstruktúrát egyéb projektek
+esetében is hasznosnak ítélem.  
 
-\missingfigure{drawios blokkdiagram a vezérlésről}
+A projekt moduláris kialakítása nagy segítség volt a fejlesztés alatt, a rendszer
+átláltható, és karbantartható maradt, a javítások és kiegészítések rendszerint
+könnyen megvalósíthatóak voltak.
 
-A mikrovezérlő firmware megírása során törekedtem a platformfüggetlen, eönnyen
-áttekinthető kód készítésére. A teljesítmény maximalizálása és a kódméret
-kordában tartása végett nem szerepel a projektben HAL\footnote{HAL: Hardware
-Abstraction Layer} library kód. Minimális generált kóddal dolgoztam, amely
-kimerül a linkerscript, valamint a startup fájlokban, ezeket a gyártó STM32CubeMX
-nevű szoftverével hoztam létre. A vezérlő felkonfigurálásához, és perifériáinak
-eléréséhez a CMSIS\footnote{CMSIS: Cortex Microcontroller Software Interface
-Standard, az ARM által megkövetelt szabványos nevezéktan és támogatás minden
-Cortex típusú magot tartalmazó mikrovezérlőre} által szolgáltatott
-regiszterdefiníciókat használtam. A firmware megírása során arően támaszkodtam az
-STM32F103 \todo{Ez egy hivatkozás az urlre}Reference Manualjára.
+\medskip
 
-Ennek a firmware verziónak a képességei kimerültek egy USART periféria
-használatában, a timer periféria pwm konfigurációjában, valamint a FreeRTOS
-beágyazott operációsrendszer elindításában.
+A projekt ezek ellenére számos hiányosságot, és fejlesztési lehetőséget is
+tartalmaz. 
 
-Ez a megközelítés nagyban segített a mikrovezérlő belső működésének pontos
-megértésében, ellenben a diplomatervi munka során a fejlesztés gyorsítása
-érdekében áttértem a HAL driverek használatára is, erről a későbbi fejezetekben
-lesz szó.
+A robot nagy hiányossága, hogy a motorok szabályozása nincs implementálva. A
+szabályzás implementálásához a motorokon rendszeridentifikációt kell végezni,
+majd az így kapott rendszerhez PID szabályzót hangolni. A paraméterek kiszámolása
+után a firmware részét képező szabályzót a mért értékekkel kell inicializálni, és
+a motorvezérlésben a szabályzó iterációs függvényét meg kell hívni.
 
-Az önálló laboratórium alatt írt firmware végül nem lett közvetlenül hasznomra,
-így teljes egészében cserélnem kellett.
+\medskip
 
-Az önálló laboratóriumi munkám ennyit segített a kész produktumhoz, a következő
-feladatokat már a diplomatervezés keretein belül hajtottam végre.
+A robot kommunikációján szintén van fejlesztési lehetőség. A kommunikáció jelen
+állapotában nehezen tolerálja a hibákat, egy hibatűrőbb kommunikációs protokoll
+kifejlesztésével, amely hiba esetén esetleg újra építi a kapcsolatot,
+robosztusabb megoldás lenne elérhető. 
+
+\medskip
+
+A firmware két kisebb fejlesztési lehetőséget tartalmaz, amelyeket érdemes
+megemlíteni.
+
+Alacsony sebességeken a sebességmérés nem ad pontos eredményt, a
+sebesség csökkenésével alternatív megoldásra való áttérés esetén ez javítható.
+
+A robot sebességét a hardver konfiguráció befolyásolja, azonban a firmwareben a
+konfiguráció csak újrafordítás során lehetséges. A robot paramétereit tároló
+struktúra elemeiként defíniált hardveres konfigurációval ez a limitáció
+megszűnhet, amely konfigurációt akár a linuxos rendszerben is tárolni lehetne.
+

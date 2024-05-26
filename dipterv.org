@@ -28,6 +28,35 @@ tervezési shitek, csak az áramkörökhöz kapcsolódó dolgok.
 ** TODO Chapter 1 firmware és build
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
 - A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+** TODO Linux
+*** Bevezető
+miért kell nekünk linux, milyen problémát old meg?
+milyen linuxra van szükségünk? mi a nehéz a feladatban,
+miért nehéz összerakni? milyen lehetőségeink vannak?
+*** Linux
+Rövid bemutatás, koncepciók ismertetése stb. Erősen salvagable az eddigi szöveg, ami lényegében szinte csak linux cucc
+*** Yocto
+a Build nehézségei, komplex rendszer, megoldás: yocto project
+Rövid buildroot összehasonlítás
+build folyamat összefoglalása, általánosan package-re nézve: fetch unpack patch configure compile install package
+működés bemutatása:
+- receptek
+- layerek
+- append fileok
+- config fileok (local, bbconfig stb)
+- branchek és verziók
+
+*** saját build és konfiguráció
+specifikációk, mit kell tudnia a rendszernek, mire szeretnénk hogyan használni, mit pakoljunk bele hogy ezt elérjük
+  
+saját feladatban az implementációk:
+networking, patchelés, patchek készítése, bbappend írása.
+kísérlet a hotspottal, jó, de nem tökéletes.  instabil kapcsolat: ->  szar. legyen felcsatlakozva wifire
+
+meta ros layer és lefordítása
+ros integrálása a buildbe.
+
+
 ** TODO Chapter 2 ros2
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
 - A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
@@ -51,4 +80,4 @@ Ide lehet kéne még a ros2 action amivel haladni tudunk.
 ** Dokumentálja és automatizálja a robot szoftverének előállítását.
 Le tudjuk vajon fordítani a firmware-t?
 * Itt tartok
-[[file:text/chapters/chapter-2-overview.tex::63][link]]
+[[file:text/chapters/chapter-3-overview.tex::552][link]]
