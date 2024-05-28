@@ -345,20 +345,503 @@ forráskódjához szabad hozzáférésünk van, módosítható és fordítható.
 azonban összetett és bonyolult feladat, amelynek automatizálására több
 keretrendszer is épült. Ezek a keretrendszerek általában megkönnyítik a fordítás
 folyamatát, konfigurációs interfészt biztosítanak a kernelhez, illetve adnak
-olyan eszközöket, amelyek segítségével a végső image könnyedén elkészíthető.
+olyan eszközöket, amelyek segítségével a végső image könnyedén elkészíthető. Az
+iparban két fontos rendszer terjedt el: a Buildroot, valamint a Yocto Project.
 
-Két fontos rendszer terjedt el az iparban, a Buildroot, valamint a Yocto
-Project. A két build rendszer között a legnagyobb különbség a fordításra használt
-fő eszközben rejlik. A buildroot egy script és Makefile gyűjtemény amely segít a
-forráskód lefordításában, valamint a root fájrendszer generálásában. Mindkét
-rendszer keresztfordítást használ, hogy a célhardveren futó binárisokat állítson
-elő.
+\medskip
+
+A buildroot egy Makefile és patch gyűjtemény amely segít a forráskód
+lefordításában, valamint a root fájrendszer generálásában. A konfigurációban
+többek között a menuconfig, és kconfig TUI\footnote{Terminal User Interface}
+programok biztosítanak felhasználóbarát felületet. 
+
+Általános vélekedés szerint a Buildroot könnyebben tanulható, egyszerűbb
+konstrukció. A build rendszer Makefile alapú, ami széles körben ismert a
+fejlesztői körökben, így egyszerű módosítások elvégzése könnyebb feladat lehet. A
+buildroothoz azonban sokkal kevesebb cég biztosít supportot, a projektet
+jellemzően a közösség tartja karban.
+
+\medskip
+
+A Yocto Project egy umbrella project, amely az openembedded build systemet, és
+hozzá tartozó általános receptcsomagokat foglalja össze, és biztosít egy
+referencia disztribúciót, amelyet poky-nak nevez. A projekt konfigurációja
+scripteken keresztül történik, amely szkriptek használnak python és shellscript
+részleteket, valamint az openembedded build engine, a bitbake saját script
+szintaxisában megírt scripteket.
+
+A projekt első számú nagy előnye a széleskörű támogatottság. A Buildroottal
+ellentétben a legtöbb gyártó biztosít Yocto támogatást saját termékeihez. A
+projektet a Linux Foundation is támogatja, ezek fényében a projekt aktívan és
+dinamikusan fejlődik. 
+
+A rendszer sajátossága a buldscriptek, a yocto terminológia szerint receptek,
+rétegekbe szervezése, amely így átlátható rendszerbe foglalja ezeket. A
+kialakítás rendkívül flexibillisé teszi a konfigurációt.
+
+A build során a projekt shared state chache-t használ, amelynek köszönhetően a
+build folyamat az első build alkalmával lassú, (lassabb mint a buildroot)
+ellenben a további buildek, esetleges konfigurációk módosítása esetén már sokkal
+gyorsabban futnak le, így a hibajavítások, és új funkciók implementálása által
+igényelt idő sokkal kevesebb, mert nem kell minden változtatás után az egész
+fordítást újra elvégezni.  
+
+A projekt hátránya, hogy a kialakításából adódóan sok időt vesz igénybe amíg a
+fejlesztő megérti és átlátja a build folyamatot. A konfigurációhoz használt
+szintaxis szintén új megtanulandó elem, így a projekt tanulási görbéje
+kivételesen meredeknek mondható.
+
+\medskip
 
 A projekt során nagyobb komplexitása ellenére a yocto projectet választottam,
-amely szabadabb fejlesztést és személyre szabhatóságot tesz lehetővé. További
-nagy előnye hogy képes felhasználni az előzőm fordítás kimenetét, így hiba, vagy
-kisebb javítás után nem kell a teljes folyamatot előröl kezdeni. A következő
-fejezetben részletesen foglalkozom vele.
+amely szabadabb fejlesztést és személyre szabhatóságot tesz lehetővé.
+
+\subsection{A Yocto Project felépítése és működése}
+
+A Yocto project komplex és robosztus build rendszer, működésének megértése
+kritikus a hatékony munkavégzéshez. A projekt egyik nagy előnye az átfogó és
+részletes dokumentáció, amelyet a Yocto honlapján\todo{hivatkozás és source}
+találunk. A dokumentáció részletes utasításokat ad számunkra a kezdeti
+lépésekhez, amelyet követve az első teszt build könnyen megvalósítható.
+
+A project saját terminológiát használ aminek megértése a működés megértését
+nagyban segíti. A következő szegmentsben bemutatom a projekt felépítését, és
+leggyakrabban használt kifejezéseinek jelentését.
+
+\subsubsection{Bitbake}
+
+A Yocto project nem más, mint egy umbrella project ami több kisebb projektet fog
+össze, és egy egészként bocsátja rendelkezésre. A legfontosabb komponense az
+openembedded build system, ami egy komplex projekt build folyamatok
+automatizálásához. Az openembedded projekt központjában a Bitbake program áll,
+ami egy úgynevezett ``task execution engine''.
+
+\medskip
+
+A Bitbake saját script nyelvel rendelkezik, amely szintaxisában hasonlít a
+bashscript és python nyelvekhez. A hasonlóság odáig terjed, hogy a scriptek
+magjában teljes python vagy bash nyelvű függvények találhatóak. A Bitbake
+scriptekre használt általános kifejezés a recept, a receptek pedig általánosan
+``.bb'' kiterjesztéssel rendelkeznek.
+
+A script legfontosabb feladata különböző taskok létrehozása, és a működésüket
+befolyásoló változók értékének beállítása. A Bitbake ezen scriptekből határozza
+meg az elvégzendő feladatok listáját, valamint a feladatok egymás közötti
+függőségeit. 
+
+\subsubsection{Recept}
+
+A Bitbake számára végrehajtható script, a recept, amely segítségével csomagok
+előállítását végezzük. Az openembedded rendszerben minden csomaghoz és
+előállítandó komponenshez tartozik egy recept, amely az előállítás pontos
+lépéseit tartalmazza. A meghatározott lépések szigorú sorrendben egymás után
+hajtódnak végre:
+
+\begin{itemize}
+\item{do\_fetch}
+\item{do\_unpack}
+\item{do\_patch}
+\item{do\_configure}
+\item{do\_compile}
+\item{do\_install}
+\item{do\_package}
+\end{itemize}
+
+A fenti lista nem teljes, csak átfogó képet hivatott adni egy átlagos csomag
+lefordításának lépéseiről. Első lépésben a forráskód letöltése történik, amelyen
+kicsomagolás után patcheket alkalmazunk. Ezután a build konfigurációja,
+következik, amit a forráskód lefordítása követ. A kész build artifacteket ezután
+egy célkönyvtárba telepítjük, és csomagot készítünk belőlük. 
+
+A Yocto renszerének nagy előnye, hogy a receptek módosíthatóak. A működés során
+használt változók kiegészíthetőek, vagy éppen teljesen megváltoztathatóak, de a
+végrehajtandó feladatokhoz is be tudunk szúrni kiegészítéseket. A
+kiegészítésekre úgynevezett ``.bbappend'' fileok szolgálnak, amelyek a velük
+azonos nevű recepthez tartalmaznak kiegészítéseket.
+
+A receptek dinamikus módosíthatósága és kiegészíthetősége a Yocto Projectet
+rendkívül flexibilissé teszi.
+
+\medskip
+
+A receptekhez tartozó másik fontos koncepció a gyakran használt kód külön fileban
+tárolása, erre a célra a ``.bbclass'' fileok szolgálnak. A bbclass fileok olyan
+scripteket, és kódokat tartalmaznak, amelyeket több receptben is újra kívánunk
+használni, ezzel elkerülhetjük, hogy a gyakran ismételt kód másolásával, vagy
+újra megírásával időt pazaroljunk.
+
+\subsubsection{Layer}
+
+A receptek csoportosítására a Yocto Project terminológiája szerint ``layer''-eket
+használunk. A layerek nem mások, mint jól szervezett mapparendszerbe gyűjtött
+receptek, amelyek tipikusan egy jól körülhatárolható funkcionalitást
+biztosítanak. A build konfigurációban lehetőségünk van megadni a layereket,
+amelyekből recepteket használni szeretnénk, valamint ezekhez prioritások
+társításával sorrendet meghatározni.
+
+A gyakorlatban a layerek git repositoryk, amelyeket a projekt root könyvtárába
+klónozva érhetünk el. Tartalmaznak egy layer konfigurációs állományt, amelyben a
+layerhez kapcsolódó információk és beállítások érhetőek el. A konfiguráción kívül
+a layerekben mappákba szervezve megtalálhatunk konfigurációs fileokat,
+recepteket, bbappend fileokat, és patcheket is. Egy réteget tartalmazó mappát
+hagyományosan a ``meta-'' kifejezéssel kezdjük, és a biztosított funkcióval
+zárjuk, például: ``meta-python'', a réteg amely python funkcionalitást biztosító
+recepteket tárol. 
+
+A layerek egymásra rétegződése elegáns megoldás, amely jól szervezett elosztott
+munkavégzést tesz lehetővé. A gyakorlatban egy projekt általában egy layerben
+határozza meg a saját receptjeit, amely így könnyen verziókövethető is. A
+layerben lehetőségünk van függőségek defíniálására, ezzel meghatározva a pontos
+szükségleteket a saját buildkonfigurációnk számára. 
+
+\subsubsection{Verziók és kiadások}
+
+A Yocto Project egy dinamikusan fejlődő rendszer, amely mind saját működésében,
+mind a biztosított package-k verziójában aktívan fejlődik. A dinamikus fejlődés
+mellett a projektben kihívást jelent a függőségi gráf betartása a packagek
+között, ezért a fejlődést rendszerint verziók kiadásával rendelik
+mérföldkövekhez.
+
+A kiadott verziók lehetnek LTS\footnote{Long Term Release} vagy standard verziók,
+amelyek a verzió támogatásának idejét határozzák meg. Minden layer karbantartó
+külön branchen kezeli saját layerének azon verzióját, amely egy támogatott Yocto
+release-hez tartozik, így a layerek klónozása után a használni kívánt Yocto
+verziót a ``git checkout'' parancsal állíthatjuk be. A layer verziójának a hibák
+elkerülésének érdekében meg kell egyezniük a használt Yocto verziójával.
+
+\subsubsection{Poky}
+
+A Yocto Project mint rendszer egy referenciadisztribúciót biztosít számunkra. Ez
+a disztribúció nem keverendő a Linux rendszerek disztribúcióival, tisztán csak a
+build rendszer csomagjáról van szó.
+
+A biztosított referenciadisztribúció neve Poky, amely tartalmaz egy openembedded
+rendszert, és kiegészítő layereket, amelyek a legtöbb alapvető és gyakran
+használt funkcionalitást biztosítják.
+
+\subsubsection{Build konfigurációk}
+
+A build konfigurációt több összetevő határozza meg. A projekt gyökérkönyvtárában
+találunk egy ``oe-init-build-env'' nevű scriptet, amelyet
+source-olva\footnote{Fontos hogy source-oljuk a scriptet, mert a buildfolyamathoz
+használt környezetet ez a script állítja be shellünkben, ha futtatni próbáljuk
+úgy hibát is jelez!} a projekthez szükséges környezet beállthatjuk, valamint
+létrehozhatjuk a buildfolyamatok által használt mappát, ennek alapértelmezett
+neve a ``build''.
+
+A mappában találunk egy ``conf'' mappát, amelyben a buildhez használt lokális
+konfigurációk kapnak helyet különböző fileokban. Ilyen például local.conf file
+amelyben például a célarchitektúrát határozhatjuk meg, amelyre a keresztfordítást
+végezzük. A mappában találjuk továbbá a bblayers.conf file-t amelyben a
+felhasznált layereket tudjuk specifikálni, amelyben a Bitbake a recepteket
+keresheti. 
+
+\medskip
+
+A kívánt eredmény, amelyet végsősoron elő kívánunk állítani, egy image file,
+amelyen a teljes rendszer megtalálható. Ezt az image-et adathordozóra másolva,
+egy bootolható médiát kapunk, amelyel a céleszköz megkezdheti működését. 
+
+Egy image előállítását egyszerre befolyásolja a lokális konfiguráció, valamint a
+receptek által meghatározott build konfiguráció, ezek összességében eredményezik
+a rendszer kimenetét. 
+
+\subsubsection{Kezelés}
+
+A Yocto több eszközt is biztosít számunkra, amelyel a fejlesztés során felmerülő
+feladatokat meg tudjuk oldani. Ezek a feladatok rendszerint kézzel is könnyedén
+elvégezhetők, de a rendszer által biztosított parancsokkal általánosságában
+könnyen tudjuk a projektet konfigurálni.
+
+\medskip
+
+A buildfolyamatot a Bitbake indításával kezdhetjük el. A program kapcsolók nélkül
+indítva átvesz egy argumentumot, amely a végrehajtandó recept, majd a recept
+alapján végrehajtja a szükséges feladatokat. A receptet a bitbake kiterjesztés
+nélkül várja! A Bitbake-et egy recept végrehajtásához a következő módon
+indíthatjuk el:
+
+``\$ bitbake <recept>''
+
+A Bitbake a parancs hatására kezdeti lépésben beolvassa a bblayers.conf és
+local.conf fileokat, majd az ezekben meghatározott módon beolvassa az
+recepteket. A cél receptből kiindulva, a receptek tartalmazta feladatokból
+függőségi fát épít, majd nekilát a feladatok végrehajtásának.
+
+A build tesztelésére, esetlges konfigurációkra több kapcsolóval befolyásolhatjuk,
+amelyek a bitbake felhasználása során nagy segítséget jelenthetnek, a teljesség
+igénye nélkül néhány:
+
+\begin{itemize}
+\item{-e:~A build során alkalmazott változókat listázza}
+\item{-k:~A build esetleges failelése esetén nem áll le, hanem minden feladatot
+  végrehajt, amely nem függ a hibába futó feladattól}
+\item{-c:~A build során csak egy meghatározott feladatot hajt végre}
+\end{itemize}
+
+\section{Saját Linux image készítése}
+
+A robot következő modulja a beágyazott Linux image, ennek elkészítéséhez a Yocto
+Projectet használtam. Ebben a szegmensben a fejlesztés menetét fogom bemutatni.
+
+\subsection{Specifikáció}
+
+A Linux rendszer elkészítéséhez első lépésben specifikáltam az igényeket,
+amelyeket ki kellett elégítenie az image-nek. Az igények felmérését követően
+lehetséges megoldásokat kerestem, amelyeket kipróbáltam és teszteltem. A Linux
+platform a robot esetében host platformként viselkedik, amely a ROS keretrendszer
+futtatását végzi. A rendszernek azonban meg kell felelnie egyéb igényeknek is.
+
+\subsubsection{Kapcsolat}
+
+A rendszer vezeték nélkül vezérelhető legyen. Egy autonóm alkalmazásban a
+legpraktikusabb megközelítés, ha a kommunikáció vezeték nélkül történik, a
+robotban használt Raspberry Pi ehhez hardveres támogatást is biztosít. A
+legideálisabb helyzetben a kapcsolat a fejlesztőeszközön és a roboton kívül nem
+igényel egyéb támogatást, így ezt opcionális célnak tűztem ki.
+
+\subsubsection{Soros port}
+
+A rendszernek kommunikálnia kell tudni a vezérlőpanellel soros porton keresztül.
+A kommunikációs csatorna kritikus, hiszen a ROS számára feltétlen szükséges, hogy
+a hardverhez hozzáférjen, az ehhez defíniált protokol pedi USART kommunikációt
+igényel.
+
+\subsubsection{ROS}
+
+A rendszernek futtatnia kell a ROS2 Humble keretrendszert. A ROS2 rendszer
+futtatása a legfontosabb feladat amely a linux rendszerre hárul. A
+keretrendszeren kívül a saját ROS projektek futtatása szintén feladat, amelyek a
+robot hardvert integrálják a ROS2 rendszerbe, valamint a magas szintű
+funkcionalitást implementálják. A node-ok automatikus indítását nem tűztem ki
+feladatul, mert úgy számoltam, hogy a rendszer idő hiányában nem fogja elérni a
+teljes autonóm mozgást, így a ROS node-ok automatikus indítása kevésbé fontos
+kritérium, valamint a parancssorból történő indítás implementációja után az
+automatikus indítás egy triviális feladattá egyszerűsödik.
+
+\subsubsection{Egyéb}
+
+A könnyű feladatvégzés és tesztelés érdekében a rendszerbe egyéb packageket
+telepítettem, mint szövegszerkesztő, file manager. Ezek a rendszernek nem
+közvetlen részei, de meglétükkel a tesztelés és a rendszer használata sokkal
+ergonómikusabb. 
+
+\subsubsection{Build}
+
+A buildel szembeni egyedüli igény, hogy minden fentebb specifikált funkciót és
+konfigurációt generáljon bele az elkészített rendszer rootfilesystem-jébe. Így a
+legkevesebb utómunka szükséges a deploymenthez, és a legjobban használató ki a
+Yocto Project.
+
+\subsection{Projekt layer: meta-rpirobot}
+
+A feladat végrehajtását egy saját layer defíniálásával kezdtem, amelybe az image
+generálásához szükséges receptek és fileok kerülnek. A layer alkalmas a munkám
+verziókövetésére, valamint későbbi reprodukálására is. A fileok rendszerezése az
+általános konvenciók szerinti felépítést követi. A layer tartalmaz egy conf
+mappát, amelyben a layer.conf a layer beállításait tartalmazza.
+
+A build szempontjából a legcélravezetőbbnek tartottam a Yocto Project legújabb
+LTS kiadását, a kirkstone verzót használni. Ebből kifolyólag a saját layerem is a
+kirkstone verzióval kompatibilis.
+
+\subsubsection{Layerkonfiguráció}
+
+A konfigurációban a layer tulajdonságait állíthatjuk be. Konfigurálható a
+szükséges layerek listája, amik a layer függőségeiként szolgálnak, a kompatibilis
+Yocto kiadás, valamint a receptek elrendezésének módja, ami alapján a bitbake
+megtalálja a recepteket.
+
+A layer függőségeit az alapvető layereken felül a meta-ros, meta-raspberrypi
+és a meta-ros2-humble rétegekkel egészítettem ki.
+
+A receptek és fileok megtalálásához konvenció szerinti alapértelmezett
+beállításokat használtam. Ezek értelmében a recepteket a generált package nevével
+ellátott mappa tartalmazza, amely mappákat általánosabb kategóriájuk szerint
+recept-könyvtárakban tároljuk, az alábbi módon:
+
+\dirtree{%
+  .1 meta-rpirobot.
+  .2 conf.
+  .3 layer.conf.
+  .2 LICENSE.MIT.
+  .2 recipes-core.
+  .3 busybox.
+  .4 busybox.
+  .5 udhcpd.conf.
+  .4 busybox\_1.35.0.bbappend.
+  .3 hostapd.
+  .4 hostapd\_2.10.bbappend.
+  .4 patch.
+  .5 hostapd.conf.patch.
+  .3 images.
+  .4 rpirobot-core-image.bb.
+  .3 init-ifupdown.
+  .4 patch.
+  .5 init-ifupdown\_1.0.bbappend.
+  .3 ros-components.
+  .4 files.
+  .5 LICENSE.
+  .4 ros-rpirobot-driver\_0.1.bb.
+  .4 ros-rpirobot-interfaces\_0.1.bb.
+  .3 wpa-supplicant.
+  .4 wpa-supplicant.
+  .5 wpa\_supplicant.conf-sane.patch.
+}
+
+Az ábrán látható, hogy a recipes-core mappában találhatóak a szükséges package-k
+mappái, amelyeken belül a receptek és appendfileok találhatóak. 
+
+\subsection{Az első boot}
+
+A kész image előállítását egy Raspberry Pi-n bootolni képes image előállításával
+kezdtem. A teljes image generálása komplex feladat, ennek megkönnyítésére a Yocto
+Projectben egy core-image-minimal recept is szerepel, amely leírása alapján egy
+minimális Linux rendszer amely képes bootolni a target platformon. A projektet
+tehát ennek az image-nek a generálásával kezdtem. A buildhez a
+build/conf/bblayers.conf fileban ki kellett egészíteni a layerlistát, a Raspberry
+Pi támogatását biztosító meta-raspberrypi layerrel. Ezt követően a
+build/conf/local.conf fileban a machine változónak a ``raspberrypi4\-64'' értéket
+adva beállítottam a target platformot. Ezek után a core-image-minimal targetet a
+Bitbake meghívásával előállítottam, majd bmaptools segítségével SD kártyára
+másoltam az elkészült imaget. A bootolás tesztelvén a Raspberry Pi-hez egy
+USB-USART átalalkító áramkörrek kapcsolódtam, majd megkíséreltem a bootolást,
+amely sikeres volt.
+
+\subsection{Image}
+
+Az image generálást szintén receptek végzik, így a meta-rpirobot layerben a
+recipes-core/images mappában létrehoztam egy receptet, ahol az image
+elkészítéséhez szükséges feladatokat és konfigurációkat állíthatom be, ennek a
+receptnek az rpirobot-core-image nevet adtam.
+
+A Bitbake támogatja a receptek további kiegészítését, ezért a legkézenfekvőbb
+megoldás, a core-image-minimal ``öröklése'' volt, ezt az inherit kulcsszóval
+lehet megtenni.
+
+A konfiguráció teszteléséhez licensz és summary beállításokat végeztem, majd az
+image-et az említett hasznos eszközöket tartalmazó packagekkel egészítettem
+ki. Ezek előnye hogy a Yocto alapértelmezett layereiben megtalálható a receptjük,
+telepítésük pedig egyszerű, és minimális a hibalehetőség. Ezért a build
+tesztelésére, és később az image-en való munka során is hasznos csomagok.
+
+A telepített csomagok a vim, mc, bash, tmux, és a screen csomagok voltak. Egy
+sikeres build lefuttatása után tapasztaltam, hogy az image az elvárt módon
+tartalmazza ezeket a programokat. 
+
+\medskip
+
+A receptben az image kiegészítéséhez létezik egy alternatív mód, amely néhány
+funkció esetében nagyban megkönnyíti a konfigurálást. Ez a funkció az
+``image\_feature'' amely lényegében teljes csomag- és konfigurációhalmazt jelent,
+amely az image számára valamilyen teljes feature-t biztosít. A funkció az
+``IMAGE\_FEATURES'' változóhoz való hozzáfűzéssel érhető el, például a következő
+képpen:
+
+\code{
+  IMAGE\_FEATURES += \"package-management\"\\
+}
+
+A fenti kóddal package managert, és a package managementhez szükséges egyéb
+eszközöket telepítettem az image-re.
+
+\subsection{A kapcsolat}
+
+Az image fontos feladata, hogy vezeték nélküli kapcsolaton keresztül legyen
+elérhető, ennek legkézenfekvőbb megoldását a beépített WiFi modul
+felhasználásában láttam.
+
+A kapcsolat kiépítésére WiFin keresztül két módon van lehetőség. Az egyik mód a
+WiFi modult access point módban konfigurálni, amelyben a Raspberry Pi saját
+hálózatot nyit, amelyhez bármilyen WiFi-képes eszközzel csatlakzhatunk. Az
+autentikációra egy alapértelmezett és egyszerű jelszó generálható, amelyet az
+első bejelentkezés után a felhasználó szabadon megváltoztathat. Ez a kialakítás
+nagyon előnyös, mert nem igényel semmilyen külső eszközt, csak a fejlesztői
+számítógépet valamint a robotot.
+
+Alternatív megvalósításként a robot csatlakozhat egy előre bekonfigurált WiFi
+hálózatra, amelyen innentől kezdve elérhető. Ez a megvalósítás sokkal egyszerűbb,
+mint az access point kiépítése, ellenben a robot vezérléséhez valamilyen külső
+eszköz és infrastruktúra megléte szükségeltetik, amelyet ráadásul a robot
+konfigurációjának megfelelően kell beállítani. A megoldás további hátránya, hogy
+a robotot helyhez köti, bár ez az állapot a robot feladatköréből adódóan nem
+biztos, hogy tényleg problémát jelent, valamint könnyen orvosolható is, ha a
+helyzet azt kívánja. 
+
+\medskip
+
+Első nekifutásra az access point konfigurációval próbálkoztam, a fent ismertetett
+előnyei miatt. A konfigurációhoz hozzáadtam a hostapd csomagot, valamint a
+busybox-udhcpd csomagját. A hostapd az access point létrehozásáért és
+üzemeltetéséért felelős szoftver, a busybox-udhcpd pedig a busybox csomag által
+szolgáltatott lightweight dhcp szerver, amely csatlakozó eszközök
+számára szolgáltat ipcím kiosztást. A csomagok telepítése mellett appendfileokat
+hoztam létre, amelyek a konfigurációt módosították a kívánt módon.
+
+Több sikertelen tesztelési fázis, és hibakeresés után sikerült olyan
+konfigurációt beállítanom, amelyben a robot saját hálózatát felállította, és a
+csatlakozó eszközök számára ipcímet is szolgáltatott.
+
+A kialakítás sajnálatos
+módon rendkívül instabil volt, gyakran fordult elő, hogy a kapcsolat rövid időre
+megszakadt, amely használhatatlanná tette a megoldást. A hibát minden
+valószínűség szerint a WiFi chip teljesítményének, vagy az alkalmazott on-board
+antenna kialakításának nem megfelelősége okozta. A probléma javítására külön WiFi
+eszköz beépítése egy praktikus megoldás, ilyen külső eszköz amelyet USB-n
+keresztül lehet csatlakoztatni, könnyen be is szerezhető. A fejlesztési idő miatt
+azonban tovább kellett lépnem és alternatív konfigurációt kellett fejlesztenem.
+
+\medskip
+
+A végleges megoldásban a robot egy előre meglévő hálózathoz automatikusan
+csatlakozik, ameyet a wpa-supplicant csomag konfigurációjával értem el. A külső
+hálózatot egy telefonon indított hotspot hálózat biztosította. A hátrányokkal
+együtt ez a kialakítás már sokkal stabilabban működött, így lehetőség volt tovább
+lépni.
+
+\medskip
+
+\subsection{A layer index}
+
+A felhasznált csomagok megtalálásában a leghasznosabb eszköz az
+openembedded layer index volt. Ez az openembedded által jóváhagyott rétegeket
+gyűjtő adatbázis, amelyhez egy webes frontend is tartozik. A weboldalon alkalmunk
+nyílik layereket, és recepteket keresni, amelyekről az adatbázisból hasznos
+információkat tudhatunk meg.
+
+A hálózati konfiguráció, valamint a telepített csomagok a meta-openembedded
+layerben a meta-networking és a meta-oe alrétegekben voltak megtalálhatóak,
+amelyeket ezért a layerlistához kellett adnom.
+
+\subsection{A ROS keretrendszer}
+
+A ROS2 keretrendszer integrálására a projekt hivatalos layerét használtam. A
+layer a projekt fejlesztésével párhuzamosan fejlődött, így több frissítésre is
+volt szükség mire a build sikeresen lezajlott.
+
+A meta-ros layer az openembedded kialakítás szerint egy repositoryban több layert
+tárol, így a meta-ros klónozása után a bblayers.conf filet több layerrel is
+kiegészítettem, ezek a meta-ros2, meta-ros2-humble, meta-ros-common. A ROS
+erőteljesen épít a python nyelvre, így függőségeinek kielégítéséhez a
+meta-openembedded layer, meta-python sublayerét is felhasználtam.
+
+A layerek kiegészítése után, a ROS telepítési útmutatóját követve az image
+receptben meghatároztam a használni kívánt ROS disztribúciót, inicializáltam az
+útmutató szerint a buildhez szükséges változókat, majd az ``IMAGE\_INSTALL''
+változót bővítettem a ros-core, ros-base csomagokkal, valamint néhány example
+kategóriájú csomaggal, amelyek a disztribúció tesztelésében nyújtottak
+segítséget.
+
+A build végül sikeresen lefutott, és az image flashelése után a Raspberry Pi-n
+képes voltam a ROS beépített példamoduljait futtatni. 
+
+\subsection{A saját ROS packagek}
+
+A ROS projekt önmagában egy keretrendszer, a robot működéséhez a buildnek
+automatikusan tartalmaznia kell a robothoz készült ROS packageket is. Ezeknek a
+packageknek a fordításához a meta-ros layer többi receptjét vettem alapul,
+valamint a ROS2 fórumokon más olyan projekteket, amelyek saját recept
+lefordításán alapultak.\todo{source?}
 
 
-
+\subsection{Fejlesztési lehetőségek}
