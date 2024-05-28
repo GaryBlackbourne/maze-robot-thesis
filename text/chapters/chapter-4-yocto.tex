@@ -738,9 +738,7 @@ amely az image számára valamilyen teljes feature-t biztosít. A funkció az
 ``IMAGE\_FEATURES'' változóhoz való hozzáfűzéssel érhető el, például a következő
 képpen:
 
-\code{
-  IMAGE\_FEATURES += \"package-management\"\\
-}
+  $ IMAGE\_FEATURES += \"package-management\" $
 
 A fenti kóddal package managert, és a package managementhez szükséges egyéb
 eszközöket telepítettem az image-re.
@@ -813,6 +811,46 @@ A hálózati konfiguráció, valamint a telepített csomagok a meta-openembedded
 layerben a meta-networking és a meta-oe alrétegekben voltak megtalálhatóak,
 amelyeket ezért a layerlistához kellett adnom.
 
+\subsection{Az USART port}
+
+A soros kommunikáció a robottal kritikus feladat volt a ROS komponensek
+telepítése és tesztelése előtt, lévén a saját komponensek a robot többi részével
+UART interfészen keresztül tartják a kapcsolatot. Az USART port konfigurálását a
+Raspberry Pi esetében azonban a bootfile-ok módosítását igényli.
+
+A Raspberry Pi pinsorán kivezetet USART-on megjelenik egy konzol, amelyre
+csatlakozva lehetőségünk nyílik az eszköz vezérlésére, egy teletype-on
+keresztül. Ez a megoldás hasznos, ugyanis az eszközhöz kapcsolódhatunk akkor is
+ha a hálózat meghibásodik, vagy egyéb okokból nem elérhető, ugyanakkor ennek a
+portnak a felhasználásával könnyen csatlakoztatható a robot vezérlőpanelje is.
+A teletypeok menedzseléséért felelős service Linux rendszer alatt a getty, ennek
+konfigurációját azonban script állítja elő a build során, így praktikusabbnak
+láttam a konfigurációt létrehozó scriptet befolyásoló változók konfigurálását a
+végső script patchelésénél.
+
+Az usart porton két jelenség történik, amelyet a port használatához el kell
+kerülni. Az első,hogy a bootolás során a kernel üzenetei ezen a porton keresztül
+jelennek meg, a másik, hogy a bootolást követően ezen a porton egy shellhez
+csatlakoztatott teletype jelenik meg, amely ellehetetleníti a kommunikációt.
+
+A fenti működéseket kikapcsolni a local.conf konfigurációba írt három sorral
+lehet:
+
+\code{
+ENABLE\_UART = \"1\" \\
+SERIAL\_CONSOLES = \"\" \\
+CMDLINE\_SERIAL = \"\" \\
+}
+
+Az első sor a build során inicializálja az USART-ot amelyen ezek után
+kommunikálni lehet, majd a második és harmadik sor kikapcsolja az usarton
+megjelenő parancssori interfészt, és kernelüzeneteket, így a port teljesen
+szabadon marad a szükséges célra.
+
+Fontos, hogy változók beállítása hatástalan, amennyiben azt az image-et generáló
+receptben hajtjuk végre, ellenben a local.conf-ban történő beállítás sikerre
+vezet. 
+
 \subsection{A ROS keretrendszer}
 
 A ROS2 keretrendszer integrálására a projekt hivatalos layerét használtam. A
@@ -843,5 +881,75 @@ packageknek a fordításához a meta-ros layer többi receptjét vettem alapul,
 valamint a ROS2 fórumokon más olyan projekteket, amelyek saját recept
 lefordításán alapultak.\todo{source?}
 
+A projekt során elkészített ROS package-ekről a következő fejezetben részletesen
+lesz szó, a jelenlegi fejezetben csak lefordításuk és buildrendszerbe történő
+integrálásukat tárgyalom.
+
+A projekthez két ROS package készült el, amelyekhez a fordítást a ROS az ament
+buildrendszer segítségével végezi el, amely CMake és python alapú packagek
+létrehozására szolgáló rendszer. A meta-ros layer az ament felhasználására
+biztosít lehetőségeket, így a package-k integrálása kisebb erőfeszítések árán
+megoldható. 
+
+\todo{valami formát találni a kódsoroknak}
+A két package közül egy ament\_cmake, egy pedig ament\_python buildrendszert
+használ, ezekhez külön scriptek készültek a recipes-core/ros-components mappában.
+
+A receptek felépítése mindkét esetben rendkívül hasonló. Elsősorban a recepthez
+tartozó weboldalt, maintainert, valamint rövid leírást kell kitölteni, amit a
+licensz file, és hozzá tartozó checksum követ.
+
+A ros külön változókba gyűjti a fordításidejű és futásidejű függőségeket, ezek
+megadása a következő feladat. 
+
+A Yocto rendszerben minden forrás valamilyen upstreamről kerül letöltésre, a
+packagek esetében ez a github repository, amelyen tároltam őket. Ennek az
+upstreamnek a megadása a következő lépés, amely során nem csak az upstreamhez
+tartozó URL-t, hanem a branch, és githash értékeit is meg kell adni a pontos
+verzió letöltéséhez. 
+
+\todo{valami formát találni a kódsoroknak}
+A packagek fordításához tartozó feladatokat az inherit ros\_ament\_cmake, vagy
+inherit ros\_ament\_python sorokkal csatolhatjuk a recepthez, ami a továbbiakban
+már tudni fogja hogy milyen lépéseket kell végrehajtani a ROS package
+lefordításához.
+
+Utolsó lépésben a csomaghoz tartozó ``FILES'' változó értékét kell beállítani
+olymódon, hogy kiegészítjük, minden csomagba telepítendő fileal, ami a receptek
+esetén a következő sorral volt kivitelezhető:
+
+$ FILES:\$\{PN\} += \"/usr/share/<csomagnév>/*\" $ \todo{ezt a vackot valahogy
+  formázni}
 
 \subsection{Fejlesztési lehetőségek}
+
+A build végeredményében egy sikeres és használható disztribúciót állít elő,
+amelynek konfigurációját teljesen automatikusan végzi el. A saját réteg
+alkalmazásának megfelelően a reprodukció könnyen és gyorsan végrehajtható, hiszen
+ahhoz csak a layerek klónozására van szükség, amelyeket a kirkstone branchre
+állítva a lokális konfiguráció kiegészítésével már indíthatjuk is a build
+folyamatot. 
+
+A rendszer ugyanakkor több fejlesztési lehetőséget is tartalmaz. A fejlesztés
+során a hálózathoz csatlakozás mellett döntöttem a fejleszés sebessége és az
+időkeret miatt. Egy új WiFi modul csatlakoztatásával és integrálásával az
+instabilitás orvosolható lehet, és a robottal való kommunikáció egy elegánsabb
+módon valósítható meg. 
+
+A Raspberry Pi több USART portal is rendelkezik, az egyszerűség kedvéért a
+projekt során a legkönnyebben elérhetőt választottam. A soros port meghagyása
+azonban debuggolás szempontjából hasznos biztonsági tartalék. A konfiguráció
+tovább fejleszthető olyan módon, hogy egy másik port kivezetésével az eredeti
+megőrizhető erre a célra.
+
+A ROS projekt ugyan integrálva van a buildben, ellendben automatikus indítása nem
+megoldott. A rendszer egy setup script source-olását igényli, amely a
+futtatókörnyezetet állítja be a ros számára. A rendszerben használt shell, a bash
+inicializációs fileját kiegészítve ez a sourceolás automatikusan elvégezhető
+volna.
+
+A projekt szempontjából ésszerű lenne a buildben egy scriptet mellékelni, amely
+segítségével a ROS2 packagekben megvalósított a saját funkcionalitás
+indítható. Ez a script az init program által is végrehajtható, így az automatikus
+indítás megvalósítható.
+
