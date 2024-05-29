@@ -22,13 +22,13 @@ Erről szól az utolsó bekezdés.
 ** DONE A feladatkiírás pontosítása és részletes elemzése
 Ezt lehet hogy kihagyom, mert nem nagyon van értelme lamentálni a feladaton.
 Inkább írok egy hosszabb bevezetőt, amiben ismertetem hogy mi a helyzet mondjuk subchapterben
-** TODO Előzmények (irodalomkutatás, hasonló alkotások), az ezekből levonható következtetések
+** DONE Előzmények (irodalomkutatás, hasonló alkotások), az ezekből levonható következtetések
 Ide jöhet az összes hardware spec, meg shit, áramkörök, alkaltrészek, etc, de itt még/már nincsenek
 tervezési shitek, csak az áramkörökhöz kapcsolódó dolgok.
-** TODO Chapter 1 firmware és build
+** DONE Chapter 1 firmware és build
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
 - A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
-** TODO Linux
+** DONE Linux
 *** Bevezető
 miért kell nekünk linux, milyen problémát old meg?
 milyen linuxra van szükségünk? mi a nehéz a feladatban,
@@ -56,13 +56,37 @@ kísérlet a hotspottal, jó, de nem tökéletes.  instabil kapcsolat: ->  szar.
 meta ros layer és lefordítása
 ros integrálása a buildbe.
 
-
 ** TODO Chapter 2 ros2
-- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
-- A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
-*/home/geri/Downloads/Labirintus-megoldo-robot-Feladatkiiras-1.pdf* TODO Chapter 3 yocto
-- A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
-- A megtervezett műszaki alkotás értékelése, kritikai elemzése, továbbfejlesztési lehetőségek
+
+*** bevezetés
+- eddig volt hardver firmware linux és most legyen a linuxon egy ros.
+- Azért jó hogy  ne találjuk fel a kereket,
+- robot operating system egységes platform, sokmindent felhasználhatunk amit mások megírtak
+- jól dokumentált, sok robotikai alkalmazás van vele
+*** ROS bemutatása
+- robot funkcionalitásának gyors és átlátható fejlesztése
+- a rendszer támogatja a robotoknál gyakori feladatokat.
+- absztrakciós réteg
+- több verziója is létezik, disztribúciók, releasek, lts, humble
+**** koncepciói
+  - nodeok
+  - interfacek
+    - servicek
+    - actionok
+    - topic
+**** fejlesztés menete
+- eszközök (rosdep, colcon)
+- packagek
+- workspacek
+*** Saját ROS illesztés
+- Fejlesztés menete, PCn lehet, colcon package workspace stuff.
+- Specifikáció, mit kell csinálnunk az illesztéshez
+- végrehajtás, hogyan raktuk össze amit össze kell rakni
+- action? elméletileg hogy kellett volna, de nincs motor, ezért nem lett meg.
+- mi az ami kimaradt, de lehetett volna?
+*** Útvonalkeresés ROS segítségével
+- nem volt rá idő, de elméletben így kellene
+- ros modulok keresése, tutorialok, algoritmusok
 ** TODO Chapter 3 útvonal tervezés
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
 ** TODO Részletes és pontos irodalomjegyzék
