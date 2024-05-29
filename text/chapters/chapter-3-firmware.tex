@@ -219,7 +219,7 @@ található. A scriptben néhány hasznos beállítás amit konfigurálni lehet:
 \item{A project neve}
 \item{A fordító és linker binárisok}
 \item{A kimenetet tartalmazó könyvtár}
-\item{A fordításhoz és inkeléshez használt flagek}
+\item{A fordításhoz és linkeléshez használt flagek}
 \item{Az optimalizáció szintje}
 \item{A lefordítandó modulok listája}
 \end{itemize}
@@ -256,10 +256,9 @@ mikrovezérlőre.
 
 A firmware fejlesztéséhez több könyvtárat és eszközt használtam a projekt
 áttekinthetősége, és a fejlesztés sebessége végett. A következőkben röviden
-bemutatom a projektben használt librarykat és keretrendszereket, a projektben
-használt librarykat és keretrendszereket. Röviden bemutatom lényegi működésüket,
-indoklom szükségességüket a projekt szempontjából, és kitérek előnyeikre és
-esetleges nehézségeikre is.
+bemutatom a projektben használt librarykat és keretrendszereket. Röviden
+bemutatom lényegi működésüket, indoklom szükségességüket a projekt szempontjából,
+és kitérek előnyeikre és esetleges nehézségeikre is.
 
 \subsection{FreeRTOS}
 
@@ -485,7 +484,7 @@ Az USART streamen érkező utasítások karakterenként érkeznek meg a vezérl�
 fogadásukat interrupt rutin végzi. Egy üzenet az első karakterétől (azaz az
 utolsó stop bit után számíott első start bittől) számítva a carriage-return
 karakter érkezéséíg tart. Az interrupt rutin feladata, hogy minden megérkezett
-karaktert egy ideiglenes bufferben tárol, majd az első ``\\r'' karakter
+karaktert egy ideiglenes bufferben tárol, majd az első ``\textbackslash{}r'' karakter
 megérkezését követően az üzenetet a parancsokat feldolgozó task számára egy
 message queue-ba rakja. 
 
@@ -630,7 +629,7 @@ task már könnyedén elvégzi, a kiolvasott enkóderértékek, a kerék és mot
 paraméterei és a megszakítás periódusideje alapján:
 
 \begin{eqnarray*}
-CNT = az enkóder értéke
+CNT = \text{az enkóder értéke} \\
 N_{inkremens} = 14 \\
 D_{kerék} = 21 mm \\
 C_{kerék} = D * \pi \\
