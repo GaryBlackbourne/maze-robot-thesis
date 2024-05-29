@@ -42,10 +42,11 @@ robot kialakítása során.  A robot koncepcióját bemutató következő fejeze
 részletesebben kitérek a panelek felhasználására és topológiájára, a jelen
 fejezetben pusztán az elektronikai igényekről, specifikációkról valamint az
 alkatrészek megválasztásáról lesz szó. A projekt verziókövetve megtalálható a
-github repository-ban~\cite{RpirobotGitrepo}, ahol a pcbs mappa alatt egy
-movement-control és egy power-supply-unit könyvtárban találhatóak a KiCAD
-projektek. Az ábrák pdf formátumban elérhetőek a doc/schemas/circuits mappában a
-ctrl-board és pwr-supply mappákban. 
+github repository-ban~\cite{RpirobotGitrepo}, ahol a \verb|pcbs| mappa alatt egy
+\verb|movement-control| és egy \verb|power-supply-unit| könyvtárban találhatóak a
+KiCAD projektek. Az ábrák pdf formátumban elérhetőek a
+\verb|doc/schemas/circuits| mappában a \verb|ctrl-board| és \verb|pwr-supply|
+mappákban.
 
 \subsection{Motor és szenzor választás}
 
@@ -71,7 +72,7 @@ esett a választásom. Ezek a chipek LIDAR működésű érzékelők, azaz léze
 kibocsátásán és a visszaverődés érzékelésén alapul a működésük. Rendkívül gyakori
 keresési találatok voltak, és sok hobbielektronikai projekt foglalkozott velük. A
 kommunikáció a chippel I2C buszon zajlik, a szenzorok komplexitása és vezérlésük
-bonyolultsága miatt, azonban vezérlésükhöz a gyártó külön driver csomagot
+bonyolultsága miatt, azonban használatukhoz a gyártó külön driver csomagot
 biztosít. A gyártó nem csak integrált áramkör formájában forgalmazza ezeket az
 alkatrészeket, hanem VL53L1-SATEL néven, mint modul is kaphatóak. Ebben a
 kiszerelésben a táp- és földlábak, az I2C busz valamint két fontos láb, ki vannak
@@ -137,13 +138,13 @@ függvényében a következőkben állapítottam meg:
 \end{itemize}
 
 A teljesítményviszonyokat pedig felülbecsléssel állapítottam meg. A vezérlés és
-a raspberry pi teljes kihasználtság esetén 15W teljesítménynél kevesebbet
+a Raspberry Pi teljes kihasználtság esetén 15W teljesítménynél kevesebbet
 fogyaszt, ezért a pi irányában 15W teljesítményt írtam elő. A motorok szintén
 15W-nál kevesebb teljesítményt vesznek fel a teljes kihasználáskor, ezért a motor
 irányába menő teljesítményt szintén 15W-ban írtam elő.
 
 A teljesítményáramlás a tápfeszültségek szempontjából a következőképpen alakul:
-A raspberry pi, és a vezérlés rendre 5V és 3.3V tápfeszültségeket és 15W
+A Raspberry Pi, és a vezérlés rendre 5V és 3.3V tápfeszültségeket és 15W
 teljesítményt kapnak. A motor egy vonalon kap összesen 15W teljesítményt és 6V
 tápfeszültséget. Ez összesen egy 30W teljesítményt leadó feszültségforrást
 igényel, valamint egy ehhez a teljesítménykonfigurációhoz méretezett tápot.
@@ -151,9 +152,9 @@ igényel, valamint egy ehhez a teljesítménykonfigurációhoz méretezett tápo
 A tápellátó áramkör feladata a rendszer minden komponensét elegendő
 teljesítménnyel ellátni. Ehhez a fent részletezetteknek megfelelően, olyan
 tápáramkörre van szükség amely a következőket biztosítja: három kimeneti
-tápfeszültségszint: \textbf{3.3V}, \textbf{5V}, \textbf{6V}; teljes rendszer
-teljesítmény: \textbf{30W} amely két részben oszlik meg: \textbf{15W} a
-\textbf{6V} kimenetre és \textbf{15W} a \textbf{3.3V} és \textbf{5V} kimenetekre.
+tápfeszültségszint: 3.3V, 5V, 6V teljes rendszer
+teljesítmény: 30W amely két részben oszlik meg: 15W a
+6V kimenetre és 15W a 3.3V és 5V kimenetekre.
 Ehhez rendelkezésre áll egy akkumulátoros feszültségforrás, amely a projekt
 esetében egy Li-ion akkumulátorblokkot jelent. Ennek az akkumulátorblokknak a
 kimenő teljesítménye alulról becsülhető 30W-al. A megfelelő feszültségek
@@ -167,7 +168,7 @@ A lítium cellák vezérlése egy komplex feladat, amely túlmutat a projekt cé
 BMS\footnote{BMS: Battery Management System} egy olyan modul amely a Lítium-ion
 cellák vezérléséért felel, amely komplex elektronikát igényel. Három bemenetére
 egyesével egy cella kapcsolódik, amelyek között kiegyensúlyozza a terhelést és
-kimenetén \textbf{12V} egyenfeszültséget állít elő.
+kimenetén 12V egyenfeszültséget állít elő.
 
 A tápáramkör bemenete tehát 12V egyenfeszültség amiből a kívánt feszültségeket
 kell előállítani. 
@@ -213,17 +214,17 @@ panelnek az elsődleges feladata, hogy a robot motorjait vezérelje, valamint
 a szenzorait inicializálja és olvassa.
 
 Ez a panel egy mikrovezérlőt hordoz, amely mindezen funkcionalitást képes
-ellátni. A használt kontroller egy stm32f103cb mikrovezérlő, amely egy
-ARM Cortex-M3 maggal 20 kb RAM-mal, és 60 kb flash memóriával rendelkezik.
+ellátni. A használt kontroller egy STM32F103CB mikrovezérlő, amely egy
+ARM Cortex-M3 maggal 20 kB RAM-mal, és 60 kB flash memóriával rendelkezik.
 
-Az STM32 mikrovezérlőcsalád különösen elterjedt az autóiparban, és egy
-nagyon népszerű gyártó és család. A vezérlő kiválasztásánál fontos szerepet
-játszott, hogy már volt tapasztalatom stm32 mikrovezérlővel.
+Az STM32 mikrovezérlőcsalád különösen elterjedt az autóiparban, és nagyon
+népszerű termék. A vezérlő kiválasztásánál fontos szerepet játszott, hogy már
+volt tapasztalatom STM32 mikrovezérlővel.
 
 \medskip
 
 A vezérlő feladatai közé tartozik, hogy a motorok meghajtását elvégezze. A
-mikrovezérlő gpio lábainak maximális árama nem elegendő a motor meghajtásához,
+mikrovezérlő GPIO lábainak maximális árama nem elegendő a motor meghajtásához,
 valamint feszültsége is elenyésző a motor szükségleteihez viszonyítva. Ebből a
 célból egy-egy H-bridge áramkör kapott helyet a vezérlőpanelen, amelyet 3.3V
 feszültségszintekkel lehet vezérelni, de a motor kimeneteire már képes 6V
@@ -235,21 +236,21 @@ csatlakozik a tápáramkör által előállított 6V.
 Lévén a motorok enkóderrel is fel vannak szerelve, így a mikrovezérlő mérheti
 ezen motorok sebességét, és ezzel egy esetleges szabályzási kör megvalósítása is
 lehetővé válik. A motorok szögsebessége ezen felül szintén egy fontos információ
-a felsőbb szintű logika számára is.
+a magasabb szintű logika számára is.
 
 További fontos feladata a vezérlőnek, hogy a távolságmérő szenzorokat
 periodikusan olvassa, és ezek értékét eltárolja. Ez később a felsőbb szintű
 logika számára lehet fontos információ, valamint extra védelmet jelenthet, ha a
 vezérlő le tudja fékezni a robotot, ha egy adott küszöbérték alatt mér egy
-szenzorral, így elkerülve egy lehetséges ütközést. Ehhez a szenzorokat egy
-i2c buszra kell csatlakoztatni, amelyet a mikrovezérlő meghajt. A panelen
-a szenzorokhoz egy egy gpio trace is vezet, amely az egyedi címkiosztás miatt
-lesz majd fontos.
+szenzorral, így elkerülve egy lehetséges ütközést. Ehhez a szenzorokat egy I2C
+buszra kell csatlakoztatni, amelyet a mikrovezérlő meghajt. A panelen a
+szenzorokhoz egy egy GPIO által vezérelt nyomvonal is vezet, amely az egyedi
+címkiosztás miatt lesz majd fontos.
 
 Végül de nem utolsó sorban a vezérlő feladata, hogy a már említett felsőbb szintű
-logikát végrehajó raspberry pi-vel tartsa a kapcsolatot, és interfészt
+logikát végrehajó Raspberry Pi-vel tartsa a kapcsolatot, és interfészt
 biztosítson számára. Erre két lehetőség is van a boardon, az egyik a debug usart
-port amely végül felhasználásra kerül majd, valamint egy külön i2c port, ami a
+port amely végül felhasználásra kerül majd, valamint egy külön I2C port, ami a
 panelre ki van vezetve.
 
 A vezérlőpanelen továbbá helyet kapott egy steppper motor meghajtó modul
@@ -283,10 +284,10 @@ panelt igényel, így alternatív megoldásra van szükség.
 A magasabb szintű logikát végző processzorhoz, egy SBC\footnote{Single Board
 Computer}-t használtam. Ezek a panelek egy nagyteljesítményű processzort, vagy
 SoC\footnote{System On a Chip}-ot hordoznak, amelyet így könnyebben
-intergrálhattam a robot rendszerébe. A választott SBC egy raspberry pi 4 B
+intergrálhattam a robot rendszerébe. A választott SBC egy Raspberry Pi 4 B
 modell, amelyet széleskörűen alkalmaznak hobbielektronikai megoldásokban, és
 ipari felhasználásra is van példa. Ennek a boardnak könnyen hozzáférhető
-dokumentációja van és rendelkeztem már az eszközt illető tapasztalattal.
+dokumentációja van és rendelkeztem már tapasztalattal az eszközt illetően.
 
 \section{Az elvégzendő feladatok}
 

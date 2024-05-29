@@ -42,7 +42,7 @@ lehetőséget tartogató kialakítás.
 Klasszikus elrendezése, hogy a két motort a hosszanti tengellyel merőlegesen kell
 elhelyezni, ezálal a a robot sebessége a motorok szögsebességéből valamint a
 kerékátmérőből számítható. A robot orientációját a két motor különböző nagyságban
-és/vagy különböző sebességgel történő meghajtásával lehet vezérelni.
+és/vagy különböző irányban történő meghajtásával lehet vezérelni.
 
 A kialakítás további előnyeihez tartozik, hogy a robot vezérléséből csak relative
 kevés erőforrást kell a mozgásra allokálni, hiszen pusztán csak a két motorhoz
@@ -82,9 +82,10 @@ szoftveres modulok egyszerűsített ábrái is, így ezeket a fizikai kialakít�
 egy ábrán szemlélve jobban átlátható a rendszer.
 
 \subsubsection{A tápellátás kialakítása}
-Az ábrán narancssárga színnel jelöltem a tápellátásért felelős modult. Ennek a
-modulnak több kisebb alegysége van, amelyek a szükséges feszültségszintek
-előállításának más-más részeiért felelnek.
+A~\ref{fig:robot-diagram-complex} és~\ref{fig:robot-diagram-simple} ábrákon
+narancssárga színnel jelöltem a tápellátásért felelős modult. Ennek a modulnak
+több kisebb alegysége van, amelyek a szükséges feszültségszintek előállításának
+más-más részeiért felelnek.
 
 \medskip
 
@@ -133,10 +134,11 @@ bemutatásra kerültek, itt az alkatrészek integrációjáról ejtenék pár sz
 
 A motorok meghajtásához a vezérlőpanelen két H-bridge meghajtó áramkört
 alkalmaztam. Ezek bemenete a motorok által igényelt feszültség, valamint két
-logikai tartományba eső PWM jel, amelyek a hídkapcsolás irányát befolyásolják,
-valamint kitöltési tényezőjükkel a motort meghajtó teljesítményértéket állítják
-be. A motorok tápfeszültségét, a vezérlő panel továbbítja a tápegység felől, a
-PWM jelek előállításáért pedig a vezérlőpanelen található mikrokontroller felel.
+logikai feszültségtartományba eső PWM jel, amelyek a hídkapcsolás irányát
+befolyásolják, valamint kitöltési tényezőjükkel a motort meghajtó
+teljesítményértéket állítják be. A motorok tápfeszültségét, a vezérlő panel
+továbbítja a tápegység felől, a PWM jelek előállításáért pedig a vezérlőpanelen
+található mikrokontroller felel.
 
 A motorok rendelkeznek beépített enkóderrel, amelyeket szintén a vezérlőpanelen
 található mikrovezérlő kezel.
@@ -149,13 +151,13 @@ mikrovezérlőhöz, amin keresztül vezérlésük végezhető, valamint a mért 
 kiolvasható. A SATEL boardok számára a szükséges 3.3V tápfeszültséget a
 vezérlőpanel továbbítja.
 
-A választott mikrokontroller nem tartalmaz annyi i2c perifériát, mint ahány
+A választott mikrokontroller nem tartalmaz annyi I2C perifériát, mint ahány
 szenzor illesztését a feladat megkövetelné, így alternatív megoldást kerestem. A
 szenzorok rendelkeznek módosítható cím funkcióval, így ezt a megoldást ítéltem a
 legkézenfekvőbbnek. A modulok rendelkeznek egy XSHUT nevű kivezetett lábbal,
 amely funkciója az adatlap alapján, hogy az eszköz bootolását befolyásolja. Ennek
 a lábnak a felhasználásával az egyes szenzorok az inicializációs fázisban
-egyesével bootolhatóak, ami lehetővé teszi a firmware számára, hogy egyedi i2c
+egyesével bootolhatóak, ami lehetővé teszi a firmware számára, hogy egyedi I2C
 címeket rendeljen minden eszközhöz. Ennek érdekében négy GPIO lábat felhasználtam
 a szenzorok vezérlésére.
 
@@ -189,7 +191,8 @@ rendelkezik több USART perifériával és I2C perifériával, valamint TIMER
 perifériái támogatják az enkóder módot és PWM generálást, amely a motorok
 vezérlésére, valamint az enkóder jelek feldolgozására alkalmas. Az I2C periféria
 alkalmas a szenzorok illesztésére, az USART periféria pedig debug célokra a
-fejlesztési fázisban, illetve a Raspberry-vel történő kapcsolattartásra alkalmas.
+fejlesztési fázisban, illetve a Raspberry Pi-vel történő kapcsolattartásra
+alkalmas.
 
 A mikrovezérlő mellé a gyártó CMSIS támogatást biztosít (ARM magú chipről lévén
 szó) valamint külön hardver absztrakciós könyvtárat, amely a konfigurálást és a
@@ -202,7 +205,7 @@ következő fejezetben bővebben kifejtem.
 A vezérlőpanel a központi vezérlő SBC panelhez soros porton keresztül
 csatlakozik, ahol saját protokollon keresztül üzenetek váltására van lehetőség. 
 
-\subsubsection{A rasppberry pi}
+\subsubsection{A Rasppberry Pi}
 
 Az ábra utolsó pirossal jelölt blokkja egy Raspberry Pi 4B modell. Az SBC soros
 porton keresztül kapcsolódik a vezérlő panelhez, tápellátásáról pedig a tápegység
@@ -214,11 +217,11 @@ csatlakozó a projekt során nem volt használva.
 
 \medskip
 
-A kapcsolatot a felhasználó, hálózaton keresztül teremthet a Raspberryvel, amire
-a beépített WiFi modulon keresztül van lehetőség. A WiFi modul képes accesspoint
-működésre, ami a robot függetlenségében nagy segítség. A Linuxal foglalkozó
-fejezetben a kapcsolódás módjait, valamint a telepített eszközöket bővebben ki
-fogom fejteni.
+A kapcsolatot a felhasználó, hálózaton keresztül teremthet a Raspberry Pi-vel,
+amire a beépített WiFi modulon keresztül van lehetőség. A WiFi modul képes
+accesspoint működésre, ami a robot függetlenségében nagy segítség. A Linuxal
+foglalkozó fejezetben a kapcsolódás módjait, valamint a telepített eszközöket
+bővebben ki fogom fejteni.
 
 \medskip
 
@@ -266,12 +269,8 @@ helyigényt.
 
 \subsection{Megvalósítás}
 
-A pontos tervek kialakítását követően a különböző panelek furataihoz illeszkető
-metrikus csavarokat és távtartókat alkatrészlistába gyűjtöttem. A kész terv és
-alkatrészlista után megrendeltem az alkatrészeket, és furatokat készítettem az
-alsó és felső panelen. Az alkatrészek megérkezését követően folyamatos tesztelés
-mellett rögzítettem a modulokat a panelekre, majd összecsavaroztam a paneleket.
-\todo{Ezt átfogalmazni, trivialitásokat kivenni}
+A pontos tervek kialakítását követően megrendeltem az alkatrészeket, és
+összeszereltem a robotot.
 
 \section{A terv értékelése}
 

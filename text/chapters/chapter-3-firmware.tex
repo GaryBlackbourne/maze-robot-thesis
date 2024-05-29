@@ -58,7 +58,7 @@ lezárja az üzenetváltást egy DONE üzenettel.
 Az üzenetek egy vagy több bájtot, vagyis karaktert tartalmazhatnak, és
 mindenképpen carriage-return karakterrel végződnek. Egy transzfer a fent
 ismertetett üzenetváltásból áll, minden esetben egy parancsal kezdődik és egy
-DONE jelzéssel (hiba esetén unknown jelzéssel) ér véget.
+DONE jelzéssel (hiba esetén UNKNOWN jelzéssel) ér véget.
 
 A kommunikációra csak ASCII karakterek használhatóak, ezzel elkerülve, hogy az
 adatbájtok véletlenül egybeessenek a sor vége karakterrel, és így idő előtt
@@ -87,7 +87,7 @@ motorral rendelkezik.
 GET parancs esetén az üzenetet carriage-return karakterrel zárhatjuk, és a
 specifikált sorrendben várhatjuk a mikrovezérlő válaszát. Amennyiben SET
 parancsot adtunk, úgy egy `-' karakterrel jelezzük a firmware számára hogy adat
-következik. A küldendő adatot hexadecimális formában ascii karakterekre kódolva
+következik. A küldendő adatot hexadecimális formában ASCII karakterekre kódolva
 abban a sorrendben küldjük el, amely sorrendet az irányhatározó karaktereinkel
 meghatároztunk. A megfelelő mennyiségű adat elküldése után a mikrovezérlő
 nyugtázza a megkapott utasítást (ACK), majd annak végrehajtásáról DONE üzenetben
@@ -107,7 +107,7 @@ A firmwarenek feladata a szenzorok inicializálása. A mikrokontroller egy I2C
 perifériát használ a szenzorok kezeléséhez, viszont mindegyik szenzorhoz
 egyesével tartozik egy GPIO, amelyel a szenzor bootolása vezérelhető. A szenzorok
 adatlapjából kiolvasható, hogy boot után a 0x52 címen érhetőek el. A bootfolyamat
-késleltetésével a firmware fel tudja paraméterezni külön külön az összes
+késleltetésével a firmware fel tudja paraméterezni külön-külön az összes
 szenzort, így azok a futás alatt saját címmel rendelkezhetnek.
 
 Az inicializáció után a firmware aszinkron módon gyűjt adatot a szenzoroktól
@@ -141,7 +141,7 @@ mérten mm/s egységben állapítottam meg.
 A motorok sebességének beállítása szintén a firmware feladata. A sebesség
 beállítás komplex feladat is lehet, amennyiben nagy pontosságra törekszünk.
 
-A motorok sebességszabályozásért felelős algoritmus állhat egy egyszerű pwm
+A motorok sebességszabályozásért felelős algoritmus állhat egy egyszerű PWM
 állításból de egy komplex PID szabályzóból és szabályzókörből is. Az algoritmus
 komplexitásának felső korlátja, hogy egy iteráció futásideje bele kell, hogy
 férjen a szabályzó task periódusidejébe, amit a floating point unit hiánya
@@ -175,24 +175,26 @@ modulárisabb, könnyebben cserélhető eszköztárra és projektkomponensekre b
 a feladatot.
 
 A fordításhoz a GNU toolchain ARM mikrokontrollerek számára készült verzióját, az
-arm-none-eabi-gcc-t használtam. A többlépcsős build folyamat végrehajtásához
-shellscriptekből és Makefileokból álló rendszert építettem, amely a forráskódot
-viselkedés szerint modulokba engedi csomagolni, így többfajta kialakítású projekt
-is könnyedén integrálható a buldbe. A nyelvi szerver támogatáshoz clangd-t
-használtam amihez a szükséges compile\_commands.json file-t a bear nevű, szintén
-open source szoftverrel generáltam.
+\verb|arm-none-eabi-gcc|-t használtam. A többlépcsős build folyamat
+végrehajtásához shellscriptekből és Makefileokból álló rendszert építettem, amely
+a forráskódot viselkedés szerint modulokba engedi csomagolni, így többfajta
+kialakítású projekt is könnyedén integrálható a buildbe. A nyelvi szerver
+támogatáshoz \verb|clangd|-t használtam amihez a szükséges
+\verb|compile_commands.json| file-t a \verb|bear| nevű, szintén open source
+szoftverrel generáltam.
 
 A projekt ezen felépítése lehetővé teszi hogy tetszőleges editorral (vim, emacs,
 vscode) vagy fejlesztői környezettel megnyitható és szerkeszthető legyen.
 
 A project teljesen verziókövetve van amihez git-et használtam. A repository
-szabad licensz mellett elérhető a github linken\todo{hivatkozás}. 
+szabad licensz mellett elérhető a github linken\cite{RpirobotGitrepo}. 
 
 \subsection{A project architektúrája}
 
-A repository root könyvtárában két fontos mappát találunk, a utils és modules
-mappákat. A utils mappa tartalmazza a projekthez használt általános scriptek
-legnagyobb részét. ebben a mappában található scriptek a következők:
+A repository root könyvtárában két fontos mappát találunk, a \verb|utils| és
+\verb|modules| mappákat. A \verb|utils| mappa tartalmazza a projekthez használt
+általános scriptek legnagyobb részét. Ebben a mappában található scriptek a
+következők:
 
 \begin{itemize}
 \item{build.sh:~A build folyamatot elindító script.}
@@ -203,20 +205,21 @@ legnagyobb részét. ebben a mappában található scriptek a következők:
   debugoláshoz használandó.}
 \item{openocd-start-bg:~Az openocd service indító scriptje, amely on-chip
   debugoláshoz használandó. A folyamatot háttérfolyamatként indítja.}
-\item{gdb.sh:~Az arm gdb programot megfelelő indítási kapcsolókkal indító scirpt,
+\item{gdb.sh:~Az arm gdb programot megfelelő indítási kapcsolókkal indító script,
   igényli az openocd futását.}
 \item{gdb-ide.sh:~Az arm gdb programot megfelelő indítási kapcsolókkal a
-  fejlesztőkörnyezetből indító scirpt, igényli az openocd futását.}
+  fejlesztőkörnyezetből indító script, igényli az openocd futását.}
 \item{stm32f1x.cfg:~Az openocd által igényelt konfigurációs file a target
   mikrovezérlőhöz.}
 \end{itemize}
 
-A build egyszerűen végrehajtható a build.sh script futatásával. A buldhez tartozó
-konfigurációt a settings.sh file tartalmazza, ami a repository root könyvtárában
-található. A scriptben néhány hasznos beállítás amit konfigurálni lehet:
+A build egyszerűen végrehajtható a \verb|build.sh| script futatásával. A buildhez
+tartozó konfigurációt a \verb|settings.sh| file tartalmazza, ami a repository
+root könyvtárában található. A scriptben néhány hasznos beállítás amit
+konfigurálni lehet:
 
 \begin{itemize}
-\item{A project neve}
+\item{A projekt neve}
 \item{A fordító és linker binárisok}
 \item{A kimenetet tartalmazó könyvtár}
 \item{A fordításhoz és linkeléshez használt flagek}
@@ -229,19 +232,20 @@ amelyek a projektben használt modulok.
 
 A moduláris kialakításnak hála, egy új szoftverkomponens vagy library lefordítása
 sokkal könnyebb és nem borítja meg a projekt addigi architektúráját. Egy modul a
-modules mappán belül található olyan könyvtár amely tartalmaz module.sh scriptet.
-A module.sh script minden modulhoz meghatározza a fordítás lépéseit, ami a
-leggyakrabban egy make parancs. A modul saját mappájában belül dolgozik, és
-kimenetét egy obj nevű mappában gyűjti össze. A modul lefordulása után ezek a
-kimenetek a modul nevének prefixálásával bemásolásra kerülnek a projekt build
-mappáján belül található obj mappába. Ezzel a megoldással elkerülhetjük, hogy két
-modul által ugyanazon a néven hívott object file felülírja egymást.
+modules mappán belül található olyan könyvtár amely tartalmaz \verb|module.sh|
+scriptet.  A \verb|module.sh| script minden modulhoz meghatározza a fordítás
+lépéseit, ami a leggyakrabban egy make parancs. A modul saját mappájában belül
+dolgozik, és kimenetét egy obj nevű mappában gyűjti össze. A modul lefordulása
+után ezek a kimenetek a modul nevének prefixálásával bemásolásra kerülnek a
+projekt \verb|build| mappáján belül található \verb|obj| mappába. Ezzel a megoldással
+elkerülhetjük, hogy két modul által ugyanazon a néven hívott object file
+felülírja egymást.
 
-A modulok jellemzően tartalmaznak egy Makefile-t is, ami a pontos build
+A modulok jellemzően tartalmaznak egy \verb|Makefile|-t is, ami a pontos build
 instrukciókat és a függőségeket is tartalmazza.
 
 A modulok lefordítása és kimeneteik globális build mappába történő másolását
-követően a build script meghívja a Make-et a project root könyvtárából, ami a
+követően a build script meghívja a \verb|Make|-et a project root könyvtárából, ami a
 linkelést elvégzi. Az így kapott kimenet egy ``.elf'' file, amely mellé
 automatikusan generálódik egy ``.bin'' kiterjesztésű file, ami alkalmas a
 mikrokontrollerre történő másolásra.
@@ -249,7 +253,7 @@ mikrokontrollerre történő másolásra.
 \medskip
 
 A build folyamat végeztével az ST-Linket csatlakoztatva a fejlesztői
-számítógéphez, a ``utils/flash.sh'' scriptet futtatva a program letölthető a
+számítógéphez, a \verb|utils/flash.sh| scriptet futtatva a program letölthető a
 mikrovezérlőre. 
 
 \section{Felhasznált libraryk és keretrendszerek}
@@ -278,12 +282,12 @@ számából adódóan szükségesnek láttam egy operációsrendszer használat�
 
 Mikrokontrolleres alkalmazások tekintetében a legelterjedtebb beágyazott
 operációsrendszer a FreeRTOS, amely egy ingyenes, nyílt forráskódú RTOS, 32 bites
-mikrokontrollerekre tervezve.
+mikrokontrollerekre lett tervezve.
 
 A FreeRTOS operációsrendszer számos hasznos eszközt biztosít:
 
 \begin{itemize}
-\item{Konfigurálható kernel, többfajta ütemezőalgoritmussal.}
+\item{Konfigurálható kernel, többfajta ütemező algoritmussal.}
 \item{Mutexek és szemaforok, szinkronizáció, és versenyhelyzetek kezelése
   céljából.}
 \item{Opcionális dinamikus memóriakezelés, malloc, és free implementációkkal.}
@@ -302,9 +306,8 @@ függvények vagy makrók formájában állnak rendelkezésre. A FreeRTOS beáll
 egy FreeRTOSConfig.h nevű headerben találjuk, ehhez a filehoz referencia
 implementációt a FreeRTOS honlapján a dokumentációban találhatunk. Fejlesztés
 előtt érdemes a rendszerrel megismerkedni, és a használni kívánt rendszerhívások
-dokumentációját átolvasni, erre a FreeRTOS honlapján az API reference szolgál.
-
-\todo{Freertos link}
+dokumentációját átolvasni, erre a FreeRTOS honlapján az API
+reference\cite{FreertosApiReference} szolgál.
 
 \subsection{CMSIS}
 
@@ -340,10 +343,11 @@ kódját.
 \subsection{HAL}
 
 Az STMicroelectronics biztosít két absztrakciós réteget a mikrovezérlőihez, ezek
-az LL driver, valamint a HAL driver. A HAL\footnote{Hardware Abstraction Layer}
+az LL driver, valamint a HAL\footnote{Hardware Abstraction Layer} driver. A HAL
 driver egy magas szintű hardver absztrakciós könyvtár, amely minden STM32
 perifériához tartalmaz driver réteget. A HAL kód könnyebben olvasható mint egy
-CMSIS ellenben teljesítményében, és generált kód méretében számottevően lassabb.
+CMSIS ellenben teljesítményében lassabb, és számottevően nagyobb méretű kódra
+fordul.
 
 A projekt fejlesztése során a HAL drivereket és saját kiegészítő kódot használtam
 a mikrovezérlő hardvereivel történő interakcióban, ennek három fő indoka volt.
@@ -394,7 +398,7 @@ válaszul kiadott egy forráskód szinten elérhető driver csomagot, amely
 lefordítható tetszőleges architektúrára, és a szenzor vezérlését végzi.
 
 A projekt során a szenzorok illesztésének feladata lényegétben ennek a drivernek
-a beágyazása és lefordítása volt.  A driver több mint 30 forrásfileból áll, a
+a beágyazása és lefordítása volt.  A driver több mint 30 forrásfile-ból áll, a
 csomagban található dokumentáció valamint rövid readme, amely a driver
 felhasználását hivatott bemutatni. A csomag implementál minden fontos vezérlő
 logikát amely a szenzor vezérléséhez szükséges, ezekhez pedig publikus API
@@ -503,9 +507,6 @@ hossszából következtettem a rutin futásidejére.
   alatt futott le a rutin.}
 \missingfigure{mérések az optimalizáció ki, és bekapcsolásával.}
 
-\todo{próbáltam rambol futtatni a kódot, de nem volt értelme mert az data uton
-  jött és lassabb lett.}
-
 Az érkező karakterstream feldolgozásához szükséges feltétel, hogy a karaktereket
 nagyobb sebességgel tudjuk fogadni, mint ahogyan azok megérkeznek. A szükséges
 idő limitet a következő módon határoztam meg:
@@ -527,7 +528,7 @@ az időkorlátoknak mindkét kód megfelelt. Az optimalizáció hatása látván
 ábrákon\todo{hivatkozás} jól megfigyelhető.
 
 \medskip
-
+\textsl{
 Érdekesség: A kód gyorsabb végrehajtása érdekében kísérletet tettem a függvény
 flash memória helyett RAM-ból történő végrehajtására. Ennek a kísérletnek az
 eredménye képpen a függvénynek az flashből történő végrehajtáshoz viszonyítva
@@ -538,6 +539,7 @@ RAM sebessége elméletben a flash sebességénél nagyobb. Komplexebb
 mikrovezérlőkben, amelyek nagyobb órajelfrekvencián működnek, ilyen esetekre egy
 kis méretű utasítás-úti RAM modul is megtalálható, ahova a nagy sebességben
 végrehajtandó kód betöltésre kerül.
+}
 
 \medskip
 
@@ -546,7 +548,7 @@ feltétele a helyes futásnak, a rendszernek ugyanis időre van szüksége a par
 értelmezéséhez és végrehajtásához is. Ennek érdekében egy message queue-t
 alkalmaztam, amely egy FreeRTOS funkció. A message queue eltárol maximum 5
 stringet, amelyeket a parancsfeldolgozó task kiolvas, és végrehajt. A queue
-feltöltését az interrupt handler rutin végzi minden fogadott ``\\r''
+feltöltését az interrupt handler rutin végzi minden fogadott `\textbackslash{}r'
 karakternél. A queue hatására rövid ideig tartó message burst-öt a firmware képes
 lekezelni, és az üzenetekre érkezési sorrendben reagálni. 
 
@@ -670,13 +672,13 @@ végrehajtásra.
 A motor sebességszabályozása jelenleg a beállított sebességérték mint PWM jelet
 vezérlő jellemző kerül direkt beírásra a timer ARR\footnote{AutoReload Register}
 regiszterébe. Ez a kialakítás a vezérlő logika számára lehetővé teszi a pontos
-pwm beállítást, ellenben a hardverhez túlságosan közeli hozzáférést biztosít, ami
+PWM beállítást, ellenben a hardverhez túlságosan közeli hozzáférést biztosít, ami
 nem elegáns megoldás, lévén a firmware feladatai között szerepel a hardver
 absztrahálása.
 
 \subsection{Sensor Task}
 
-Végül de nem utolsó sorban a firmware tartalmaz egy sensor vezérlő taskot. Ennek
+Végül de nem utolsó sorban a firmware tartalmaz egy szenzor vezérlő taskot. Ennek
 a tasknak a feladata a VL53L1 szenzorok inicializálása, egyedi címek kiosztása,
 valamint a szenzorok periodikus olvasása, az UltraLite driveren keresztül.
 
