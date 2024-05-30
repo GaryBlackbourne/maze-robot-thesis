@@ -65,48 +65,47 @@ scripteket, és patcheket, és az egyes feladatok eléréséhez végrehajtott
 konfigurációs lépéseket. Végeredményben értékelem a kész disztribúciót, és
 javaslatokat teszek annak fejlesztésére.
 
+%% \section{A Linux}
 
-\section{A Linux}
+%% A Linux napjaink legelterjedtebb iparban használt operációsrendszere,
+%% megtalálhatjuk minden nagyobb teljesítményt igénylő informatikai eszközünkben. A
+%% routerek és networkswitchek szinte kizárólagosan Linux rendszert futtatnak, de
+%% megjelenik kisebb beágyazott eszközöktől elkezdve a szervereken keresztül egészen
+%% a szuperszámítógépekig egyaránt.
 
-A Linux napjaink legelterjedtebb iparban használt operációsrendszere,
-megtalálhatjuk minden nagyobb teljesítményt igénylő informatikai eszközünkben. A
-routerek és networkswitchek szinte kizárólagosan Linux rendszert futtatnak, de
-megjelenik kisebb beágyazott eszközöktől elkezdve a szervereken keresztül egészen
-a szuperszámítógépekig egyaránt.
+%% A mobiltelefonok platformján legnépszerűbb operációsrendszer, az Android szintén
+%% is Linux alapú. Napjainkban az asztali felhasználása is egyre inkább teret nyer
+%% köszönhetően a személyre szabhatóságának, teljesítményének és ingyenességének.
 
-A mobiltelefonok platformján legnépszerűbb operációsrendszer, az Android szintén
-is Linux alapú. Napjainkban az asztali felhasználása is egyre inkább teret nyer
-köszönhetően a személyre szabhatóságának, teljesítményének és ingyenességének.
+%% \subsection{Eredete}
 
-\subsection{Eredete}
+%% A Linux egy Unix-like operációs rendszer. Eredetileg egy Minix klónként indult
+%% amelyet Linus Torvalds Finn származású informatikus kezdett el fejleszteni, hobbi
+%% projekt szintjén. A rendszer iránt hatalmas volt a lelkesedés, így 1992-es első
+%% kiadásától napjainkig aktív fejlesztés alatt áll. 
 
-A Linux egy Unix-like operációs rendszer. Eredetileg egy Minix klónként indult
-amelyet Linus Torvalds Finn származású informatikus kezdett el fejleszteni, hobbi
-projekt szintjén. A rendszer iránt hatalmas volt a lelkesedés, így 1992-es első
-kiadásától napjainkig aktív fejlesztés alatt áll. 
+%% \medskip
 
-\medskip
+%% A fejlesztésben a Linux projekt körül kialakuló közösség aktívan részt vesz. A
+%% projekt népszerűségének egyik nagy oka a nyílt forráskód, amelyet bárki igénye
+%% szerint elolvashat, és módosíthat saját felhasználási céljainak megfelelően. A
+%% projekt jelenleg a GPLv2 licensz alatt érhető el.\todo{kernel.org hivatkozás}
 
-A fejlesztésben a Linux projekt körül kialakuló közösség aktívan részt vesz. A
-projekt népszerűségének egyik nagy oka a nyílt forráskód, amelyet bárki igénye
-szerint elolvashat, és módosíthat saját felhasználási céljainak megfelelően. A
-projekt jelenleg a GPLv2 licensz alatt érhető el.\todo{kernel.org hivatkozás}
+%% A Linux azonban nem pusztán egy közösségi kezdeményezés amely lelkes fejlesztők
+%% hobbiprojektje. Fejlesztésében számos nagyvállalat aktívan vállal szerepet. Az
+%% infrastruktúrában betöltött központi szerepe miatt kontribúciók érkeznek számos
+%% chipgyártó vállalattól, akik saját termékeik támogatottságát szeretnék
+%% biztosítani a Linux kernelben, de a felhőalapú szolgáltatásokat biztosító tech
+%% óriások is rendszeresen támogatják a projektet.
 
-A Linux azonban nem pusztán egy közösségi kezdeményezés amely lelkes fejlesztők
-hobbiprojektje. Fejlesztésében számos nagyvállalat aktívan vállal szerepet. Az
-infrastruktúrában betöltött központi szerepe miatt kontribúciók érkeznek számos
-chipgyártó vállalattól, akik saját termékeik támogatottságát szeretnék
-biztosítani a Linux kernelben, de a felhőalapú szolgáltatásokat biztosító tech
-óriások is rendszeresen támogatják a projektet.
-
-A Linux az eddig valaha volt legnagyobb szoftveres projekt, amelyen a legtöbb
-fejlesztő dolgozott. A fejlesztés ilyettén módja az ipar minden résztvevőjének
-kölcsönösen előnyös, az elosztott fejlesztés pedig széleskörű hibakeresést, és új
-funkciók gyors implementálását teszi lehetővé.
+%% A Linux az eddig valaha volt legnagyobb szoftveres projekt, amelyen a legtöbb
+%% fejlesztő dolgozott. A fejlesztés ilyettén módja az ipar minden résztvevőjének
+%% kölcsönösen előnyös, az elosztott fejlesztés pedig széleskörű hibakeresést, és új
+%% funkciók gyors implementálását teszi lehetővé.
 
 \section{Az operációs rendszer felépítése}
 
-Egy Linux alapú operációs rendszer általában több részegységből áll, ezek egymást
+Egy Linux alapú operációs rendszer több részegységből áll, ezek egymást
 elfedő rétegekként, vagy egymásra épülő szintenként képzelhetőek el. A Linux,
 pontosabban szólva GNU/Linux önmagában csak a kernelt foglalja magában, egy
 teljes rendszer működéséhez azonban több egyéb komponensre is szükség van.
@@ -115,12 +114,12 @@ Egy ilyen komponens például egy extra kernel modul, amely a kernel
 funkcionalitását hivatott kibővíteni, például valamilyen hardver támogatásának
 biztosításával, vagy egy init program ami a rendszer bootolása során elsőként
 indított program és a szolgáltatások elindításáért felelős. A rendszer szerves
-részei továbbá a filerendszer, interaktív felhasználás esetén shell, és
+részei továbbá a file-rendszer, interaktív felhasználás esetén shell, és
 szövegszerkesztő, alapvető parancssori alkalmazások (coreutils). Természetesen
 extrém esetekben a szerkesztő, parancssori alkalmazások, vagy akár shell nélkül
 is futtatható Linux kernel, és általa ütemezett szolgáltatások, azonban a
 felhasználási esetek döntő többségében ezeknek a megléte nagyban megkönnyíti,
-vagy lényegében lehetővé teszi a rendszer karbantartását és a hibakeresést, ezért
+sőt, lényegében lehetővé teszi a rendszer karbantartását és a hibakeresést, ezért
 szinte sosem maradnak ki egy disztribúcióból.
 
 \subsection{Kernel}
@@ -199,9 +198,9 @@ modulok kerülnek betöltésre az az egész kernel számára fatális következm
 járhat. Egy rosszul működő modul könnyedén az egész rendszert tönkreteheti, ezért
 új modul betöltésénél fokozott elővigyázatosságra van szükség. Szerencsére a
 kernel, és a modulokat kezelő alkalmazások fel vannak készítve a modulok egyszeri
-betöltésére. Egyszeri betöltés esetén az esetleges hibát okoztó modul a
-rendszer bootolásakor már nem töltődik be, így a hiba esetén a fejlesztésre
-használt rendszer nem válik használhatatlanná. 
+betöltésére. Egyszeri betöltés esetén amennyiben a betöltött modul hibát okoz,
+akkor a rendszert újraindítva a kernel a modul betöltése nélkül indul így a hiba
+esetén a fejlesztésre használt rendszer nem válik használhatatlanná.
 
 \subsection{Init}
 
@@ -243,8 +242,8 @@ amelyet Unix-like rendszerek esetében általában egy shell program biztosít. 
 shell egy szöveges parancsértelmező alkalmazás, általános célja, hogy a
 renszerhez egy kezelőfelületet biztosítson. A shell rendszerint a rendszerrel
 való interaktív kapcsolatbalépés alapvető eszköze. Parancsai alapvető programok,
-amelyek a disztribúció részét képezik, és általában a ``coreutils'' nevű package
-részei. Ezekkel a programokkal alapvető fileműveletek és minimális
+amelyek a disztribúció részét képezik, és általában a \verb|coreutils| nevű
+package részei. Ezekkel a programokkal alapvető file-műveletek és minimális
 rendszerkarbantartás végezhető.
 
 A shell programok rendszerint biztosítanak scriptelési lehetőséget is. A
@@ -299,13 +298,13 @@ teljes rendszer felállásáig.
 
 \subsection{BIOS}
 
-A bekapcsolást követően az alaplapba égetett firmware azaz a BIOS\footnote{BIOS:
-Basic Input Output System} indul el. Ennek a rövid programnak a feladata a POST
-azaz Power On Self Test öntesztelő eljárás végrehajtása, majd a megfelelő
-bootloader betöltése az MBR szerint. Az MBR azaz Master Boot Record az első
-szektorban található kis terület amely tartalmazza a bootloader információit,
-valamint a partíciós táblát. Ezek alapján a BIOS elindítja a megfelelő
-bootloadert.
+A bekapcsolást követően az alaplapba égetett firmware azaz a
+BIOS\footnote{BIOS:~Basic Input Output System} indul el. Ennek a rövid programnak
+a feladata a POST azaz Power On Self Test öntesztelő eljárás végrehajtása, majd a
+megfelelő bootloader betöltése az MBR szerint. Az MBR azaz Master Boot Record az
+első szektorban található kis terület amely tartalmazza a bootloader
+információit, valamint a partíciós táblát. Ezek alapján a BIOS elindítja a
+megfelelő bootloadert.
 
 \subsection{Bootloader}
 
@@ -316,7 +315,7 @@ architektúrán leggyakrabban a GRUB2\footnote{GRUB:~Grand Unified BootLoader} n
 bootloaderrel találkozhatunk. A programot rendszerint csak GRUB-nak nevezik,
 lévén teljesen leváltotta az első verziót.
 
-Beágyazott környezetben gyakran az U-Boot\footnote{U-Boot: Universal Boot}
+Beágyazott környezetben gyakran az U-Boot\footnote{U-Boot:~Universal Boot}
 szolgál a kernel betöltésére. Az U-Boot egy teljesértékű bootloader, amely a
 teljes bootfolyamatért felel, ellentétben a GRUB-bal, amely csak úgynevezett
 ``second stage'' bootloader. U-Boot ARM architektúrájú rendszereken jellemző.
@@ -350,15 +349,15 @@ iparban két fontos rendszer terjedt el: a Buildroot, valamint a Yocto Project.
 
 \medskip
 
-A buildroot egy Makefile és patch gyűjtemény amely segít a forráskód
+A Buildroot egy Makefile és patch gyűjtemény amely segít a forráskód
 lefordításában, valamint a root fájrendszer generálásában. A konfigurációban
-többek között a menuconfig, és kconfig TUI\footnote{Terminal User Interface}
+többek között a menuconfig, és kconfig TUI\footnote{TUI:~Terminal User Interface}
 programok biztosítanak felhasználóbarát felületet. 
 
 Általános vélekedés szerint a Buildroot könnyebben tanulható, egyszerűbb
 konstrukció. A build rendszer Makefile alapú, ami széles körben ismert a
 fejlesztői körökben, így egyszerű módosítások elvégzése könnyebb feladat lehet. A
-buildroothoz azonban sokkal kevesebb cég biztosít supportot, a projektet
+Buildroothoz azonban sokkal kevesebb cég biztosít supportot, a projektet
 jellemzően a közösség tartja karban.
 
 \medskip
@@ -366,7 +365,7 @@ jellemzően a közösség tartja karban.
 A Yocto Project egy umbrella project, amely az openembedded build systemet, és
 hozzá tartozó általános receptcsomagokat foglalja össze, és biztosít egy
 referencia disztribúciót, amelyet poky-nak nevez. A projekt konfigurációja
-scripteken keresztül történik, amely szkriptek használnak python és shellscript
+scripteken keresztül történik, amely szkriptek használnak Python és shellscript
 részleteket, valamint az openembedded build engine, a bitbake saját script
 szintaxisában megírt scripteket.
 
@@ -375,12 +374,12 @@ ellentétben a legtöbb gyártó biztosít Yocto támogatást saját termékeihe
 projektet a Linux Foundation is támogatja, ezek fényében a projekt aktívan és
 dinamikusan fejlődik. 
 
-A rendszer sajátossága a buldscriptek, a yocto terminológia szerint receptek,
+A rendszer sajátossága a buldscriptek, a Yocto terminológia szerint receptek,
 rétegekbe szervezése, amely így átlátható rendszerbe foglalja ezeket. A
 kialakítás rendkívül flexibillisé teszi a konfigurációt.
 
 A build során a projekt shared state chache-t használ, amelynek köszönhetően a
-build folyamat az első build alkalmával lassú, (lassabb mint a buildroot)
+build folyamat az első build alkalmával lassú, (lassabb mint a Buildroot)
 ellenben a további buildek, esetleges konfigurációk módosítása esetén már sokkal
 gyorsabban futnak le, így a hibajavítások, és új funkciók implementálása által
 igényelt idő sokkal kevesebb, mert nem kell minden változtatás után az egész
@@ -393,7 +392,7 @@ kivételesen meredeknek mondható.
 
 \medskip
 
-A projekt során nagyobb komplexitása ellenére a yocto projectet választottam,
+A projekt során nagyobb komplexitása ellenére a Yocto projectet választottam,
 amely szabadabb fejlesztést és személyre szabhatóságot tesz lehetővé.
 
 \subsection{A Yocto Project felépítése és működése}
@@ -414,13 +413,14 @@ A Yocto project nem más, mint egy umbrella project ami több kisebb projektet f
 össze, és egy egészként bocsátja rendelkezésre. A legfontosabb komponense az
 openembedded build system, ami egy komplex projekt build folyamatok
 automatizálásához. Az openembedded projekt központjában a Bitbake program áll,
-ami egy úgynevezett ``task execution engine''.
+ami egy úgynevezett ``task execution engine'', amely scriptekben defíniált
+feladatok végrehajtására lett tervezve.
 
 \medskip
 
 A Bitbake saját script nyelvel rendelkezik, amely szintaxisában hasonlít a
-bashscript és python nyelvekhez. A hasonlóság odáig terjed, hogy a scriptek
-magjában teljes python vagy bash nyelvű függvények találhatóak. A Bitbake
+bashscript és Python nyelvekhez. A hasonlóság odáig terjed, hogy a scriptek
+magjában teljes Python vagy bash nyelvű függvények találhatóak. A Bitbake
 scriptekre használt általános kifejezés a recept, a receptek pedig általánosan
 ``.bb'' kiterjesztéssel rendelkeznek.
 
@@ -485,7 +485,7 @@ layerhez kapcsolódó információk és beállítások érhetőek el. A konfigur
 a layerekben mappákba szervezve megtalálhatunk konfigurációs fileokat,
 recepteket, bbappend fileokat, és patcheket is. Egy réteget tartalmazó mappát
 hagyományosan a ``meta-'' kifejezéssel kezdjük, és a biztosított funkcióval
-zárjuk, például: ``meta-python'', a réteg amely python funkcionalitást biztosító
+zárjuk, például: ``meta-python'', a réteg amely Python funkcionalitást biztosító
 recepteket tárol. 
 
 A layerek egymásra rétegződése elegáns megoldás, amely jól szervezett elosztott
@@ -502,7 +502,7 @@ mellett a projektben kihívást jelent a függőségi gráf betartása a package
 között, ezért a fejlődést rendszerint verziók kiadásával rendelik
 mérföldkövekhez.
 
-A kiadott verziók lehetnek LTS\footnote{Long Term Release} vagy standard verziók,
+A kiadott verziók lehetnek LTS\footnote{LTS:~Long Term Release} vagy standard verziók,
 amelyek a verzió támogatásának idejét határozzák meg. Minden layer karbantartó
 külön branchen kezeli saját layerének azon verzióját, amely egy támogatott Yocto
 release-hez tartozik, így a layerek klónozása után a használni kívánt Yocto
@@ -511,9 +511,10 @@ elkerülésének érdekében meg kell egyezniük a használt Yocto verziójával
 
 \subsubsection{Poky}
 
-A Yocto Project mint rendszer egy referenciadisztribúciót biztosít számunkra. Ez
-a disztribúció nem keverendő a Linux rendszerek disztribúcióival, tisztán csak a
-build rendszer csomagjáról van szó.
+A Yocto Project új projektek kezdéséhez egy referenciadisztribúciót biztosít
+amely segítségével a projekt dinamikusan bootstrapelhető. Ez a disztribúció nem
+keverendő a Linux rendszerek disztribúcióival, tisztán csak a build rendszer
+csomagjáról van szó.
 
 A biztosított referenciadisztribúció neve Poky, amely tartalmaz egy openembedded
 rendszert, és kiegészítő layereket, amelyek a legtöbb alapvető és gyakran
@@ -522,19 +523,19 @@ használt funkcionalitást biztosítják.
 \subsubsection{Build konfigurációk}
 
 A build konfigurációt több összetevő határozza meg. A projekt gyökérkönyvtárában
-találunk egy ``oe-init-build-env'' nevű scriptet, amelyet
+találunk egy \verb|oe-init-build-env| nevű scriptet, amelyet
 source-olva\footnote{Fontos hogy source-oljuk a scriptet, mert a buildfolyamathoz
 használt környezetet ez a script állítja be shellünkben, ha futtatni próbáljuk
 úgy hibát is jelez!} a projekthez szükséges környezet beállthatjuk, valamint
 létrehozhatjuk a buildfolyamatok által használt mappát, ennek alapértelmezett
-neve a ``build''.
+neve a \verb|build|.
 
-A mappában találunk egy ``conf'' mappát, amelyben a buildhez használt lokális
-konfigurációk kapnak helyet különböző fileokban. Ilyen például local.conf file
-amelyben például a célarchitektúrát határozhatjuk meg, amelyre a keresztfordítást
-végezzük. A mappában találjuk továbbá a bblayers.conf file-t amelyben a
-felhasznált layereket tudjuk specifikálni, amelyben a Bitbake a recepteket
-keresheti. 
+A mappában találunk egy \verb|conf| mappát, amelyben a buildhez használt lokális
+konfigurációk kapnak helyet különböző fileokban. Ilyen például \verb|local.conf|
+file amelyben például a célarchitektúrát határozhatjuk meg, amelyre a
+keresztfordítást végezzük. A mappában találjuk továbbá a \verb|bblayers.conf|
+file-t amelyben a felhasznált layereket tudjuk specifikálni, amelyben a Bitbake a
+recepteket keresheti.
 
 \medskip
 
@@ -561,10 +562,12 @@ alapján végrehajtja a szükséges feladatokat. A receptet a bitbake kiterjeszt
 nélkül várja! A Bitbake-et egy recept végrehajtásához a következő módon
 indíthatjuk el:
 
-``\$ bitbake <recept>''
+\begin{verbatim}
+    $ bitbake <recept>
+\end{verbatim}
 
-A Bitbake a parancs hatására kezdeti lépésben beolvassa a bblayers.conf és
-local.conf fileokat, majd az ezekben meghatározott módon beolvassa az
+A Bitbake a parancs hatására kezdeti lépésben beolvassa a \verb|bblayers.conf| és
+\verb|local.conf| fileokat, majd az ezekben meghatározott módon beolvassa az
 recepteket. A cél receptből kiindulva, a receptek tartalmazta feladatokból
 függőségi fát épít, majd nekilát a feladatok végrehajtásának.
 
@@ -573,10 +576,10 @@ amelyek a bitbake felhasználása során nagy segítséget jelenthetnek, a telje
 igénye nélkül néhány:
 
 \begin{itemize}
-\item{-e:~A build során alkalmazott változókat listázza}
-\item{-k:~A build esetleges failelése esetén nem áll le, hanem minden feladatot
-  végrehajt, amely nem függ a hibába futó feladattól}
-\item{-c:~A build során csak egy meghatározott feladatot hajt végre}
+\item{\verb|-e|:~A build során alkalmazott változókat listázza}
+\item{\verb|-k|:~A build esetleges failelése esetén nem áll le, hanem minden
+  feladatot végrehajt, amely nem függ a hibába futó feladattól}
+\item{\verb|-c|:~A build során csak egy meghatározott feladatot hajt végre}
 \end{itemize}
 
 \section{Saját Linux image készítése}
@@ -609,7 +612,7 @@ igényel.
 
 \subsubsection{ROS}
 
-A rendszernek futtatnia kell a ROS2 Humble keretrendszert. A ROS2 rendszer
+A rendszernek futtatnia kell a ROS2 keretrendszert. A ROS2 rendszer
 futtatása a legfontosabb feladat amely a linux rendszerre hárul. A
 keretrendszeren kívül a saját ROS projektek futtatása szintén feladat, amelyek a
 robot hardvert integrálják a ROS2 rendszerbe, valamint a magas szintű
@@ -696,28 +699,28 @@ mappái, amelyeken belül a receptek és appendfileok találhatóak.
 
 A kész image előállítását egy Raspberry Pi-n bootolni képes image előállításával
 kezdtem. A teljes image generálása komplex feladat, ennek megkönnyítésére a Yocto
-Projectben egy core-image-minimal recept is szerepel, amely leírása alapján egy
-minimális Linux rendszer amely képes bootolni a target platformon. A projektet
-tehát ennek az image-nek a generálásával kezdtem. A buildhez a
-build/conf/bblayers.conf fileban ki kellett egészíteni a layerlistát, a Raspberry
-Pi támogatását biztosító meta-raspberrypi layerrel. Ezt követően a
-build/conf/local.conf fileban a machine változónak a ``raspberrypi4\-64'' értéket
-adva beállítottam a target platformot. Ezek után a core-image-minimal targetet a
-Bitbake meghívásával előállítottam, majd bmaptools segítségével SD kártyára
-másoltam az elkészült imaget. A bootolás tesztelvén a Raspberry Pi-hez egy
-USB-USART átalalkító áramkörrek kapcsolódtam, majd megkíséreltem a bootolást,
+Projectben egy \verb|core-image-minimal| recept is szerepel, amely leírása
+alapján egy minimális Linux rendszer amely képes bootolni a target platformon. A
+projektet tehát ennek az image-nek a generálásával kezdtem. A buildhez a
+\verb|build/conf/bblayers.conf| fileban ki kellett egészíteni a layerlistát, a
+Raspberry Pi támogatását biztosító meta-raspberrypi layerrel. Ezt követően a
+\verb|build/conf/local.conf| fileban a machine változónak a ``raspberrypi4\-64''
+értéket adva beállítottam a target platformot. Ezek után a core-image-minimal
+targetet a Bitbake meghívásával előállítottam, majd bmaptools segítségével SD
+kártyára másoltam az elkészült imaget. A bootolás tesztelvén a Raspberry Pi-hez
+egy USB-USART átalalkító áramkörrek kapcsolódtam, majd megkíséreltem a bootolást,
 amely sikeres volt.
 
 \subsection{Image}
 
-Az image generálást szintén receptek végzik, így a meta-rpirobot layerben a
-recipes-core/images mappában létrehoztam egy receptet, ahol az image
+Az image generálást szintén receptek végzik, így a \verb|meta-rpirobot| layerben
+a \verb|recipes-core/images| mappában létrehoztam egy receptet, ahol az image
 elkészítéséhez szükséges feladatokat és konfigurációkat állíthatom be, ennek a
-receptnek az rpirobot-core-image nevet adtam.
+receptnek az \verb|rpirobot-core-image| nevet adtam.
 
 A Bitbake támogatja a receptek további kiegészítését, ezért a legkézenfekvőbb
-megoldás, a core-image-minimal ``öröklése'' volt, ezt az inherit kulcsszóval
-lehet megtenni.
+megoldás, a \verb|core-image-minimal| ``öröklése'' volt, ezt az inherit
+kulcsszóval lehet megtenni.
 
 A konfiguráció teszteléséhez licensz és summary beállításokat végeztem, majd az
 image-et az említett hasznos eszközöket tartalmazó packagekkel egészítettem
@@ -732,13 +735,15 @@ tartalmazza ezeket a programokat.
 \medskip
 
 A receptben az image kiegészítéséhez létezik egy alternatív mód, amely néhány
-funkció esetében nagyban megkönnyíti a konfigurálást. Ez a funkció az
-``image\_feature'' amely lényegében teljes csomag- és konfigurációhalmazt jelent,
-amely az image számára valamilyen teljes feature-t biztosít. A funkció az
-``IMAGE\_FEATURES'' változóhoz való hozzáfűzéssel érhető el, például a következő
-képpen:
+funkció esetében nagyban megkönnyíti a konfigurálást. Ez a funkció az image
+feature amely lényegében teljes csomag- és konfigurációhalmazt jelent, amely az
+image számára valamilyen teljes feature-t biztosít. A funkció az
+\verb|IMAGE_FEATURES| változóhoz való hozzáfűzéssel érhető el, például a
+következő képpen:
 
-  $ IMAGE\_FEATURES += \"package-management\" $
+\begin{verbatim}
+    IMAGE_FEATURES += "package-management"
+\end{verbatim}
 
 A fenti kóddal package managert, és a package managementhez szükséges egyéb
 eszközöket telepítettem az image-re.
@@ -770,24 +775,24 @@ helyzet azt kívánja.
 
 Első nekifutásra az access point konfigurációval próbálkoztam, a fent ismertetett
 előnyei miatt. A konfigurációhoz hozzáadtam a hostapd csomagot, valamint a
-busybox-udhcpd csomagját. A hostapd az access point létrehozásáért és
-üzemeltetéséért felelős szoftver, a busybox-udhcpd pedig a busybox csomag által
-szolgáltatott lightweight dhcp szerver, amely csatlakozó eszközök
-számára szolgáltat ipcím kiosztást. A csomagok telepítése mellett appendfileokat
-hoztam létre, amelyek a konfigurációt módosították a kívánt módon.
+\verb|busybox-udhcpd| csomagját. A hostapd az access point létrehozásáért és
+üzemeltetéséért felelős szoftver, a \verb|busybox-udhcpd| pedig a busybox csomag
+által szolgáltatott lightweight dhcp szerver, amely csatlakozó eszközök számára
+szolgáltat ipcím kiosztást. A csomagok telepítése mellett appendfileokat hoztam
+létre, amelyek a konfigurációt módosították a kívánt módon.
 
 Több sikertelen tesztelési fázis, és hibakeresés után sikerült olyan
 konfigurációt beállítanom, amelyben a robot saját hálózatát felállította, és a
 csatlakozó eszközök számára ipcímet is szolgáltatott.
 
-A kialakítás sajnálatos
-módon rendkívül instabil volt, gyakran fordult elő, hogy a kapcsolat rövid időre
-megszakadt, amely használhatatlanná tette a megoldást. A hibát minden
-valószínűség szerint a WiFi chip teljesítményének, vagy az alkalmazott on-board
-antenna kialakításának nem megfelelősége okozta. A probléma javítására külön WiFi
-eszköz beépítése egy praktikus megoldás, ilyen külső eszköz amelyet USB-n
-keresztül lehet csatlakoztatni, könnyen be is szerezhető. A fejlesztési idő miatt
-azonban tovább kellett lépnem és alternatív konfigurációt kellett fejlesztenem.
+A kialakítás sajnálatos módon rendkívül instabil volt, gyakran fordult elő, hogy
+a kapcsolat rövid időre megszakadt, amely használhatatlanná tette a megoldást. A
+hibát minden valószínűség szerint a WiFi chip teljesítményének, vagy az
+alkalmazott on-board antenna kialakításának nem megfelelősége okozta. A probléma
+javítására külön WiFi eszköz beépítése egy praktikus megoldás, ilyen külső eszköz
+amelyet USB-n keresztül lehet csatlakoztatni, könnyen be is szerezhető. A
+fejlesztési idő miatt azonban tovább kellett lépnem és alternatív konfigurációt
+kellett fejlesztenem.
 
 \medskip
 
@@ -807,6 +812,7 @@ gyűjtő adatbázis, amelyhez egy webes frontend is tartozik. A weboldalon alkal
 nyílik layereket, és recepteket keresni, amelyekről az adatbázisból hasznos
 információkat tudhatunk meg.
 
+\todo{forrás}
 A hálózati konfiguráció, valamint a telepített csomagok a meta-openembedded
 layerben a meta-networking és a meta-oe alrétegekben voltak megtalálhatóak,
 amelyeket ezért a layerlistához kellett adnom.
@@ -822,11 +828,11 @@ A Raspberry Pi pinsorán kivezetet USART-on megjelenik egy konzol, amelyre
 csatlakozva lehetőségünk nyílik az eszköz vezérlésére, egy teletype-on
 keresztül. Ez a megoldás hasznos, ugyanis az eszközhöz kapcsolódhatunk akkor is
 ha a hálózat meghibásodik, vagy egyéb okokból nem elérhető, ugyanakkor ennek a
-portnak a felhasználásával könnyen csatlakoztatható a robot vezérlőpanelje is.
-A teletypeok menedzseléséért felelős service Linux rendszer alatt a getty, ennek
-konfigurációját azonban script állítja elő a build során, így praktikusabbnak
-láttam a konfigurációt létrehozó scriptet befolyásoló változók konfigurálását a
-végső script patchelésénél.
+portnak a felhasználásával könnyen csatlakoztatható a robot vezérlőpanelje is.  A
+teletypeok menedzseléséért felelős service Linux rendszer alatt a \verb|getty|,
+ennek konfigurációját azonban script állítja elő a build során, így
+praktikusabbnak láttam a konfigurációt létrehozó scriptet befolyásoló változók
+konfigurálását a végső script patchelésénél.
 
 Az usart porton két jelenség történik, amelyet a port használatához el kell
 kerülni. Az első,hogy a bootolás során a kernel üzenetei ezen a porton keresztül
@@ -836,11 +842,11 @@ csatlakoztatott teletype jelenik meg, amely ellehetetleníti a kommunikációt.
 A fenti működéseket kikapcsolni a local.conf konfigurációba írt három sorral
 lehet:
 
-\code{
-ENABLE\_UART = \"1\" \\
-SERIAL\_CONSOLES = \"\" \\
-CMDLINE\_SERIAL = \"\" \\
-}
+\begin{verbatim}
+    ENABLE_UART = "1"
+    SERIAL_CONSOLES = ""
+    CMDLINE_SERIAL = ""
+\end{verbatim}
 
 Az első sor a build során inicializálja az USART-ot amelyen ezek után
 kommunikálni lehet, majd a második és harmadik sor kikapcsolja az usarton
@@ -857,11 +863,12 @@ A ROS2 keretrendszer integrálására a projekt hivatalos layerét használtam. 
 layer a projekt fejlesztésével párhuzamosan fejlődött, így több frissítésre is
 volt szükség mire a build sikeresen lezajlott.
 
-A meta-ros layer az openembedded kialakítás szerint egy repositoryban több layert
-tárol, így a meta-ros klónozása után a bblayers.conf filet több layerrel is
-kiegészítettem, ezek a meta-ros2, meta-ros2-humble, meta-ros-common. A ROS
-erőteljesen épít a python nyelvre, így függőségeinek kielégítéséhez a
-meta-openembedded layer, meta-python sublayerét is felhasználtam.
+A \verb|meta-ros| layer az openembedded kialakítás szerint egy repositoryban több
+layert tárol, így a \verb|meta-ros| klónozása után a \verb|bblayers.conf| filet
+több layerrel is kiegészítettem, ezek a \verb|meta-ros2|,
+\verb|meta-ros2-humble|, \verb|meta-ros-common|. A ROS erőteljesen épít a Python
+nyelvre, így függőségeinek kielégítéséhez a \verb|meta-openembedded| layer,
+\verb|meta-python| sublayerét is felhasználtam.
 
 A layerek kiegészítése után, a ROS telepítési útmutatóját követve az image
 receptben meghatároztam a használni kívánt ROS disztribúciót, inicializáltam az
@@ -886,14 +893,20 @@ lesz szó, a jelenlegi fejezetben csak lefordításuk és buildrendszerbe tört�
 integrálásukat tárgyalom.
 
 A projekthez két ROS package készült el, amelyekhez a fordítást a ROS az ament
-buildrendszer segítségével végezi el, amely CMake és python alapú packagek
+buildrendszer segítségével végezi el, amely CMake és Python alapú packagek
 létrehozására szolgáló rendszer. A meta-ros layer az ament felhasználására
 biztosít lehetőségeket, így a package-k integrálása kisebb erőfeszítések árán
-megoldható. 
+megoldható: 
 
-\todo{valami formát találni a kódsoroknak}
-A két package közül egy ament\_cmake, egy pedig ament\_python buildrendszert
-használ, ezekhez külön scriptek készültek a recipes-core/ros-components mappában.
+
+\begin{verbatim}
+asdfsadfasfdas
+\end{verbatim}
+\todo{ide a fontos parancsot beírni, a csomagkészítéshez}
+
+A két package közül egy \verb|ament_cmake|, egy pedig \verb|ament_python|
+buildrendszert használ, ezekhez külön scriptek készültek a
+\verb|recipes-core/ros-components| mappában.
 
 A receptek felépítése mindkét esetben rendkívül hasonló. Elsősorban a recepthez
 tartozó weboldalt, maintainert, valamint rövid leírást kell kitölteni, amit a
@@ -910,16 +923,17 @@ verzió letöltéséhez.
 
 \todo{valami formát találni a kódsoroknak}
 A packagek fordításához tartozó feladatokat az inherit ros\_ament\_cmake, vagy
-inherit ros\_ament\_python sorokkal csatolhatjuk a recepthez, ami a továbbiakban
+inherit \verb|ros_ament_python| sorokkal csatolhatjuk a recepthez, ami a továbbiakban
 már tudni fogja hogy milyen lépéseket kell végrehajtani a ROS package
 lefordításához.
 
-Utolsó lépésben a csomaghoz tartozó ``FILES'' változó értékét kell beállítani
+Utolsó lépésben a csomaghoz tartozó \verb|FILES| változó értékét kell beállítani
 olymódon, hogy kiegészítjük, minden csomagba telepítendő fileal, ami a receptek
 esetén a következő sorral volt kivitelezhető:
 
-$ FILES:\$\{PN\} += \"/usr/share/<csomagnév>/*\" $ \todo{ezt a vackot valahogy
-  formázni}
+\begin{verbatim}
+    FILES:${PN} += "/usr/share/<csomagnév>/*"
+\end{verbatim}
 
 \subsection{Fejlesztési lehetőségek}
 

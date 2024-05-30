@@ -145,7 +145,7 @@ A motorok sebességszabályozásért felelős algoritmus állhat egy egyszerű P
 állításból de egy komplex PID szabályzóból és szabályzókörből is. Az algoritmus
 komplexitásának felső korlátja, hogy egy iteráció futásideje bele kell, hogy
 férjen a szabályzó task periódusidejébe, amit a floating point unit hiánya
-nagyban meg tud nehezíteni adott sebesség felett.
+nagyban meg tud nehezíteni bizonyos sebesség felett.
 
 A firmware specifikációja során nem határoztam meg pontos követelményeket, és a
 végső kialakításban nem szerepel PID szabályzás, de a kódbázisban implementálva
@@ -156,9 +156,8 @@ van egy szabályzó, ami alkalmas lehet további fejlesztésre.
 A motor vezérlésénél fontos kérdés, hogy mi történjen ha elveszik a kapcsolat a
 magasabb szintű vezérléssel. Robotikai alkalmazásokban általános megoldás, hogy
 ilyen esetben a robot megáll, hiszen a funkcionalitás jelentős része kiesett, így
-a robot akár károkat is okozhat.
-
-A folyamatos kapcsolat igényét a firmware fejlesztése során szem előtt tartottam.
+a robot akár károkat is okozhat. A folyamatos kapcsolat igényét a firmware
+fejlesztése során szem előtt tartottam.
 
 \missingfigure{drawios blokkdiagram a vezérlésről}
 
@@ -276,7 +275,7 @@ operációsrendszereket alkalmazunk.
 Egy real time operációsrendszer nem garantálja a szoftver real time működését,
 viszont lehetővé teszi, hogy real time működésű szoftvert fejlesszünk. Az
 operációsrendszer eközben eszközkészletet biztosít a fejlesztő számára
-a multitasking megkönnyítésére és a versenyhelyzetek, és IPC\footnote{Inter
+a multitasking megkönnyítésére és a versenyhelyzetek, és IPC\footnote{IPC:~Inter
 Process Communication} igények kezelésére. A firmware feladatainak
 számából adódóan szükségesnek láttam egy operációsrendszer használatát.
 
@@ -343,7 +342,7 @@ kódját.
 \subsection{HAL}
 
 Az STMicroelectronics biztosít két absztrakciós réteget a mikrovezérlőihez, ezek
-az LL driver, valamint a HAL\footnote{Hardware Abstraction Layer} driver. A HAL
+az LL driver, valamint a HAL\footnote{HAL:~Hardware Abstraction Layer} driver. A HAL
 driver egy magas szintű hardver absztrakciós könyvtár, amely minden STM32
 perifériához tartalmaz driver réteget. A HAL kód könnyebben olvasható mint egy
 CMSIS ellenben teljesítményében lassabb, és számottevően nagyobb méretű kódra
@@ -442,34 +441,34 @@ könyvárakat. Ebben a részben bemutatom a firmware taskfelosztását, azok
 architektúráját. Bemutatom a taskok kommunikációját, valamint a robot belső
 memóriamodelljét, ami a robot paramétereinek firmware-en belüli modellje. 
 
-\subsection{robot internal struct}
+\subsection{A robot belső állapota}
 
 A firmware egy singleton adatstruktúrában tárolja azokat a paramétereket amik a
 robot aktuális állapotát jellemzik. A robot ilyenmódon történő modellezése egy
 helyen összesíti az összes paramétert így kiegészítés során elég ezt az egyetlen
 struktúrát bővíteni.
 
-A robot paraméterei alstruktúrákba rendeződnek, ez a megoldás modulok szerint
-csoportosít minden tagváltozót. A kód ezért olvashatóbb és könnyen követhető,
-valamint lehetőséget ad a hosszú és nem beszédes változónevek kikerülésére. Az
-alstruktúrák tartalmazzák a kérdéses adatokat valamilyen formában, valamint
-többségük tartalmaz mutexet, amelyet a versenyhelyzetek elkerülésére használ a
-firmware.
+A robot paramétereinek alstruktúrákba rendeződésével, modulok szerint
+tagváltozókba csoportosítható minden fontos paraméter. A kód ezért olvashatóbb és
+könnyen követhető, valamint lehetőséget ad a hosszú és nem beszédes változónevek
+elkerülésére. Az alstruktúrák tartalmazzák a kérdéses adatokat valamilyen
+formában, valamint többségük tartalmaz mutexet, amelyet a versenyhelyzetek
+elkerülésére használ a firmware.
 
 A struktúra négy fő alstruktúrából áll:
 \begin{itemize}
-\item{distance:~A szenzorok által mért adat, négy darab előjel nélküli 16 bites
-  egész, valamint egy mutex.}
-\item{encoder:~Az enkóderpár jelenlegi, és előző iteráció beli értékei előjeles
-  16 bites egész formában.}
-\item{actual\_speed:~A robot mért sebessége ami az enkóder értékekből
+\item{\verb|distance|:~A szenzorok által mért adat, négy darab előjel nélküli 16
+  bites egész, valamint egy mutex.}
+\item{\verb|encoder|:~Az enkóderpár jelenlegi, és előző iteráció beli értékei
+  előjeles 16 bites egész formában.}
+\item{\verb|actual_speed|:~A robot mért sebessége ami az enkóder értékekből
   számolódik, egy pár előjeles 16 bites egész, és egy mutex.}
-\item{target\_speed:~A robot célsebessége, ami egy pár előjeles 16 bites egész,
-  valamint egy mutex, és egy timeout 16bites előjel nélküli egész.}
+\item{\verb|target_speed|:~A robot célsebessége, ami egy pár előjeles 16 bites
+  egész, valamint egy mutex, és egy timeout 16bites előjel nélküli egész.}
 \end{itemize}
 
-A firmware élesen elkülöníti a mért és kívánt sebességeket. A struktúra tagjai
-közül három érhető el írásra és-vagy olvasásra a firmware számára specifikált
+A firmware elkülöníti a mért és kívánt sebességeket. A struktúra tagjai
+közül három érhető el írásra és-vagy olvasásra, a firmware számára specifikált
 utasítások szerint.
 
 \medskip
@@ -518,11 +517,12 @@ Az USART konfiguráció 8N1 kialakítású, 115200 baud következésképpen az i
 \begin{eqnarray*}
 N_{karakter} = 10 \\
 baudrate = 115200 \frac{1}{s} \\
-T_{karakter} = N_{karakter} * \frac{1}{baudrate} s > 8.68 * 10^{-5} s \\
+T_{karakter} = N_{karakter} * \frac{1}{baudrate} s \approx 8.680555 * 10^{-5} s \\
+T_{karakter} < 8.7 * 10^{-5} \\
 \end{eqnarray*}
 
 A fenti módszer segítségével meghatározható, a karakter-stream olvasásához
-használt intterupt rutin futási idejére egy felső korlát, ezt $8.68 * 10^{-5}s$
+használt intterupt rutin futási idejére egy felső korlát, ezt $8.7 * 10^{-5}s$
 -ban határoztam meg. A méréshez a kódot release és debug módban is lefordítottam,
 az időkorlátoknak mindkét kód megfelelt. Az optimalizáció hatása látványos, az
 ábrákon\todo{hivatkozás} jól megfigyelhető.
@@ -637,7 +637,7 @@ D_{kerék} = 21 mm \\
 C_{kerék} = D * \pi \\
 G_{áttétel} = \frac{1}{100} \\
 t = 10 ms \\
-s = \frac{C_{kerék} * CNT}{N_{inkremens} * G_{áttétel}}
+s = \frac{C_{kerék} * CNT}{N_{inkremens} * G_{áttétel}} \\
 v = \frac{s}{t} \\
 \end{eqnarray*}
 
@@ -670,7 +670,7 @@ végrehajtásra.
 \todo{szabályozáshoz irodalomhivatkozás, jegyzet?}
 
 A motor sebességszabályozása jelenleg a beállított sebességérték mint PWM jelet
-vezérlő jellemző kerül direkt beírásra a timer ARR\footnote{AutoReload Register}
+vezérlő jellemző kerül direkt beírásra a timer ARR\footnote{ARR:~AutoReload Register}
 regiszterébe. Ez a kialakítás a vezérlő logika számára lehetővé teszi a pontos
 PWM beállítást, ellenben a hardverhez túlságosan közeli hozzáférést biztosít, ami
 nem elegáns megoldás, lévén a firmware feladatai között szerepel a hardver
