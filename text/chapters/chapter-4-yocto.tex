@@ -409,12 +409,11 @@ leggyakrabban használt kifejezéseinek jelentését.
 
 \subsubsection{Bitbake}
 
-A Yocto project nem más, mint egy umbrella project ami több kisebb projektet fog
-össze, és egy egészként bocsátja rendelkezésre. A legfontosabb komponense az
-openembedded build system, ami egy komplex projekt build folyamatok
-automatizálásához. Az openembedded projekt központjában a Bitbake program áll,
-ami egy úgynevezett ``task execution engine'', amely scriptekben defíniált
-feladatok végrehajtására lett tervezve.
+A Yocto Project központi komponense a Bitbake build eszköz, amely az openembedded
+projekt központi build eszköze is. A Bitbake végzi a csomagok előállítását a
+beágyazott Linux rendszerhez.  A program egy úgynevezett ``task execution
+engine'', amely feadatát scriptekben defíniált alfeladatokból való függőségi gráf
+építésével, és ezek végrehajtásával végzi.
 
 \medskip
 
