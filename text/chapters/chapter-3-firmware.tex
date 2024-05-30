@@ -510,9 +510,30 @@ interrupt handler első sorában egy GPIO lábat 1-es állapotba állítottam,
 visszatérés előtt közvetlenül pedig reseteltem, így oszcilloszkóppal az impulzus
 hossszából következtettem a rutin futásidejére.
 
-\todo{képlet, hogy mennyi időnk van, az interrupt végrehajtására + mennyi idő
-  alatt futott le a rutin.}
-\missingfigure{mérések az optimalizáció ki, és bekapcsolásával.}
+\begin{figure}
+  \centering \includegraphics[width=150mm,
+    keepaspectratio]{figures/ch3/osc_single_char_debug.png}
+  \caption{Egyetlen karakter feldolgozásához szükséges idő debug módban}
+  \label{fig:char_debug}
+\end{figure}
+\begin{figure}
+  \centering \includegraphics[width=150mm,
+    keepaspectratio]{figures/ch3/osc_single_char_release.png}
+  \caption{Egyetlen karakter feldolgozásához szükséges idő release módban}
+  \label{fig:char_release}
+\end{figure}
+\begin{figure}
+  \centering \includegraphics[width=150mm,
+    keepaspectratio]{figures/ch3/osc_complete_message_debug.png}
+  \caption{A kész üzenet fogadásának ideje az interrupt rutinban debug módban}
+  \label{fig:msg_debug}
+\end{figure}
+\begin{figure}
+  \centering \includegraphics[width=150mm,
+    keepaspectratio]{figures/ch3/osc_complete_message_release.png}
+  \caption{A kész üzenet fogadásának ideje az interrupt rutinban release módban}
+  \label{fig:msg_release}
+\end{figure}
 
 Az érkező karakterstream feldolgozásához szükséges feltétel, hogy a karaktereket
 nagyobb sebességgel tudjuk fogadni, mint ahogyan azok megérkeznek. A szükséges
@@ -526,14 +547,18 @@ Az USART konfiguráció 8N1 kialakítású, 115200 baud következésképpen az i
 N_{karakter} = 10 \\
 baudrate = 115200 \frac{1}{s} \\
 T_{karakter} = N_{karakter} * \frac{1}{baudrate} s \approx 8.680555 * 10^{-5} s \\
-T_{karakter} < 8.7 * 10^{-5} \\
+T_{karakter} > 8.6 * 10^{-5} \\
 \end{eqnarray*}
 
 A fenti módszer segítségével meghatározható, a karakter-stream olvasásához
-használt intterupt rutin futási idejére egy felső korlát, ezt $8.7 * 10^{-5}s$
+használt intterupt rutin futási idejére egy felső korlát, ezt $8.6 * 10^{-5}s$
 -ban határoztam meg. A méréshez a kódot release és debug módban is lefordítottam,
-az időkorlátoknak mindkét kód megfelelt. Az optimalizáció hatása látványos, az
-ábrákon\todo{hivatkozás} jól megfigyelhető.
+az időkorlátoknak mindkét kód megfelelt. Az optimalizáció hatása látványos,
+a~\ref{fig:char_debug},~\ref{fig:char_release},~\ref{fig:msg_debug},~\ref{fig:msg_release}
+ábrákon jól megfigyelhető. Az interrupt rutin debug módban fordítva is 82 us
+alatt fut le az üzenet endline karakterének fogadása esetében. Ez worst case
+eset, amely a megállapított 86 us időnél kisebb. A kód release módban történő
+futása esetén a tartalék sokkal nagyobb. 
 
 \medskip
 \textsl{

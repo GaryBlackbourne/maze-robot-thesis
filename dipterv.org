@@ -102,7 +102,7 @@ ros integrálása a buildbe.
 **** TODO freecad ábra
 **** DONE üzenet protokol ábra (táblázatos, hogy mikor milyen üzenetek követhetik egymást)
 **** DONE Firmware vezérlés blokkdiagrammja
-**** TODO optimalizációs mérések blokkdiagram
+**** DONE optimalizációs mérések blokkdiagram
 * Tippek
 - \medsip parancsal lehet uj bekkezdést csinálni és azzal telik sok hely.
 - mindenhova tegyünk ábrákat ahol csak el lehet képzelni.
