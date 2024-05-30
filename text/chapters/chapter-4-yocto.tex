@@ -474,9 +474,12 @@ használni, ezzel elkerülhetjük, hogy a gyakran ismételt kód másolásával,
 A receptek csoportosítására a Yocto Project terminológiája szerint ``layer''-eket
 használunk. A layerek nem mások, mint jól szervezett mapparendszerbe gyűjtött
 receptek, amelyek tipikusan egy jól körülhatárolható funkcionalitást
-biztosítanak. A build konfigurációban lehetőségünk van megadni a layereket,
-amelyekből recepteket használni szeretnénk, valamint ezekhez prioritások
-társításával sorrendet meghatározni.
+biztosítanak. Ilyen funkcionalitás lehet egy adott feature támogatás, mint
+például a Python könyezet, vagy valamilyen hardver támogatás
+biztosítása. Ezutóbbi layereket BSP\footnote{BSP:~Board Support Package}
+layereknek nevezzük. A build konfigurációban lehetőségünk van megadni a
+layereket, amelyekből recepteket használni szeretnénk, valamint ezekhez
+prioritások társításával sorrendet meghatározni.
 
 A gyakorlatban a layerek git repositoryk, amelyeket a projekt root könyvtárába
 klónozva érhetünk el. Tartalmaznak egy layer konfigurációs állományt, amelyben a
