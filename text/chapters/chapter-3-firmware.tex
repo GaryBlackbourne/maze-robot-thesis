@@ -64,7 +64,12 @@ A kommunikációra csak ASCII karakterek használhatóak, ezzel elkerülve, hogy
 adatbájtok véletlenül egybeessenek a sor vége karakterrel, és így idő előtt
 megszakítsák a kommunikációt.
 
-\missingfigure{Ábra az üzenetekről}
+\begin{figure}
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/ch3/protocol.png}
+  \caption{A kommunikációs protokol}
+  \label{fig:protocol}
+\end{figure}
 
 Tekintsük át a lehetséges üzeneteket. A firmware feladatainak defíniálásakor
 tisztázódott, hogy kétfajta üzenet létezik, SET vagy GET, amely valamilyen
@@ -96,8 +101,6 @@ tájékoztat minket.
 GET parancs esetén a firmware ugyanilyen formátumban biztosítja számunkra az
 adatot. Az UNKNOWN, DONE és ACK üzenetek karaktereit rendre a `u', `n' és `k'
 karakterek jelölik.
-\todo{Ez miért van így? miért nem u-d-k mint eddig mindennek? hiszen a carriage
-  return ugyis elválaszt....  nem akarjuk kipatchelni?}
 
 \medskip
 
@@ -159,7 +162,12 @@ ilyen esetben a robot megáll, hiszen a funkcionalitás jelentős része kiesett
 a robot akár károkat is okozhat. A folyamatos kapcsolat igényét a firmware
 fejlesztése során szem előtt tartottam.
 
-\missingfigure{drawios blokkdiagram a vezérlésről}
+\begin{figure}
+  \centering \includegraphics[width=150mm,
+    keepaspectratio]{figures/ch3/firmware-architecture.png}
+  \caption{A firmware blokkdiaggramja}
+  \label{fig:firmware_arch}
+\end{figure}
 
 \section{Build}
 
@@ -318,7 +326,7 @@ biztosít. Segítségével elkerülhető, hogy a fejlesztést megelőzően minde
 regiszterhez saját definíciót kelljen készítenie a fejlesztőnek, vagy a driver
 kódban mágikus konstansokat használjon regisztereléréshez.
 
-\missingfigure{cmsis fileok}
+\medskip
 
 A CMSIS a hardverhez legközelebbi szint, ahol olvasható kódot lehet C nyelven
 írni. Érdemes megemlíteni, hogy csak CMSIS felhasználásával és egyéb absztrakciós

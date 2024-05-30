@@ -56,7 +56,7 @@ kísérlet a hotspottal, jó, de nem tökéletes.  instabil kapcsolat: ->  szar.
 meta ros layer és lefordítása
 ros integrálása a buildbe.
 
-** TODO Chapter 2 ros2
+** TODO Chapter ros2
 
 *** bevezetés
 - eddig volt hardver firmware linux és most legyen a linuxon egy ros.
@@ -91,6 +91,18 @@ ros integrálása a buildbe.
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
 ** TODO Részletes és pontos irodalomjegyzék
 ** TODO Függelék(ek)
+** TODO képek
+*** képek listája
+**** DONE VL53L1 szenzorok ábrabra
+**** DONE motorok
+**** TODO tápáramkör topológiája
+**** DONE ctrl schematic és layout ?
+**** DONE csatlakozókat szemléltető ábra
+**** DONE Differenciális robot ábra
+**** TODO freecad ábra
+**** DONE üzenet protokol ábra (táblázatos, hogy mikor milyen üzenetek követhetik egymást)
+**** DONE Firmware vezérlés blokkdiagrammja
+**** TODO optimalizációs mérések blokkdiagram
 * Tippek
 - \medsip parancsal lehet uj bekkezdést csinálni és azzal telik sok hely.
 - mindenhova tegyünk ábrákat ahol csak el lehet képzelni.

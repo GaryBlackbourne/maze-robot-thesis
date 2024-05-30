@@ -82,9 +82,12 @@ projekt szempontjából ideális, mert nincs szükség még egy tápfeszültség
 előállítására, valamint a csatlakozás és majd a mechanikus rögzítés is könnyebb
 egy kész áramköri modul esetében.
 
-\missingfigure{ábra a szenzorokról}
-
-\medskip
+\begin{figure}
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/ch1/vl53.png}
+  \caption{A VL53L1-SATEL breakout board\cite{vl53l1source}}
+  \label{fig:sensor}
+\end{figure}
 
 Az autonóm robot helyzetváltoztatása motorok segítségével történik. A motorok
 meghatározásánál a feladat végrehajtásához szükséges teljesítmény és
@@ -111,7 +114,12 @@ forrasztott tüskesoron keresztül lehetett áramkört illeszteni. Ezek a tárcs
 enkóder 3.3V-tól 5V-íg tetszőleges feszültségszinten tud működni, ami alkalmas a
 projektben történő felhasználásra.
 
-\missingfigure{ábra a motorokról}
+\begin{figure}
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/ch1/motor.png}
+  \caption{Az N20E motor\cite{n20emotor}}
+  \label{fig:motor}
+\end{figure}
 
 \subsection{A tápellátás}
 
@@ -200,13 +208,23 @@ a vesztességet, ami az LDO-n diszcipálódó teljesítményből adódna.
 Az áramkört az open source és linux alatt is elérhető KiCAD programban
 készült, a kapcsolási rajz az alábbi ábrán látható.
 
-\missingfigure{IDE JÖN MAJD LINK A SCHEMATICRA}
+\begin{figure}
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/ch1/power-supply-unit-schematic.png}
+  \caption{A tápáramkör kapcsolási rajza}
+  \label{fig:pwr_schematic}
+\end{figure}
 
 A kapcsolóüzemű tápáramörök kialakításnál jó gyakorlat, ha mezőkitöltéseket
 használunk, amelyek jó hatással vannak a tápáramkör zajmentességére. Ezt
 szemlélteti az alábbi ábra a tápáramkör layoutjáról.
 
-\missingfigure{IDE JÖN MAJD A LINK A LAYOUTRÓL}
+\begin{figure}
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/ch1/power-supply-unit-layout.png}
+  \caption{A tápáramkör layout képe}
+  \label{fig:pwr_layout}
+\end{figure}
 
 \subsection{A vezérlő elektronika}
 A tápáramkör bemutatása után következzen a vezérlőpanel bemutatása. Ennek a
@@ -256,22 +274,46 @@ panelre ki van vezetve.
 A vezérlőpanelen továbbá helyet kapott egy steppper motor meghajtó modul
 foglalata is, ez viszont a diplomaterv során nem került kihasználásra.
 
-\missingfigure{ctrl board schematic}
-\missingfigure{ctrl board layout}
+\begin{figure}
+  \centering \includegraphics[width=100mm,
+    keepaspectratio]{figures/ch1/movement-control-layout.png}
+  \caption{A vezérlőpanel layout képe}
+  \label{fig:crtl_layout}
+\end{figure}
 
-A panel a a következő csatlakozási pontokat biztosítja:
+\begin{figure}
+  \centering \includegraphics[width=100mm,
+    keepaspectratio]{figures/ch1/movement-control-schematic.png}
+  \caption{A vezérlőpanel kapcsolási rajza}
+  \label{fig:ctrl_layout}
+\end{figure}
 
-\begin{itemize}
-\item 2 db csatlakozó a motorokhoz, valamint az ezeken található enkóderekhez
-\item 4 db csatlakozó egyazon I2C busz interfészhez
-\item 1 db USART interfész
-\item 1 db I2C interfész
-\item 1 db stepper motor vezérlő kimenet
-\item 1 db tápcsatlakozó bemenet
-\item 1 db STLink kompatibilis programozó csatlakozó
-\end{itemize}
+A panel a~\ref{fig:ctrl_connectors} ábrán látható. Az ábrán a panel komponenseit
+számmal jelöltem, az adott alkatrész vagy csatlakozó így beazonosítható:
+\begin{enumerate}
+\item Motor csatlakozó (bal oldal)
+\item Motor csatlakozó (jobb oldal)
+\item H-bridge (bal oldal)
+\item H-bridge (jobb oldal)
+\item Mikrovezérlő
+\item Gombok és LED
+\item Programozókábel csatlakozó
+\item Legacy Raspberry Pi I2C csatlakozó
+\item Tápcsatlakozó
+\item Legacy léptetőmotor csatlakozó
+\item Szenzor I2C csatlakozó (bal oldal)
+\item Szenzor I2C csatlakozó (jobb oldal)
+\item Szenzor I2C csatlakozó (első)
+\item Szenzor I2C csatlakozó (hátsó)
+\item USART csatlakozó
+\end{enumerate}
 
-\missingfigure{Szemléltető ábra a csatlakozókhoz a board felülnézeti képével valamint bekeretezésekkel}
+\begin{figure}
+  \centering \includegraphics[width=100mm,
+    keepaspectratio]{figures/ch1/control-connectors.png}
+  \caption{A vezérlőpanel csatlakozási pontjai és komponensei}
+  \label{fig:ctrl_connectors}
+\end{figure}
 
 \subsection{A robot magasabb szintű vezérlése}
 A magasabb szintű funkcionalitás megvalósítása több számítási kapacitást igényel,
