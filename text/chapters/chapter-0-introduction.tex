@@ -54,7 +54,7 @@ hivatott modellezni. A feladat fő célja egy autonóm robot megalkotása. A rob
 tervezése magában foglalja a robot koncepcionális megtervezését, általános
 kialakításának meghatározását. A feladatban foglalkozom továbbá a robot hardveres
 kialakításával, a firmware fejlesztésével mikrokontrolleres platformon,
-beágyazott linux készítésével a Yocto project felhasználásával és a ROS2
+beágyazott Linux készítésével a Yocto project felhasználásával és a ROS2
 keretrendszer alapszintű megismerésével. A projekt során bemutatom a fejlesztés
 és deployment automatizálható lépéseit, amelyeket a felsorolt részfeladatok
 végrehajtása során végeztem.
@@ -82,13 +82,15 @@ projectet használtam.
 
 \section{A Robot Operating System}
 
-A ``Robot Operating System'' elnevezés első hallásra megtévesztő, ez nem egy
-hivatalos értelemben vett operációs rendszer, hanem sokkal inkább egy library és
-eszköz csomag, amely robotikai alkalmazások fejlesztésére és futtatására lett
-létrehozva. A project nagy előnye, hogy jól dokumentált, és nagy közösség alakult
-ki körülötte.  Az open source megközelítésnek hála sok különböző hardverre
-lefordítható, valamint fejlesztés során sok már a közösség által elkészített
-package, és dokumentáció segíti a fejlesztőt.
+A ``Robot Operating System'' elnevezés első hallásra megtévesztő, ez
+nem egy hivatalos értelemben vett operációs rendszer, hanem sokkal
+inkább egy library és eszköz csomag, amely robotikai alkalmazások
+fejlesztésére és futtatására lett létrehozva. A project nagy előnye,
+hogy jól dokumentált\cite{doi:10.1126/scirobotics.abm6074}, és nagy
+közösség alakult ki körülötte.  Az open source megközelítésnek hála
+sok különböző hardverre lefordítható, valamint fejlesztés során sok
+már a közösség által elkészített package, és dokumentáció segíti a
+fejlesztőt.
 
 A ROS kedvelt választás robotikai alkalmazásokban, mert megközelítésében magas
 absztrakciós szinten működik, ezáltal kevesebb időt kell fordítani az
@@ -101,13 +103,15 @@ bármilyen projekt fejlesztését nagyban elősegíti.
 
 \section{A Yocto project}
 
-A Yocto project egy nyílt forráskódú projekt, amely linux disztribúciók
-elkészítésében nyújt segítséget beágyazott környezetben. A projekt
-eszközkészleteket, sablonokat és egy rugalmas keretrendszert biztosít az egyedi
-Linux disztribúciók összeállításához. A Yocto Project használatával a fejlesztők
-könnyedén testre szabhatják a Linux kernel, a csomagok és az alkalmazások
-konfigurációját, valamint automatizálhatják a build folyamatot, ezáltal
-hatékonyabbá és megbízhatóbbá téve a beágyazott rendszerek fejlesztését.
+A Yocto project egy nyílt forráskódú projekt, amely Linux
+disztribúciók elkészítésében nyújt segítséget beágyazott
+környezetben\cite{YoctoProjectReference}. A projekt eszközkészleteket,
+sablonokat és egy rugalmas keretrendszert biztosít az egyedi Linux
+disztribúciók összeállításához. A Yocto Project használatával a
+fejlesztők könnyedén testre szabhatják a Linux kernel, a csomagok és
+az alkalmazások konfigurációját, valamint automatizálhatják a build
+folyamatot, ezáltal hatékonyabbá és megbízhatóbbá téve a beágyazott
+rendszerek fejlesztését.
 
 A Yocto lényegében egy umbrella project, ami az openembedded build system-et
 felhasználva és kiegészítve biztosít egy build környezetet. A projekt fő
@@ -125,7 +129,7 @@ végig. Elsőként a projekthez felhasznált alap hardver komponenseket mutatom 
 amelyre a későbiek során építkezni fogok. Kitérek ezek részleteire és
 sajátosságaira, valamint tervezés során tapasztalt javítási, fejlesztési
 lehetőségeikre. Ezután egyesével részletezem a robot moduljait: a firmware-t, a
-linux disztribúciót, valamint a ROS driver alkalmazást. A fejezetekben külön
+Linux disztribúciót, valamint a ROS driver alkalmazást. A fejezetekben külön
 kitérek a modul kialakítására, architektúrájára és a tervezés során figyelembe
 vett szempontokra; bemutatom a felhasznált és-vagy létrehozott eszközöket és
 keretrendszereket; majd értékelem a a produktum működésését, megállapítom a

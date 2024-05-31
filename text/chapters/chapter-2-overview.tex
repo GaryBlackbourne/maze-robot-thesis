@@ -190,14 +190,15 @@ mikrovezérlő teljesítmény szempontból alkalmas a feladat ellátására vala
 perifériák számában és minőségében is elegendő erőforrással rendelkezik. A
 kontrollercsaládról ezen felül rendelkezem és előzetes tapasztalattal is.
 
-A mikrokontroller típusát tekintve egy STM32F103C8 mikrovezérlőre esett a
-választás, amely egy Cortex-M3 maggal rendelkező mikrovezérlő. Ez a modell
-rendelkezik több USART perifériával és I2C perifériával, valamint TIMER
-perifériái támogatják az enkóder módot és PWM generálást, amely a motorok
-vezérlésére, valamint az enkóder jelek feldolgozására alkalmas. Az I2C periféria
-alkalmas a szenzorok illesztésére, az USART periféria pedig debug célokra a
-fejlesztési fázisban, illetve a Raspberry Pi-vel történő kapcsolattartásra
-alkalmas.
+A mikrokontroller típusát tekintve egy STM32F103C8 mikrovezérlőre
+esett a választás, amely egy Cortex-M3 maggal rendelkező
+mikrovezérlő. Ez a modell rendelkezik több USART és I2C perifériával,
+valamint TIMER perifériái támogatják az enkóder módot és PWM
+generálást, amely a motorok vezérlésére, valamint az enkóder jelek
+feldolgozására alkalmas. Az I2C periféria alkalmas a szenzorok
+illesztésére, az USART periféria pedig debug célokra a fejlesztési
+fázisban, illetve a Raspberry Pi-vel történő kapcsolattartásra
+alkalmas\cite{stm32source}.
 
 A mikrovezérlő mellé a gyártó CMSIS támogatást biztosít (ARM magú chipről lévén
 szó) valamint külön hardver absztrakciós könyvtárat, amely a konfigurálást és a
@@ -234,7 +235,7 @@ A modul fő feladata a humán interfész biztosításán felül egy ROS környez
 futtatása, amin belül a robot funkcionalitása. A soros port a Linux rendszeren
 belül egy device file-ként elérhető, amit a ROS környezetből egyszerű
 fileműveletekkel használhatunk. Ezen a módon a robot hardvere és vezérlése
-közötti kapcsolat megteremthető.
+közötti kapcsolat megteremthető.\cite{rpisource}
 
 \section{A mechanikus váz}
 
@@ -270,8 +271,6 @@ A tervezésben a kezdeti koncepció kialakítása után proof of concept jelleg�
 segítségével a robot összeszerelése előtt ellenőriztem a méretkorlátokat és a
 helyigényt.
 
-\missingfigure{FreeCAD ábra 3D tervekről}
-
 \subsection{Megvalósítás}
 
 A pontos tervek kialakítását követően megrendeltem az alkatrészeket, és
@@ -283,7 +282,7 @@ A robot kialakítása és megtervezése során felmerültek olyan fejlesztési �
 javítási kérdések, amelyek már nem voltak időben megvalósíthatóak, ezeket mutatom
 most be.
 
-A firmware, yocto és linux, valamint a ROS2 modulokhoz tartozó fejlesztési
+A firmware, yocto és Linux, valamint a ROS2 modulokhoz tartozó fejlesztési
 lehetőségeket, hibákat és értékelést az adott témához tartozó fejezetben
 részletezem.
 

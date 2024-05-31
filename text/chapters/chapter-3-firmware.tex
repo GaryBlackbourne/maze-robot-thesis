@@ -25,7 +25,7 @@ szempontjából így igény van real-time működésű firmware kialakítására
 
 Az STM32F103 mikrokontroller egy 32 bites ARM Cortex-M3 magot tartalmazó
 mirovezérlő. Modern kialakításának és gyártói támogatásnak köszönhetően C nyelven
-programozható chip. A vezérlő 60 kB flash memóriát, és 20 kB RAM memóriát
+programozható chip. A vezérlő 64 kB flash memóriát, és 20 kB RAM memóriát
 tartalmaz, ezek a firmware számára betartandó keretek a programkód mérete és a
 program szervezése és memórialábnyoma szempontjából.
 
@@ -302,29 +302,32 @@ A FreeRTOS operációsrendszer számos hasznos eszközt biztosít:
 \item{Message Queue-k, Notificationok, IPC megoldások.}
 \end{itemize}
 
-A firmware első modulja (a main modult leszámítva) a FreeRTOS modul. Ez a projekt
-forráskód szinten elérhető, és rendkívül jól dokumentált. A FreeRTOS monolitikus
-kialakítású, az operációs rendszer egybe fordul a projektel. A main függvényben a
-``vStartScheduler()'' függvényhívással indíthatjuk el az ütemezőt. Amely ezután
-ütemezi az előzőleg létrehozott taskokat.
+A firmware első modulja (a main modult leszámítva) a FreeRTOS
+modul. Ez a projekt forráskód szinten elérhető, és rendkívül jól
+dokumentált. A FreeRTOS monolitikus kialakítású, az operációs rendszer
+egybe fordul a projektel. A main függvényben a
+\verb|vTaskStartScheduler()| függvényhívással indíthatjuk el az
+ütemezőt. Amely ezután ütemezi az előzőleg létrehozott taskokat.
 
-Az operációsrendszer funkcióihoz API hívásokon keresztül férünk hozzá, ezek vagy
-függvények vagy makrók formájában állnak rendelkezésre. A FreeRTOS beállításait
-egy FreeRTOSConfig.h nevű headerben találjuk, ehhez a filehoz referencia
-implementációt a FreeRTOS honlapján a dokumentációban találhatunk. Fejlesztés
-előtt érdemes a rendszerrel megismerkedni, és a használni kívánt rendszerhívások
-dokumentációját átolvasni, erre a FreeRTOS honlapján az API
+Az operációsrendszer funkcióihoz API hívásokon keresztül férünk hozzá,
+ezek vagy függvények vagy makrók formájában állnak rendelkezésre. A
+FreeRTOS beállításait egy FreeRTOSConfig.h nevű headerben találjuk,
+ehhez a filehoz referencia implementációt a FreeRTOS honlapján a
+dokumentációban találhatunk. Fejlesztés előtt érdemes a rendszerrel
+megismerkedni, és a használni kívánt rendszerhívások dokumentációját
+átolvasni, erre a FreeRTOS honlapján az API
 reference\cite{FreertosApiReference} szolgál.
 
 \subsection{CMSIS}
 
-Az ARM minden gyártótól aki ARM licenszelt architektúrát implementál megköveteli,
-hogy termékük mellé készítsenek CMSIS támogatást. A CMSIS, azaz Cortex
-Microcontroller Software Interface Standard, egy szabvány amely az eszközhöz
-regiszterdefiníciókat és alapszintű működéshez tartozó függvényeket
-biztosít. Segítségével elkerülhető, hogy a fejlesztést megelőzően minden
-regiszterhez saját definíciót kelljen készítenie a fejlesztőnek, vagy a driver
-kódban mágikus konstansokat használjon regisztereléréshez.
+Az ARM minden gyártótól aki ARM licenszelt architektúrát implementál
+megköveteli, hogy termékük mellé készítsenek CMSIS támogatást. A
+CMSIS, azaz Cortex Microcontroller Software Interface Standard, egy
+szabvány amely az eszközhöz regiszterdefiníciókat és alapszintű
+működéshez tartozó függvényeket biztosít. Segítségével elkerülhető,
+hogy a fejlesztést megelőzően minden regiszterhez saját definíciót
+kelljen készítenie a fejlesztőnek, vagy a driver kódban mágikus
+konstansokat használjon regisztereléréshez.\cite{cmsis}
 
 \medskip
 
@@ -779,8 +782,9 @@ megemlíteni.
 Alacsony sebességeken a sebességmérés nem ad pontos eredményt, a
 sebesség csökkenésével alternatív megoldásra való áttérés esetén ez javítható.
 
-A robot sebességét a hardver konfiguráció befolyásolja, azonban a firmwareben a
-konfiguráció csak újrafordítás során lehetséges. A robot paramétereit tároló
-struktúra elemeiként defíniált hardveres konfigurációval ez a limitáció
-megszűnhet, amely konfigurációt akár a linuxos rendszerben is tárolni lehetne.
+A robot sebességét a hardver konfiguráció befolyásolja, azonban a
+firmwareben a konfiguráció csak újrafordítás során lehetséges. A robot
+paramétereit tároló struktúra elemeiként defíniált hardveres
+konfigurációval ez a limitáció megszűnhet, amely konfigurációt akár a
+Linux file-rendszerben rendszerben is tárolni lehetne.
 

@@ -215,7 +215,7 @@ az init program felel.
 
 Az init program egy kitüntetett program, amelyet a kernel argumentumként kap meg,
 és elsőként indít el. Egy Linux rendszerben a programok elindítása mindig egy
-szülő programból indított ``fork\(\)'' és esetlegesen azt követő ``exec\(\)''
+szülő programból indított \verb|fork()| és esetlegesen azt követő \verb|exec()|
 rendszerhívásokkal érhető el, így minden folyamatnak létezik szülőfolyamata. A
 fenti szabály alól egyedül az init program kivétel, ennek a programnak a
 feladata, hogy konfigurációs scriptek felhasználásával a bootolás során a
@@ -615,7 +615,7 @@ igényel.
 \subsubsection{ROS}
 
 A rendszernek futtatnia kell a ROS2 keretrendszert. A ROS2 rendszer
-futtatása a legfontosabb feladat amely a linux rendszerre hárul. A
+futtatása a legfontosabb feladat amely a Linux rendszerre hárul. A
 keretrendszeren kívül a saját ROS projektek futtatása szintén feladat, amelyek a
 robot hardvert integrálják a ROS2 rendszerbe, valamint a magas szintű
 funkcionalitást implementálják. A node-ok automatikus indítását nem tűztem ki

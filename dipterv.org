@@ -1,5 +1,5 @@
 * Diplomaterv szerkezete
-** TODO Diplomaterv feladatkiírás
+** DONE Diplomaterv feladatkiírás
 Ezt utólag kell vagy most?
 ** DONE Címoldal
 ** DONE Tartalomjegyzék
@@ -87,19 +87,19 @@ ros integrálása a buildbe.
 *** Útvonalkeresés ROS segítségével
 - nem volt rá idő, de elméletben így kellene
 - ros modulok keresése, tutorialok, algoritmusok
-** TODO Chapter 3 útvonal tervezés
+** TODO opc. útvonal tervezés
 - A tervezés részletes leírása, a döntési lehetőségek értékelése és a választott megoldások indoklása
-** TODO Részletes és pontos irodalomjegyzék
-** TODO Függelék(ek)
-** TODO képek
+** DONE Részletes és pontos irodalomjegyzék
+** DONE Függelék(ek)
+** DONE képek
 *** képek listája
 **** DONE VL53L1 szenzorok ábrabra
 **** DONE motorok
-**** TODO tápáramkör topológiája
+**** DONE tápáramkör topológiája
 **** DONE ctrl schematic és layout ?
 **** DONE csatlakozókat szemléltető ábra
 **** DONE Differenciális robot ábra
-**** TODO freecad ábra
+**** DONE freecad ábra
 **** DONE üzenet protokol ábra (táblázatos, hogy mikor milyen üzenetek követhetik egymást)
 **** DONE Firmware vezérlés blokkdiagrammja
 **** DONE optimalizációs mérések blokkdiagram

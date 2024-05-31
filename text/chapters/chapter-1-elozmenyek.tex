@@ -25,7 +25,7 @@ részfeladatokat az alábbi módon határoztam meg:
   \end{itemize}
 \item{Software}
   \begin{itemize}
-  \item Beágyazott linux rendszer készítése
+  \item Beágyazott Linux rendszer készítése
   \item ROS2 keretrendszer telepítése
   \item A robot hardver integrálása a ROS2 keretrendszerbe
   \item Demo alkalmazás elkészítése amelyben a robot labirintusban halad.
@@ -181,7 +181,7 @@ kimenetén 12V egyenfeszültséget állít elő.
 A tápáramkör bemenete tehát 12V egyenfeszültség amiből a kívánt feszültségeket
 kell előállítani. 
 
-\missingfigure{Tápáramkörök topológiájáról egy ábra}
+\medskip
 
 A tápáramkör kialakításában a táp topológiája egy döntő fontosságú paraméter.
 Kapcsolóüzemű tápok kialakításukat tekintve komplexebb és alkatrészigényesebb
@@ -205,7 +205,7 @@ Az 5V kimenő feszültségből egy LDO segítségével áll elő a vezérlőpane
 enkóderek számára a 3.3V tápfeszültség. Ezzel a konstrukcióval minimalizáltam
 a vesztességet, ami az LDO-n diszcipálódó teljesítményből adódna. 
 
-Az áramkört az open source és linux alatt is elérhető KiCAD programban
+Az áramkört az open source és Linux alatt is elérhető KiCAD programban
 készült, a kapcsolási rajz az alábbi ábrán látható.
 
 \begin{figure}
@@ -233,7 +233,7 @@ a szenzorait inicializálja és olvassa.
 
 Ez a panel egy mikrovezérlőt hordoz, amely mindezen funkcionalitást képes
 ellátni. A használt kontroller egy STM32F103CB mikrovezérlő, amely egy
-ARM Cortex-M3 maggal 20 kB RAM-mal, és 60 kB flash memóriával rendelkezik.
+ARM Cortex-M3 maggal 20 kB RAM-mal, és 64 kB flash memóriával rendelkezik.
 
 Az STM32 mikrovezérlőcsalád különösen elterjedt az autóiparban, és nagyon
 népszerű termék. A vezérlő kiválasztásánál fontos szerepet játszott, hogy már
