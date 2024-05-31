@@ -20,54 +20,70 @@ script csomag, amely robotikai alkalmazások fejlesztését és futtatását seg
 
 A ROS célja, hogy a robot fejlesztéséhez minden szükséges komponenst biztosítson
 a fejlesztő számára, hogy a fejlesztés során minél több időt lehessen a tényleges
-problémára allokálni. Nagy előnye, hogy kialakításából adódóan nagyon jól
-támogatja a kód újrahasználást, és a moduláris tervezést.
+problémára fordítani. Nagy előnye, hogy kialakításából adódóan nagyon jól
+támogatja a kód újrafelhasználást, és a moduláris tervezést.
 
 Ennek a tulajdonságának köszönhetően rengeteg package érhető el, amely különböző
-funkcionalitások ROS-implementációját adja. A projekt teljesen open source, ami
-szintén segítette az elterjedését. A fejlesztésben továbbá nagy segítség a
-részletes dokumentáció.
+funkcionalitásokat implementálnak a ROS rendszerben. A projekt teljesen open
+source, ami szintén segítette az elterjedését. A fejlesztésben továbbá nagy
+segítség a részletes dokumentáció.
 
-\todo{Distro, humble, támogatott rendszerek}
+\medskip
+
+A ROS a Yocto Projecthez hasonlóan több kiadásban érhető el, amelyeket
+disztribúciónak nevezünk. A disztribúciók időben egymást követik, és eltérő ideig
+tartó támogatással rendelkeznek. A hosszú ideíg támogatott verziókat
+LTS\footnote{LTS:~Long Term Support} disztribúciónak hívjuk. A projekt során a
+stabilitás és elérhető dokumentáció miatt az aktuálisan legfrissebb LTS verziót
+választottam, amelyet Humble Hawksbill-nek, vagy röviden csak
+Humble-nek nevezik.
+
+A Humble a projekt kezdetén nem rendelkezett stabil Yocto támogatással a
+Kirkstone verzióhoz. Az ebből adódó hibák keresése nehézkessé tette a fejlesztés
+kezdeti fázisát, de a projekt alatt a Kirkstone támogatás stabilizálódott, és a
+rendszer a Yocto Project által buildelhetővé vált.
 
 \subsection{Koncepciók}
 
-A ROS platform a fejlesztést egy magasabb szintről közelíti meg, mint az
-általános keretrendszerek. Egy általános keretrendszer rendszerint egy adott
+A ROS platform a fejlesztést egy magasabb absztrakciós szinten közelíti meg, mint
+az keretrendszerek többsége. Egy általános keretrendszer rendszerint egy adott
 nyelven történő szoftverfejlesztést támogat extra funkcionalitással, amelyeket
 könyvtárak formájában biztosít a fejlesztők számára.
 
 Ezzel szemben a ROS egy node-oknak nevezett egységegből és ezek közötti
 kommunikációs csatornákból álló rendszer megvalósításában nyújt segítséget. A
-nodeok nem kapcsolódnak szigorúan egy programhoz, egy rendszert sok kisebb
-futtatható bináris is alkothat. A fejlesztés nyelve sincsen szigorúan megkötve, az
-adott komponensek fejlesztésére akár különböző nyelveket is használhatunk, a
-közösség ráadásul számos nyelv támogatásán is dolgozik.
+nodeok nem kapcsolódnak szigorúan egy futtatható programhoz, egy rendszert sok
+kisebb futtatható bináris is alkothat. A fejlesztés nyelve sincsen szigorúan
+megkötve, az adott komponensek fejlesztésére akár különböző nyelveket is
+használhatunk, a közösség ráadásul számos nyelv támogatásán is dolgozik.
 
 A projekt két nyelvet támogat hivatalosan, a C++-t és a Python-t. A fejlesztés
 rendszerint ezeken a nyelveken zajlik.
 
 \subsubsection{Node}
 
-A ROS alapvető építőegysége a node. Egy node a robot valamilyen funkcióját
-valósíthatja meg, és valamilyen interfész segítségével kapcsolódik a rendszer
-többi node-jához. A node kód szinten egy objektumként jelenik meg, amely a ROS
-Node osztályából származik le. Egy node futtatásához azonban valamilyen
-futtatható binárisra, vagy python scriptre is szükség van, amely implementálja az
-osztályt, és futásban tartja azt.
+A ROS alapvető építőegysége a node. Egy node a robot valamely funkcióját
+valósíthatja meg, és interfészek segítségével kapcsolódik a rendszer többi
+node-jához. A node kód szinten egy objektumként jelenik meg, amely a ROS Node
+osztályából származik le. Egy node futtatásához azonban valamilyen futtatható
+binárisra, vagy python scriptre is szükség van, amely implementálja az osztályt,
+és futásban tartja azt.
 
 A nodeok rendszerint egyetlen jól körülhatárolható funkcionalitást valósítanak
-meg, mint például egy szenzor olvasása, vagy egy motorvezérlési feladat. A
+meg, mint például egy szenzor olvasása, vagy egy motorvezérlési feladat. Egy
+node-ot nem csak egyszer lehet példányosítnai, hanem több alkalommal is, egy jól
+megtervezett node a funkcionalitást változatos könyezetekben is biztosíthatja. A
 modulásri kódszervezés lehetővé teszi, hogy a robot funkcionalitását minél
 könnyebben építhessük fel saját, vagy mások által készített csomagokban található
 nodeok összekapcsolásával.
 
-A node-ok működését befolyásolni node paraméterekkel tudjuk. A node paraméterek
-alklamasak alkalmazásfüggő és kontextus specifikus információk biztosítására,
-ezáltal további általánosítások eszközölhetőek az adott node-on.
+A node-ok belső működését befolyásolni node paraméterekkel tudjuk. A node
+paraméterek alklamasak alkalmazásfüggő és kontextus specifikus információk
+biztosítására, ezáltal a működés általánosabb implementációja válik lehetségessé
+az adott node-on, amelyet így többfajta környezetben is felhasználhatunk.
 
-Az node-ok összekapcsolását rendszerint interfészeken keresztül tehetjük meg,
-amelyekhez a ROS keretrendszer támogatást biztosít.
+Az node-ok összekapcsolását interfészeken keresztül tehetjük meg, amelyekhez a
+ROS keretrendszer támogatást biztosít.
 
 \subsubsection{Package}
 
@@ -88,8 +104,8 @@ több program egy package-en belüli tárolását.
 
 \subsubsection{Interfészek}
 
-A node-ok közti kommunikáció a jól működő ROS projektek kulcsa, a kommunikáció
-megvalósítására az interfészek szolgálnak.
+A node-ok közti kommunikáció a jól működő ROS projektek kulcsa, a  kommunikáció
+megvalósítását interfészek segítségével valósítjuk meg.
 
 Az interfészek működésük szerint három típusba sorolhatóak: topic-ok, service-ek,
 és actionok.  
@@ -113,9 +129,10 @@ végrehajtja, és a service-en keresztül visszajelzést ad.
 
 \medskip
 
-A vezérlési feladatokban az \textbf{action} típusú interfészek lesznek
-segítségünkre. Az action összetett interfész, amely egy folyamat elindítására, és
-folyamatos monitorozására való. Egy action működése két service és egy topic
+A hosszabban tartó feladatokban, mint például a vezérlési feladatok, az
+\textbf{action} típusú interfészek lesznek segítségünkre. Az action összetett
+interfész, amely egy folyamat elindítását, és folyamatos visszacsatolás
+monitorozását végzi. Egy action működése két service és egy topic
 felhasználásával megfeleltethető, ezeket goal-service-nek, feedback topic-nak és
 result-service-nek nevezzük. A goal-service a feladat számára a cél
 specifikálását végzi, amelyre a kiszolgáló node válaszol. A result-service-en
@@ -139,13 +156,13 @@ megoldást nyújt a node-ok közötti kommunikáció biztosítására.
 
 \section{A ROS driver}
 
-A Linux image sikeres telepítését és a ROS rendszer tesztelésével már csak egy
-feladat maradt hátra, a robot hardverének integrálása a ROS környezetbe, és teszt
-alkalmazás készítése. Az integrálásra a ROS környezetnek saját kiépített
-megoldása van, amely a ``rosserial'' csomagban elérhető. Ennek a kialakítása
+A Linux image sikeres telepítését és a ROS rendszer tesztelését követően már csak
+egy feladat maradt hátra, a robot hardverének integrálása a ROS környezetbe, és
+teszt alkalmazás készítése. Az integrálásra a ROS környezetnek saját kiépített
+megoldása van, amely a \verb|rosserial| csomagban elérhető. Ennek a kialakítása
 azonban egy saját protokollhoz kötött, és integrálása több munkával járt volna,
 mint egy saját illesztő megoldás készítése, amely a ROS rendszer számára a robot
-funkcióit biztosítja. 
+funkcióit biztosítja.
 
 \medskip
 
@@ -174,86 +191,102 @@ könnyebben, ergonómikusabb környezetben lehet tesztelni a node-okat.
 A ROS fejlesztés a Yocto Projecthez hasonlóan igényel egy megfelelő shell
 környezetet, amely környezet előállításához scripteket biztosít. A scripteket
 sourceolva a környezet beállítódik, minek következményeként például a ROS
-binárisai bekerülnek a PATH környezeti változóba és közvetlenül indíthatóak
-lesznek. A scriptek automatikus source-olásához a fejlesztői shell init
-file-jában elvégezhetjük a sourceolást.
+binárisai bekerülnek a \verb|PATH| környezeti változóba és közvetlenül
+indíthatóak lesznek. A scriptek automatikus source-olásához a fejlesztői shell
+init file-jában elvégezhetjük a sourceolást.
 
 \subsubsection{Workspace}
 
 A ROS nem csak a node-ok futtatására, és a rendszer kiépítésére biztosít
 támogatást, hanem a ROS csomagok fejlesztésére is. A ROS disztribúcióban találunk
-eszközöket a ROS csomagok fodítására, menedzselésére is.
+eszközöket a ROS csomagok fodítására és menedzselésére.
 
-A ROS package-k fejlesztéséhez a ROS két programon keresztül végzi. A packagek
-függőségeinek menedzselésére a rosdep program szolgál. Ennek a programnak a
-feladata a szükséges csomagok letöltése és telepítése. A packagek buildelésére a
-``colcon'' nevű program szükséges, amely a package-ek létrehozását, és
-buildelését menedzseli.
+A ROS package-k fejlesztésének támogatására a keretrendszer két programot
+biztosít. A packagek függőségeinek menedzselésére szolgál a \verb|rosdep|
+program. Ennek a programnak a feladata a szükséges csomagok letöltése és
+telepítése. A packagek buildelésére a \verb|colcon| nevű program szükséges, amely
+a package-ek buildelését menedzseli.
 
-A workspace lényegében egy mappa, amelyben a ROS package-eket tároljuk.  A mappa
-létrehozása után létre kell hozni egy almappát a csomagok számára, legyen a neve
-``src''.  A colcon a workspace maradék részét automatikusan létrehozza a
-``build'' parancs kiadásával, de fontos hogy a parancsot a workspace root
+A ROS csomagok fejlesztése egy workspace-en belül történik. A workspace
+lényegében egy mappa, amelyben a ROS package-eket tároljuk, forrásaikkal, build
+artifactjeikkel, és egyéb szükségés file-jaikkal együtt.  A mappa létrehozása
+után létre kell hozni egy almappát a csomagok számára, amelynek legyen a neve
+\verb|src|.  A colcon a workspace maradék részét automatikusan létrehozza a
+\verb|build| parancs kiadásával, de fontos hogy a parancsot a workspace root
 mappájában adjuk ki.
 
-A colcon létrehoz egy build, install, és log mappát. A build
-mappában találjuk a lefordított csomagokat, az install mappa egy lokális
-installációt tartalmaz a fordítás kimeneteiből, a log mappa pedig a fordítás
-során keletkezett naplófileokat tartalmazza. Az install mappa része egy
-local\_setup.sh script is, amelyel a lefordított packageket mint overlay tudjuk
-használni. A script source-olásával a csomagok elérhetővé válnak a ROS rendszer
-számára.
+A colcon létrehoz egy \verb|build|, \verb|install|, és \verb|log| mappát. A
+\verb|build| mappában találjuk a lefordított csomagokat, az \verb|install| mappa
+egy lokális installációt tartalmaz a fordítás kimeneteiből, a \verb|log| mappa
+pedig a fordítás során keletkezett naplófileokat tartalmazza. Az install mappa
+része egy \verb|local_setup.sh| script is, amelyel a lefordított packageket mint
+overlay tudjuk használni. A script source-olásával a csomagok elérhetővé válnak a
+ROS rendszer számára.
+
+\subsubsection{Overlayek}
+
+A ROS réteges kialakításban működik, az alap ROS2 installációra épülő rétegeket
+overlayeknek nevezzük. A ROS2 az alaptelepítést underlay-nek, a felhasználó által
+létrehozott rétegeket overlaynek nevezi.
+
+Az overlayek kezeléséhez a rendszer installációs scripteket biztosít. Az
+overlayek felhasználásával egy rendszeren található ROS2 installáció további
+csomagokkal bővíthető az eredeti installáció módosítása nélkül. Az overlayek
+felhasználása különösen hasznos fejlesztés során, amikor egy stabil rendszert
+kell összerakni.
 
 \subsubsection{Packagek}
 
-A packagek létrehozása lehetséges manuálisan is, de a ros saját parancsal
+A packagek létrehozása lehetséges manuálisan is, de a ROS saját parancsal is
 rendelkezik az új package létrehozására, amely gyorsabb és biztosabb megoldás. A
 létrehozáskor paraméterben megadhatjuk a csomag nevét, valamint a használt build
 rendszert, amely alapértelmezés szerint vagy python vagy cmake.
 
-Az új csomag létrehozásánál fontos, hogy a parancsot a workspace src almappájában
-adjuk ki, amennyiben nem így járunk el, a build folyamat összeakadhat. A
-létrehozott package mappájában csak a package szempontjából fontos fileok
-találhatóak meg, minden build kimenetet a colcon a build mappában hoz létre, így
-a mappa könnyedén verziókövethető, nincs szükség ``.gitignore'' szerkesztésre.
+Az új csomag létrehozásánál fontos, hogy a parancsot a workspace \verb|src|
+almappájában adjuk ki, amennyiben nem így járunk el, a build folyamat
+összeakadhat. A létrehozott package mappájában csak a package szempontjából
+fontos fileok találhatóak meg, minden build kimenetet a colcon a build mappában
+hoz létre, így a mappa könnyedén verziókövethető, nincs szükség \verb|.gitignore|
+szerkesztésre.
 
 A package konfigurációja eltér a választott buildrendszer függvényében. Minden
-csomag rendelkezik a package.xml konfigurációs file-al, amelyben defíniálva van a
-csomag neve, verziója, és maintainere, a csomaghoz tartozó licensz, a használt
-buildrendszer, és a csomag függőségei. 
+csomag rendelkezik a \verb|package.xml| konfigurációs file-al, amelyben
+defíniálva van a csomag neve, verziója, és maintainere, a csomaghoz tartozó
+licensz, a használt buildrendszer, és a csomag függőségei.
 
-CMake alapú csomagok esetében minden egyéb konfiguráció a CMakeLists.txt file-ban
-található, úgy mint például az előállítandó binárisok, valamint a belépési
-pontok.
+CMake alapú csomagok esetében minden egyéb konfiguráció a \verb|CMakeListe.txt|
+file-ban található, úgy mint például az előállítandó binárisok, valamint a
+belépési pontok.
 
 Python alapú csomag esetében azonban még két konfigurációs file létezik, a
-setup.cfg, és a setup.py. A package számára fontos konfigurációk a setup.py
-fileban vannak, ahol a package.xml mintájára megtalálható néhány metainformáció,
-valamint a csomag által biztosított belépési pontok.
+\verb|setup.cfg|, és a \verb|setup.py|. A package számára fontos konfigurációk a
+\verb|setup.py| fileban vannak, ahol a \verb|package.xml| mintájára megtalálható
+néhány metainformáció, valamint a csomag által biztosított belépési pontok.
 
 \subsection{A driver node}
 
 A feladat első részében a driver node létrehozásával foglalkoztam. A node
-fejlesztéséhez választott nyelv és build típus a python volt. Ennek oka, hogy a
-fejlesztés sokkal gyorsabban végezhető ezen a nyelven, mint C++-ban, valamint
-python nyelven érhető el rengeteg útmutató, és dokumentáció, amely a kezdő
-fejlesztőknek segít megismerkedni a környezettel. A feladat ezen felül nem
-igényelte a C++ nyelv használatát.
+fejlesztéséhez választott nyelv a python volt, lévén a feladat nem igényelte a
+C++ nyelv használatát. A Python nyelv mellett további érv, hogy a fejlesztés
+sokkal gyorsabban végezhető ezen a nyelven, mint C++-ban, valamint python nyelven
+érhető el rengeteg útmutató, és dokumentáció, amely a kezdő fejlesztőknek segít
+megismerkedni a környezettel.
 
 \subsubsection{Általános kialakítás}
 
-A drivert úgy terveztem, hogy egyetlen node által biztosítva legyen a
-kapcsolat. Ennek az oka, hogy a soros kommunikációban szigorú sorrendiséget kell
-tartani, ez pedig a legkönnyebben úgy érhető el, ha egyetlen komponensnek van
-hozzáférése a soros porthoz.
+A drivert úgy terveztem, hogy egyetlen node által legyen biztosítva a
+kapcsolat. Ennek az oka, hogy a specifikált protokolban megkövetelt szigorú
+sorrendiség könnyebben tartható, ha egyetlen komponensnek van hozzáférése a soros
+porthoz.
 
 A driver node egyetlen soros port illesztésén és a megfelelő protokoll
 implementálásán alapul. A Raspberry Pi esetében az usart interface egy device
 file formájában érhető el, ezért kezelése könnyen megvalósítható. A port
-meghajtására a Python serial libraryját használtam, amely az usart kezelését
-végezte. A fejlesztés és deployment környezet közötti eltérés miatt, valamint az
-interfész node minél általánosabb kialakítása végett node paraméterben határoztam
-meg a használt baud rate-et valamint a felhasznált device file-t.
+meghajtására a Python \verb|serial| library-jét használtam, amely az USART
+kezelését végezte. A fejlesztés és deployment környezet közötti eltérés miatt,
+valamint az interfész node minél általánosabb kialakítása végett node
+paraméterben határoztam meg a használt baud rate-et valamint a felhasznált device
+file-t.
 
 \subsubsection{Szenzor és sebesség olvasás}
 A node-ot megvalósító osztály tartalmaz egy referenciát a device file-ra, amelyen
@@ -271,7 +304,7 @@ a ROS rendszer többi komponensének számára.
 
 \subsubsection{Motorvezérlés}
 
-A robot motorjának hardveres meghibásodása miatt azonban nem volt módom
+A robot motorjának hardveres meghibásodása miatt nem volt módom
 implementálni a haladás megvalósítását. Ezutóbbi funkció a robot feladatának
 ellátásához kritikus, így egy elméleti megvalósítást mutatok be.
 
@@ -282,8 +315,16 @@ lehetővé teszi, hogy a motorok sebességéből és az eltelt időből a node k
 az adott idő alatt megtett távolságot, amelyet ezek után akkumulálva egy
 visszacsatolásban publikáljon.
 
-A haladás ezen megvalósítása célszerű, és könnyen használható funkcionalitás,
-amelyet más feladatot ellátó node-ok könnyedén kezelhetnek.
+A motorvezérlés ily módon való megvalósításával a robot egyszerű mozgási
+parancsokat képes végrehajtani. Ezt a funkciót más feladatot ellátó node-ok
+könnyen használhatják a feladat elvégzésére.
+
+\subsection{Echo-test}
+
+A csomagnak része egy tesztelés céljára készített node, amely a driver node által
+létrehozott topic-okra feliratkozva monitorozza a driver működését. A cél
+rendszeren elindítva sikeresen teszteltem a driver szenzorolvasó
+funkcionalitását, valamint egy motor manuális forgatásával a sebességmérést is.
 
 \subsection{Típusok}
 
@@ -294,26 +335,71 @@ package formájában. A projektnek ezért része egy csomag, amely az interfész
 használt típusokat defíniálja. 
 
 A saját típusok defíniálására a ROS rendszerben külön file-ok szolgálnak,
-amelyekben speciális fileformátumban van lehetőség egyedi típus készítésére. A
-használt típusok formátuma azonban erősen függ a felhasznált interfésztől,
-például hogy egyirányú a kommunikáció mint egy topic esetében, vagy kétirányú
-ahol válaszra is van szükség, mint egy service. A típus meghatározása során
-megadhatjuk az adatok típusát, amelyek lehetnek beépített típusok, vagy más
+amelyekben speciális szintaxis használatával van lehetőség egyedi típus
+készítésére. A használt típusok formátuma azonban erősen függ a felhasznált
+interfésztől, például hogy egyirányú a kommunikáció mint egy topic esetében, vagy
+kétirányú ahol válaszra is van szükség, mint egy service. A típus meghatározása
+során megadhatjuk az adatok típusát, amelyek lehetnek beépített típusok, vagy más
 csomagok által biztosított egyedi típusok, valamint megadhatjuk az adott
 adatmezőt azonosító elnevezést is. Olyan interfészek esetén, ahol több szegmensre
 van szükség, mint például a service, ott a szegmenseket három kötőjellel
-elválasztva határozhatjuk meg. 
+elválasztva határozhatjuk meg.
 
 A robothoz készült interfész csomag két típust biztosít a rendszer számára, a
-Distance, és Velocity típusokat. A Distance típus négy előjel nélküli tizenhat
+Distance, és Velocity típusokat. A Distance típus négy, előjel nélküli tizenhat
 bites egészt tartalmaz, a négy iránynak megfelelően. A Velocity a motorok
 elhelyezkedése szerint két előjeles tizenhat bites egész számot tartalmaz.
 
-A csomag CMakeLists.txt file-jában a ROS rendszer által szolgáltatott CMake
-kiegészítést felhasználva megadható azon fileok listája, amelyekből a típusok
-generálásra kerülhetnek.
+A csomag \verb|CMakeLists.txt| file-jában a ROS rendszer által szolgáltatott
+CMake kiegészítést felhasználva megadható azon fileok listája, amelyekből a
+típusok generálásra kerülhetnek.
 
-\subsection{Echo-test}
 
-\section{Útvonalkeresés}
+\section{A labirintus probléma}
 
+A projekt utolsó, része a teszt alkalmazás fejlesztése, amely a tényleges
+labirintusban való navigálást biztosítja. A motorokból adódó hiba okán a
+motorvezérlés és a ráépülő feladatok nem készültek el. A következő fejezetben
+bemutatom a feladat értelmezését, és megoldási tervet valamint fejlesztési
+lehetőséget vázolok fel az utolsó feladathoz.
+
+\subsection{A Labirintus}
+
+A feladat során specifikálva van, hogy a labirintus topológiája ismert. A
+megadásának módja valamint egyéb jellemzői azonban nem. A környezet mivolta
+erősen befolyásolja a végrehajtást, így a következőkben két lehetséges modellt
+vázolok fel:
+
+\subsubsection{Az egyszerű eset}
+
+Egy ideális labirintusban minden út egyenlő széles, amelyben a robot képes
+végighaladni valamint akár teljes fordulatot is tenni. A fordulópontok szabályos
+derékszögű kanyarok, és minden pontból minden pontba el lehet jutni.
+
+\subsubsection{A komplex eset}
+
+Egy összetettebb eset nagyobb esélyel modellezi a valós problémát, így nagyobb
+komplexitással is bír. Komplex esetben a labirintus falai nem minden esetben 
+
+
+\subsection{Algoritmusok}
+\subsubsection{Az egyszerű eset}
+
+\medskip
+
+Az egyszerű labirintus könnyedén ábrázolható egy gráf segítségével, amelyben a
+gráf csúcsai a lehetséges fordulópontok. A gráf éleiben kódolható a navigációhoz
+szükséges két információ. Elsőként a fordulat iránya amely lehet  jobb, bal és
+előre, majd a következő csomópontíg megteendő távolság.
+
+Egy ilyen gráfban egy legrövidebb út kereséssel meghatározható, hogy milyen
+sorrendben kell az éleken végíghaladni, ami aztán egyértelműen defíniál egy
+haladás-fordulás sorrendet a robot számára. Ennek a végrehajtásával a navigáció 
+elméletben megoldható.
+
+\subsection{Kiindulópont}
+
+\subsection{A haladás implementációja}
+
+%% folyamatos szabályozás kell mert minden esetben a
+folyt köv

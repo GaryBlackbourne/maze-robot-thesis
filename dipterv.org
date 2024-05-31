@@ -56,7 +56,7 @@ kísérlet a hotspottal, jó, de nem tökéletes.  instabil kapcsolat: ->  szar.
 meta ros layer és lefordítása
 ros integrálása a buildbe.
 
-** TODO Chapter ros2
+** DONE Chapter ros2
 
 *** bevezetés
 - eddig volt hardver firmware linux és most legyen a linuxon egy ros.
@@ -117,3 +117,7 @@ Ide lehet kéne még a ros2 action amivel haladni tudunk.
 Le tudjuk vajon fordítani a firmware-t?
 * Itt tartok
 [[file:text/chapters/chapter-3-overview.tex::552][link]]
+* Mit csináljak:
+** TODO abstract
+** TODO ROS2 fejezet bővítése elmélettel
+** TODO összefoglaló fejezet.
