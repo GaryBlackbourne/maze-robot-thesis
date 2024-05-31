@@ -7,7 +7,7 @@
 % Abstract in Hungarian
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
-\todo{Újrafogalmazni magyarul, aztán lefordítani}
+
 Ahogy a beágyazott processzorok számítási kapacitása és a kommunikációs csatornák
 sebessége növekszik, úgy válik egyre elterjedtebb és megengedhetőbb megoldássá
 robotok alkalmazása. Különösen igaz ez olyan környezetekben amelyekben az emberi
@@ -16,22 +16,25 @@ monotonitása miatt nem megengedhető. Ezen feladatok megoldása során gyakran 
 szükségünk azonban a feladatot végző robot autonóm döntéseire, például navigáció
 során. Az ilyen döntésre képes robotokat hívjuk autonóm robotoknak.
 
-A diplomatervemben egy autonóm robot megtervezését és megvalósítását tűztem ki
-célul. A robot egy előre ismert topológiájú labirintusban képes végighaladni. Ez
-a feladat egy könnyített szimulációja egy raktárépületben vagy csatornarendszerben
-haladó robotnak. A robot megtervezése során az önálló laboratóriumban elkezdett
-projektre építkezem.
+A diplomaterv céljaként egy autonóm robot megtervezését és megvalósítását tűztem
+ki. A robot feladata egy előre ismert topológiájú labirintusban való haladás. Ez
+a feladat egy könnyített szimulációja egy raktárépületben vagy
+csatornarendszerben haladó robotnak. A robot megtervezése során az önálló
+laboratóriumban elkezdett projektre építkezem.
 
 A robot feladatai indokolják hogy nagyobb teljesítményű processzort használjak,
 amely egy Linux operációs rendszer segítségével hajtja majd végre a feladatot.
 
-Egy robot megvalósítása több kis részegyég együttes működését igényli. Egy ilyen
+Egy robot megvalósítása több kisebb modul együttes működését igényli. Egy ilyen
 konstrukció kialakításához praktikus választás a ROS -- azaz Robot Operating
-System -- felhasználása. A ROS egy robotikában open source library csomag, amely
-a robotikában gyakran előforduló megoldások újrafelhasználását teszi lehetővé.
+System -- keretrendszer felhasználása. A ROS egy robotikában open source library
+csomag, amely a robotikában gyakran előforduló megoldások újrafelhasználását
+teszi lehetővé.
 
-A dolgozatban bemutatom a robot felépítését, fejlesztésének menetét, majd a
-Linux és ROS rendszerek fordításának, telepítésének és együttes felhasználásának módját.
+A dolgozatban áttekintem a robot felépítését, fejlesztésének menetét. Bemutatom a
+szükséges modulokat, és fejlesztésük menetét. Ismertetem a beágyazott Linux
+rendszerek fordításának módját Yocto Project felhasználásával, valamint a ROS
+keretrendszer integrálását a keresztfordítás folyamatába.
 
 \vfill
 \selectenglish
@@ -42,16 +45,31 @@ Linux és ROS rendszerek fordításának, telepítésének és együttes felhasz
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
 
-As the computational power of embedded processors and the speed of communication channels increase, the use of robots will become more common and affordable. This is particularly true in environments where the quality, harshness or monotonous nature of the environment makes the use of human workforce unaffordable. However, in solving these tasks, we often need autonomous decisions from the robot performing the task, for example during navigation. Robots capable of making such decisions are called autonomous robots.
+As the computational capabilities of embedded processors and the speed of
+communication channels increase, the use of robots will become more common and
+affordable. This is particularly true in environments where the quality,
+harshness or monotonous nature of the work makes the use of human labour
+unaffordable. However, when solving these tasks, we often need autonomous
+decisions from the robot performing the task, for example during
+navigation. Robots capable of making such decisions are called autonomous robots.
 
-In my thesis project, I set the goal of designing an autonomous robot that is able to navigate through a maze with a known topology. This task is a simplified simulation of a robot navigating in a warehouse or a sewer system.  In designing the robot, I build upon the project I started in the independent laboratory.
+The goal of this thesis is to design and implement an autonomous robot. The
+robot's task is to navigate through a maze with a known topology. This task is a
+simplified simulation of a robot walking in a warehouse or a sewer system. In
+designing the robot, I build on the project I started in a separate project lab.
 
-The robot's tasks require the use of a more powerful processor,
-which will execute the tasks using a Linux operating system.
+The robot's tasks require me to use a more powerful processor that will execute
+the task with a Linux operating system.
 
-The implementation of a robot requires several small components to work together. To design such a system, a practical choice is to use ROS i.e. Robot Operating System.  ROS is an open source library package that allows the reuse of solutions commonly found in robotics.
+The implementation of a robot requires the combined operation of several smaller
+modules. To design such a structure, it is a practical choice to use the ROS --
+i.e. Robot Operating System -- framework. ROS is an open source library package
+in robotics that allows reuse of solutions commonly found in robotics.
 
-In this thesis, I will describe the architecture of the robot, the development process, and then how to compile, install and use Linux and ROS together.
+In this paper, I will review the design and development process of the robot. I
+present the required modules and their development process. I will discuss how to
+compile embedded Linux systems using Yocto Project and how to integrate the ROS
+framework into the cross-compilation process.
 
 \vfill
 \selectthesislanguage
