@@ -366,27 +366,27 @@ lehetőséget vázolok fel az utolsó feladathoz.
 \subsection{A Labirintus}
 
 A feladat során specifikálva van, hogy a labirintus topológiája ismert. A
-megadásának módja valamint egyéb jellemzői azonban nem. A környezet mivolta
-erősen befolyásolja a végrehajtást, így a következőkben két lehetséges modellt
-vázolok fel:
+megadásának módja valamint egyéb jellemzői azonban nem. A környezet mivoltaerősen
+befolyásolja a végrehajtást, így a következőkben két lehetséges modellt vázolok
+fel:
 
 \subsubsection{Az egyszerű eset}
-
 Egy ideális labirintusban minden út egyenlő széles, amelyben a robot képes
 végighaladni valamint akár teljes fordulatot is tenni. A fordulópontok szabályos
 derékszögű kanyarok, és minden pontból minden pontba el lehet jutni.
 
 \subsubsection{A komplex eset}
-
 Egy összetettebb eset nagyobb esélyel modellezi a valós problémát, így nagyobb
-komplexitással is bír. Komplex esetben a labirintus falai nem minden esetben 
-
+komplexitással is bír. Komplex esetben a labirintus falai nem minden esetben
+egyenesek, az útvonalak pedig szűkülhetnek. Lehetséges nem derékszögű kanyar,
+vagy íves kanyar. 
 
 \subsection{Algoritmusok}
+
+A fenti modellek alapján a labirintusokban való navigálásra a következő elméleti
+megoldásokat javaslom.
+
 \subsubsection{Az egyszerű eset}
-
-\medskip
-
 Az egyszerű labirintus könnyedén ábrázolható egy gráf segítségével, amelyben a
 gráf csúcsai a lehetséges fordulópontok. A gráf éleiben kódolható a navigációhoz
 szükséges két információ. Elsőként a fordulat iránya amely lehet  jobb, bal és
@@ -397,9 +397,40 @@ sorrendben kell az éleken végíghaladni, ami aztán egyértelműen defíniál 
 haladás-fordulás sorrendet a robot számára. Ennek a végrehajtásával a navigáció 
 elméletben megoldható.
 
+\subsubsection{A komplex eset}
+Komplex esetben a navigáció sokkal nehezebb, és körülményesebb. A megfelelő
+útvonalat azonban így is megtalálhatjuk, az előző algoritmus módosításával.
+
+Vegyünk egy négyzetháló formájában rendezett gráfot, amely felbontása sokkal
+nagyobb mint az útvonal szélessége. Illesszük rá a labirintus képére, és
+távolítsunk el minden olyan csúcsot, amely nem megközelíthető területen van
+(falak). A gráfból azok a csúcsok is eltávolításra kerülnek, amelyeket a robot a
+saját méretei miatt nem tud megközelíteni, például túl közel vannak egy falhoz.
+A pontosság javítható átlós élek bevezetésével.
+
+Ezt követően egy olyan gráfot kapunk, amelyben a fent tárgyalt legrövidebb
+útvonalat kereső algoritmus futtatható, és hasonló módon generálható egy
+utasítássorozat, amelyet a robot már végre tud hajtani. Ebben az esetben érdemes
+lehet összevonni azokat az utasítássorozatokat, amelyek nem tartalmaznak kanyart,
+így az utasítássorozat méretét csökkenthetjük.
+
 \subsection{Kiindulópont}
+
+Az ismert topológiájú labirintus megoldásában nagy segítség, ha a kezdőpont
+ismert, és gráf csúcs. Ennek ellenében a robot első feladata a környezet
+felderítése, amely során a környezetből nyert információkból saját térképet épít,
+amelyet az ismert labirintus térképére illesztve korrelációs függvény maximumot
+keres.
+
+Ez a feladat bőven túlmutat a jelen dolgozat keretein.
 
 \subsection{A haladás implementációja}
 
-%% folyamatos szabályozás kell mert minden esetben a
-folyt köv
+A fenti esetben vázolt algoritmusok segítségével a labirintus elméletben
+megoldható, a robot mozgását azonban számos egyéb tényező befolyásolja. Ezen
+tényezők korrigálására, a haladás során szabályzó algoritmust érdemes használni.
+
+Az egyszerű labirintusmodell esetében a megvalósítás egy szabályzókör, amely a
+robot két faltól számított távolságát igyekszik egyenlően tartani.
+
+

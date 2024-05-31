@@ -1,0 +1,89 @@
+%----------------------------------------------------------------------------
+\chapter{Összefoglalás}
+%----------------------------------------------------------------------------
+
+A projekt célkitűzése beható vizsgálat volt egy robot megalkotásának lehetőségét
+illetőleg, Yocto Project és ebben integrált ROS2 keretrendszerek segítségével. A
+feladatban a két rendszer megismerése és áttekintése után, a fejlesztési és
+fordítási lehetőségek felmérése is cél volt. A rendszerek demonstrálására a
+feladat részét képezte egy robot megépítése és dokumentációja is.
+
+\medskip
+
+A projekt során egy teljes robot rendszert készítettem. A robot tervezését
+feladatokra és modulokra bontva, részletesen ismertettem.  Munkám során minden
+modul esetén bemutattam a fennálló problémat, a tervezés lépéseit, a mérnöki
+döntések mögött álló indokokat és érveket, végül szót ejtettem az adott
+témakörökben tapasztalt nehézségekről is.
+
+A munkám elején áttekintettem a robot kialakítását, és részegységekre bontottam a
+felépítését, hogy így átlátható rendszerben történhessen a fejlesztés.
+
+Ezt követően bemutattam a robot hardveres elemeit amelyek a projekt alapjaként
+szolgálnak. Röviden kitértem ezek képességeire, kialakításukra, és szerepükre az
+egész rendszer szempontjából.
+
+A következő lépésben részletesen bemutattam a robot vezérléséhez szükséges
+firmwaret. Ismertettem fejlesztésének módját és a keresztfordító környezetet. A
+fejezetben bemutattam a kész firmware kialakítását, szemléltettem az egyes taskok
+szerepét, az időkritikus feladatok esetében bemutattam az optimalizáció hatását,
+és munkámat mérési eredményekkel támasztottam alá. 
+
+A következő fejezet során a Yocto Project ismertetésével foglalkoztam, és
+bemutattam a beágyazott Linux image készítnésének módját a projekt példájának
+alapján. Ismertettem a projektben használt image tulajdonságait, valamint
+bemutattam a ROS2 rendszer integrálását is. A fejezetben kitértem saját ROS2
+package-k telepítésére, a Yocto által használt receptek segítségével.
+
+Munkám lezárásában a ROS2 keretrendszert mutattam be, amelynek során sikeresen
+integráltam a rendelkezésre álló robot komponenseit, és sikeres tesztet végeztem
+a roboton futtatott ROS2 alkalmazás segítségével.
+
+\medskip
+
+A projekten való munkával hasznos tapasztalatokat szereztem a beágyazott
+rendszerek fejlesztésének minden területén, különös tekintettel a beágyazott
+szoftverfejlesztésre. A projekt során megismertem egy komplex rendszer
+megtervezésével és megalkotásával járó kihívásokat, és tapasztalatot gyűjtöttem a
+különböző területek egymásra hatásáról egy projekten belül.
+
+\section{Fejlesztési lehetőségek}
+
+Az elkészült hardver számos irányba fejleszthető tovább. Moduláris kialakításának
+köszönhetően a fejlesztés irányultsága is eltérő lehet. A robot alacsony szintű
+moduljaiban több ponton találunk hardveres javításra és letisztázásra
+lehetőséget, akár Quality-of-Life jellegű, akár új funkcionalitás implementálását
+célzó módosítások formájában.
+
+\medskip
+
+A kész robot motoros vezérlésének tesztelése az első és legfontosabb lépés a
+projekt fejleszthetősége szempontjából. Ennek a funkciónak az implementálása a
+robot funkcióit teljeskörűvé tenné, és további szoftveres fejlesztések számára
+biztosítana alapot.
+
+Az akkumulátoros üzemű rendszerek számára hatalmas előny ha az akkumulátor
+állapotáról visszacsatolás érkezik. A projekt fejlesztésére jó lehetőség az
+akkumulátormenedzsment rendszer újragondolása, és egy komplexebb tápáramkör
+implementálása, amely kapcsolatban áll a robot többi részével.
+
+\medskip
+
+A firmware fejlesztés szempontjából a motorokra épül egy fontos fejlesztési
+lehetőség, a PID szabályzás. Ennek implementálása a motorvezérlésben nagyban
+javítaná a firmware minőségét. A firmwareben másik fejlesztési lehetőség egy
+robosztus kommunikációs protokoll kialakítása.
+
+\medskip
+
+A Linux image-et érintően a robot saját hálózatának kiépítése és alapvető
+autentikáció implementálása hozzájárulna a robot könnyebb kezelhetőségéhez. A
+firmware keresztfordításának Yocto integrációjával a robot előállítását lehetne
+tehermentesíteni.
+
+\medskip
+
+A ROS rendszert tekintve rengeteg fejlesztési lehetőség adódik. A felsorolt
+lehetőségek mind alapot adnak a ROS rendszer bővítésére, lehetővé téve, hogy a
+robot fő funkciói számos feladatban és környezetben alkalmazhatók legyenek.
+

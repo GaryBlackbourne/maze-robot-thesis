@@ -119,5 +119,5 @@ Le tudjuk vajon fordítani a firmware-t?
 [[file:text/chapters/chapter-3-overview.tex::552][link]]
 * Mit csináljak:
 ** TODO abstract
-** TODO ROS2 fejezet bővítése elmélettel
+** DONE ROS2 fejezet bővítése elmélettel
 ** TODO összefoglaló fejezet.
