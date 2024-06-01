@@ -256,37 +256,37 @@ Különböző shell implementációk léteznek, beágyazott környezetben a legg
 a bash, és dash shellekkel találkozhatunk. Asztali környezetben számos egyéb
 shell típus létezik, például zsh, ksh, és a fish.
 
-\subsection{GUI}
+%% \subsection{GUI}
 
-A shell interfészen kívül a Linux operációs rendszerek képesek grafikus
-felhasználói felületet is biztosítani. Grafikus felületre beágyazott környezetben
-nem minden esetben van igény, az esetek jelentős részében a feladat ellátására
-egy shell teljesen megfelelő. Akadnak azonban feladatok, ahol a grafikus
-megjelenítés része a feladatkörnek, vagy a rendszer karbantartásában jelenthet
-segítséget egy grafikus környezet.
+%% %% A shell interfészen kívül a Linux operációs rendszerek képesek grafikus
+%% %% felhasználói felületet is biztosítani. Grafikus felületre beágyazott környezetben
+%% %% nem minden esetben van igény, az esetek jelentős részében a feladat ellátására
+%% %% egy shell teljesen megfelelő. Akadnak azonban feladatok, ahol a grafikus
+%% %% megjelenítés része a feladatkörnek, vagy a rendszer karbantartásában jelenthet
+%% %% segítséget egy grafikus környezet.
 
-\medskip
+%% \medskip
 
-A Linux rendszereken grafikus megjelenítésre két fő protokollt, az X11 és Wayland
-protokollokat szokás alkalmazni.
+%% A Linux rendszereken grafikus megjelenítésre két fő protokollt, az X11 és Wayland
+%% protokollokat szokás alkalmazni.
 
-A két megoldás közül az X11 (vagy röviden csak X) a régebbi rendszer, fejlesztése
-napjainkban nagyon lassan halad. Gyakran fogalmazódik meg kritika az elavúlt
-technológia miatt, ennek ellenére az X a gyakrabban használt megoldás.
-Kialakítása szerver-kliens kapcsolat alapú.  A program elfedi a ki és bemeneti
-perifériákat, mint egér billentyűzet és monitor, és ezek eléréséhez interfészt
-biztosít az alkalmazások számára.  Kialakításának jellegzetessére a régi
-számítástechnikai rendszerek maradványa, amely szerint egy központi számítógéphez
-több végpont csatlakozik, a megjelenítést a végpontok végzik, míg a
-számításigényes feladat a központi rendszeren fut. Ez a megközelítés napjainkban
-kevésbé praktikus, a számítógépek elterjedésének köszönhetően.
+%% A két megoldás közül az X11 (vagy röviden csak X) a régebbi rendszer, fejlesztése
+%% napjainkban nagyon lassan halad. Gyakran fogalmazódik meg kritika az elavúlt
+%% technológia miatt, ennek ellenére az X a gyakrabban használt megoldás.
+%% Kialakítása szerver-kliens kapcsolat alapú.  A program elfedi a ki és bemeneti
+%% perifériákat, mint egér billentyűzet és monitor, és ezek eléréséhez interfészt
+%% biztosít az alkalmazások számára.  Kialakításának jellegzetessére a régi
+%% számítástechnikai rendszerek maradványa, amely szerint egy központi számítógéphez
+%% több végpont csatlakozik, a megjelenítést a végpontok végzik, míg a
+%% számításigényes feladat a központi rendszeren fut. Ez a megközelítés napjainkban
+%% kevésbé praktikus, a számítógépek elterjedésének köszönhetően.
 
-A wayland egy modernebb, korszerűbb protokol és architektúra, amely a grafikus
-alkalmazások megjelenítésére lett kifejlesztve. Koncepcióját tekintve egyszerűbb
-és kisebb az erőforrásigénye. Központi komponense egy úgynevezett wayland
-compositor, amelyet minden grafikus környezet saját maga implementálhat. A
-wayland biztosít egy nyelvet amin keresztül ezzel a compositor-ral
-kommunikálhatnak alkalmazásaink.
+%% A wayland egy modernebb, korszerűbb protokol és architektúra, amely a grafikus
+%% alkalmazások megjelenítésére lett kifejlesztve. Koncepcióját tekintve egyszerűbb
+%% és kisebb az erőforrásigénye. Központi komponense egy úgynevezett wayland
+%% compositor, amelyet minden grafikus környezet saját maga implementálhat. A
+%% wayland biztosít egy nyelvet amin keresztül ezzel a compositor-ral
+%% kommunikálhatnak alkalmazásaink.
 
 \section{A boot folyamat}
 
@@ -437,6 +437,7 @@ lépéseit tartalmazza. A meghatározott lépések szigorú sorrendben egymás u
 hajtódnak végre:
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{do\_fetch}
 \item{do\_unpack}
 \item{do\_patch}
@@ -578,6 +579,7 @@ amelyek a bitbake felhasználása során nagy segítséget jelenthetnek, a telje
 igénye nélkül néhány:
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{\verb|-e|:~A build során alkalmazott változókat listázza}
 \item{\verb|-k|:~A build esetleges failelése esetén nem áll le, hanem minden
   feladatot végrehajt, amely nem függ a hibába futó feladattól}

@@ -34,6 +34,7 @@ program szervezése és memórialábnyoma szempontjából.
 Tekintsük át a firmware feladatait!
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{Kommunikáció a Raspberry Pi-vel}
 \item{Szenzorok inicializálása és kezelése}
 \item{Motorok vezérlése}
@@ -204,6 +205,7 @@ A repository root könyvtárában két fontos mappát találunk, a \verb|utils| 
 következők:
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{build.sh:~A build folyamatot elindító script.}
 \item{clean.sh:~A build artifactokat törlő script.}
 \item{flash.sh~Az elkészült binárist ST-Linken keresztül a mikrokontrollerre
@@ -226,6 +228,7 @@ root könyvtárában található. A scriptben néhány hasznos beállítás amit
 konfigurálni lehet:
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{A projekt neve}
 \item{A fordító és linker binárisok}
 \item{A kimenetet tartalmazó könyvtár}
@@ -294,6 +297,7 @@ mikrokontrollerekre lett tervezve.
 A FreeRTOS operációsrendszer számos hasznos eszközt biztosít:
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{Konfigurálható kernel, többfajta ütemező algoritmussal.}
 \item{Mutexek és szemaforok, szinkronizáció, és versenyhelyzetek kezelése
   céljából.}
@@ -363,6 +367,7 @@ A projekt fejlesztése során a HAL drivereket és saját kiegészítő kódot h
 a mikrovezérlő hardvereivel történő interakcióban, ennek három fő indoka volt.
 
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{A HAL Driverek jól dokumentáltak, sok segédanyag érhető el velük
   kapcsolatban}
 \item{Az STMicroelectronics CubeMX eszköze a HAL kód generálását támogatja.}
@@ -468,6 +473,7 @@ elkerülésére használ a firmware.
 
 A struktúra négy fő alstruktúrából áll:
 \begin{itemize}
+  \setlength\itemsep{0em}
 \item{\verb|distance|:~A szenzorok által mért adat, négy darab előjel nélküli 16
   bites egész, valamint egy mutex.}
 \item{\verb|encoder|:~Az enkóderpár jelenlegi, és előző iteráció beli értékei
